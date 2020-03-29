@@ -6,6 +6,7 @@ tags: ["linux"]
 categories: []
 date: 2015-10-17
 ---
+{{% toc %}}
 ## Intro
 So I have an old Western Digital Sharespace NAS box that I used to use as my main home NAS. I've long since switched it off, support for it has more or less finished, there have been no updates in ages and the new WD support site does not list it anymore. That said it seems a shame to skip it so I tried a few times to re-purpose it. I did get root when I first got it, but was never able to do anything more as it had all my files on. After I stopped using it for a while I forgot about it. Sometime later I found a few posts on the debian-arm mailing list from David Hicks, he had managed to get Debian installed at working! Yay I thought so I emailed him and he very helpfully gave me some instructions and some patches to get me started. Unfortunately I fell at the first hurdle and could not get the console working. Embarrassingly I had not turned the flow control to off within the minicom settings. After 18 months while working on a serial console for a RaspberryPi it dawned on me that it was my mistake. So I got out the box and console cable and decided to have another go.
 

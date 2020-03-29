@@ -6,6 +6,7 @@ tags: ["pi"]
 categories: []
 date: 2018-07-06
 ---
+{{% toc %}}
 ## Introduction
 I recently needed to temperature monitor, log and alert on over temperatures. I had a look in my parts bin and I found a Raspberry PI a 1-Wire HBA, a 1-Wire temperature IC and a 3G dongle.
 

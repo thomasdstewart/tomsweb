@@ -6,6 +6,7 @@ tags: ["pi"]
 categories: []
 date: 2017-11-26
 ---
+{{% toc %}}
 ## Introduction
 I have known about reel to reel tape for sometime, my Dad has an old 1960's player in the attic. However it is only relatively recently that I found out that there are some people that still used them for music listening purposes. I think my first real exposure was on the [Techmoan](https://www.youtube.com/user/Techmoan]) YouTube channel, I saw a video about [Tips and advice for the Reel-to-Reel buying newbie](https://www.youtube.com/watch?v=UnZXmpMo0XY). Instantly I decided it was a waste of time and money. However the more I thought about it the more I liked the idea of selecting an album or compilation of music, starting the tape and not being able to skip tracks easily. All while seeing the tape player play while listening to the music. The other appealing idea was the retro design and the look of 10 inch tape spools. I continued to think about reel to reel, secretly wanting a player. Till a friend reminded me that people generally spend far more on "ornaments" for their houses than the average cost of a working tape player. This changed my mind, I instantly did an ebay search and found a player that ticked every box: a direct drive so that no belts would need changing, a head that is not prone to wearing out, a model that takes 1/4 inch tape and 10 inch tape reels, touch buttons rather than large mechanical piano key controls, vu meters, a nice 80s black finish and most importantly in working order. To make it even better it was a buy it now auction that was in the neighbouring town. So I bid, won, paid and picked it up the same day!
 
@@ -192,8 +193,8 @@ qemu-system-arm -kernel kernel-qemu-4.1.13-jessie -cpu arm1176 -m 256 -M versati
 
 Once running the system will have a read-only root, that way the device can be powered off without worrying about file system corruption. If small changes are needed on the fly, the root filesystem can be remounted rw in order to make small changes.
 
-## Rocko Update
-Build nodes for Rocko
+## Zeus Update
+Build nodes for Zeus
 
 ```
 sudo apt-get -y install build-essential chrpath cpio debianutils diffstat gawk gcc-multilib git iputils-ping libsdl1.2-dev python python3 python3-pexpect python3-pip socat sudo texinfo unzip wget xterm xz-utils 
@@ -201,10 +202,10 @@ sudo apt-get -y install screen dstat qemu-system-arm
 ```
 
 ```
-git clone http://git.yoctoproject.org/git/poky -b rocko
+git clone http://git.yoctoproject.org/git/poky -b zeus
 cd poky
-git clone http://git.openembedded.org/meta-openembedded -b rocko
-git clone http://git.yoctoproject.org/git/meta-raspberrypi -b rocko
+git clone http://git.openembedded.org/meta-openembedded -b zeus
+git clone http://git.yoctoproject.org/git/meta-raspberrypi -b zeus
 git clone https://github.com/thomasdstewart/meta-rptr.git
 . oe-init-build-env
 bitbake-layers add-layer $PWD/../meta-openembedded/meta-oe
@@ -213,12 +214,10 @@ bitbake-layers add-layer $PWD/../meta-openembedded/meta-networking
 bitbake-layers add-layer $PWD/../meta-raspberrypi
 bitbake-layers add-layer $PWD/../meta-rptr
 echo 'MACHINE ?= "raspberrypi"' >> conf/local.conf
+echo 'DISTRO = "rptr"' >> conf/local.conf
 echo 'ROOT_PASSWORD = "password"' >> conf/local.conf
 echo 'WIFI_SSID = "someapssid"' >> conf/local.conf
 echo 'WIFI_PSK = "somepassword"' >> conf/local.conf
-echo 'MACHINE = "raspberrypi"' >> conf/local.conf
-echo 'DISTRO_FEATURES_append = " systemd"' >> conf/local.conf
-echo 'VIRTUAL-RUNTIME_init_manager = "systemd"' >> conf/local.conf
 bitbake rpi-rptr-image
 ```
 

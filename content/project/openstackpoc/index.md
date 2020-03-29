@@ -6,6 +6,7 @@ tags: ["openstack"]
 categories: []
 date: 2016-03-18
 ---
+{{% toc %}}
 ## Introduction
 
 This is a short howto on creating a small Openstack proof of concept on CentOS. It's mostly cobbled together with the aid of:
