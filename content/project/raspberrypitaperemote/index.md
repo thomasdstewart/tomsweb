@@ -213,7 +213,7 @@ bitbake-layers add-layer $PWD/../meta-openembedded/meta-python
 bitbake-layers add-layer $PWD/../meta-openembedded/meta-networking
 bitbake-layers add-layer $PWD/../meta-raspberrypi
 bitbake-layers add-layer $PWD/../meta-rptr
-echo 'MACHINE ?= "raspberrypi"' >> conf/local.conf
+echo 'MACHINE = "raspberrypi"' >> conf/local.conf
 echo 'DISTRO = "rptr"' >> conf/local.conf
 echo 'ROOT_PASSWORD = "password"' >> conf/local.conf
 echo 'WIFI_SSID = "someapssid"' >> conf/local.conf

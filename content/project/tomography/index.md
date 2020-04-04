@@ -6,6 +6,6 @@ tags: ["science"]
 categories: []
 date: 2009-06-11
 ---
-I can to Tomography!
+I can do Tomography!
 
 {{< figure src="image.png">}}
