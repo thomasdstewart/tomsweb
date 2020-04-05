@@ -4,7 +4,7 @@ name: Thomas Stewart
 
 # Username (this should match the folder name)
 authors:
-- admin
+- thomas
 
 # Is this the primary user of the site?
 superuser: true
@@ -22,7 +22,7 @@ bio: Computer enthusiast and sysadmin
 social:
 - icon: envelope
   icon_pack: fas
-  link: '#contact'  # For a direct email link, use "mailto:test@example.org".
+  link: 'mailto:thomas@stewarts.org.uk'
 - icon: twitter
   icon_pack: fab
   link: https://twitter.com/thomasstewart

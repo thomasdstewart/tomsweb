@@ -105,9 +105,13 @@ appointment_url = ""
 # Contact links
 #   Set to `[]` to disable, or comment out unwanted lines with a hash `#`.
 contact_links = [
-  {icon = "twitter", icon_pack = "fab", name = "DM Me", link = "https://twitter.com/Twitter"},
-  {icon = "skype", icon_pack = "fab", name = "Skype Me", link = "skype:echo123?call"},
-  # {icon = "telegram", icon_pack = "fab", name = "Telegram Me", link = "https://telegram.me/@Telegram"},
+  {icon = "twitter", icon_pack = "fab", name = "Twitter", link = "https://twitter.com/thomasstewart"},
+  {icon = "skype", icon_pack = "fab", name = "Skype", link = "skype:thomas_d_stewart?call"},
+  {icon = "facebook", icon_pack = "fab", name = "Facebook", link = "https://facebook.com/thomas.d.stewart"},
+  {icon = "linkedin", icon_pack = "fab", name = "Linkedin", link = "https://www.linkedin.com/in/thomasdstewart"},
+  {icon = "youtube", icon_pack = "fab", name = "YouTube", link = "https://www.youtube.com/thomasdstewart"},
+  {icon = "redhat", icon_pack = "fab", name = "Red Hat Certified Engineer (RHCE)", link = "https://www.redhat.com/wapps/training/certification/verify.html?certNumber=110-244-175"},
+  {icon = "wikipedia-w", icon_pack = "fab", name = "Wikipedia", link = "https://en.wikipedia.org/wiki/User:thomas_d_stewart"},
   ]
 
 ############################
