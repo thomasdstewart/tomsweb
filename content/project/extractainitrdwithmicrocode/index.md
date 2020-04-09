@@ -1,7 +1,7 @@
 ---
 title: "How to extract a initrd with a microcode header"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date:  2014-07-14

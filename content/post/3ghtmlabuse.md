@@ -1,7 +1,7 @@
 ---
 title: "3G HTML Abuse"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "mobile", "html", "javascript"]
 categories: []
 date: 2012-10-11 00:19:00

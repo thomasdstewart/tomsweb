@@ -1,7 +1,7 @@
 ---
 title: "Essential Films"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["movies"]
 categories: []
 date: 2013-11-24

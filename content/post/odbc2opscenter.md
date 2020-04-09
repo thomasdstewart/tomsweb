@@ -1,7 +1,7 @@
 ---
 title: "ODBC 2 OpsCenter"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "backup", "netbackup"]
 categories: []
 date: 2010-09-16 21:50:00

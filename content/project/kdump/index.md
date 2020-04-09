@@ -1,7 +1,7 @@
 ---
 title: "Kdump"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2015-05-27

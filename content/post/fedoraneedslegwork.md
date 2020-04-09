@@ -1,7 +1,7 @@
 ---
 title: "Fedora needs legwork"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "fedora", "yum"]
 categories: []
 date: 2009-06-06 00:06:00

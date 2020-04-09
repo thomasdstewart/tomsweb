@@ -1,7 +1,7 @@
 ---
 title: "Essential Films Bechdel Test"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["movies"]
 categories: []
 date: 2013-01-31

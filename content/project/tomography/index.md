@@ -1,7 +1,7 @@
 ---
 title: "Tomography"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["science"]
 categories: []
 date: 2009-06-11

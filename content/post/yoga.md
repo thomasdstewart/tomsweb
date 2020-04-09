@@ -1,7 +1,7 @@
 ---
 title: "Yoga"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "gym"]
 categories: []
 date: 2009-08-12 22:07:00

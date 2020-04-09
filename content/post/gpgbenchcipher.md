@@ -1,7 +1,7 @@
 ---
 title: "GPG Bench Cipher"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "gpg", "openphp", "benchmark"]
 categories: []
 date: 2009-10-09 16:53:00

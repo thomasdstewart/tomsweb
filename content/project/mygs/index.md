@@ -1,7 +1,7 @@
 ---
 title: "My g's"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux", "gnome"]
 categories: []
 date: 2011-11-10

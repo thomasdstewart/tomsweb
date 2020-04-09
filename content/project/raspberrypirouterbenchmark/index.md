@@ -1,7 +1,7 @@
 ---
 title: "Raspberry Pi Router Benchmark"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["pi"]
 categories: []
 date: 2015-02-25

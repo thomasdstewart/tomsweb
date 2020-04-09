@@ -1,7 +1,7 @@
 ---
 title: "Big Disk"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "mdadm", "aoe"]
 categories: []
 date: 2009-09-15 22:40:00

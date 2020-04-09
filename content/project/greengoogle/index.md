@@ -1,7 +1,7 @@
 ---
 title: "Green Google"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux", "google"]
 categories: []
 date: 2009-06-17

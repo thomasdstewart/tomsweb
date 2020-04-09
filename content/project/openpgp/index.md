@@ -1,7 +1,7 @@
 ---
 title: "Open PGP"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["pgp"]
 categories: []
 date: 2014-03-19

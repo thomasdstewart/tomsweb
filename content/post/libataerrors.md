@@ -1,7 +1,7 @@
 ---
 title: "Libata Errors"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "disk"]
 categories: []
 date: 2009-06-12 14:48:00

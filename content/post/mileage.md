@@ -1,7 +1,7 @@
 ---
 title: "Mileage"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "petrol", "mileage"]
 categories: []
 date: 2012-05-23 22:32:00

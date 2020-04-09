@@ -1,7 +1,7 @@
 ---
 title: "Spinning Phrases"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "gym"]
 categories: []
 date: 2010-07-22 21:36:00

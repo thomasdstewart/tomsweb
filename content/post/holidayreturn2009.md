@@ -1,7 +1,7 @@
 ---
 title: "I'm back from Ireland"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "holiday", "rss"]
 categories: []
 date: 2009-07-24 00:18:00

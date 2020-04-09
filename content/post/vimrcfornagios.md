@@ -1,7 +1,7 @@
 ---
 title: "vimrc for nagios"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "nagios"]
 categories: []
 date: 2011-03-29 16:57:00

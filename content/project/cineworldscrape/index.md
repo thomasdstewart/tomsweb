@@ -1,7 +1,7 @@
 ---
 title: "Cineworld Scrape"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["movies", "python"]
 categories: []
 date: 2011-03-13

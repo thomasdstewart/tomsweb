@@ -1,7 +1,7 @@
 ---
 title: "Type of Film"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["movies"]
 categories: []
 date: 2013-08-21

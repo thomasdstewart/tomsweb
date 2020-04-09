@@ -1,7 +1,7 @@
 ---
 title: "I have no name"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date:  2013-08-06

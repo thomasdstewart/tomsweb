@@ -1,7 +1,7 @@
 ---
 title: "New Year's resolutions 2010"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "resolutions", "reading"]
 categories: []
 date: 2010-07-05 22:06:00

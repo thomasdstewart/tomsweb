@@ -1,7 +1,7 @@
 ---
 title: "Raspberry Pi Tape Remote (RPTR)"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["pi"]
 categories: []
 date: 2017-11-26

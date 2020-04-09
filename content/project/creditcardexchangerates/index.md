@@ -1,7 +1,7 @@
 ---
 title: "Credit Card Exchange Rates"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["creditcard", "exchangerate"]
 categories: []
 date: 2013-01-23 

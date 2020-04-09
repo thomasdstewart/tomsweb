@@ -1,7 +1,7 @@
 ---
 title: "Major Filesystem Corruption"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "disk", "fsck"]
 categories: []
 date: 2010-10-06 10:36:00

@@ -1,7 +1,7 @@
 ---
 title: "Firefox"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["firefox"]
 categories: []
 date: 2009-05-21

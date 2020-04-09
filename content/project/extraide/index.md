@@ -1,7 +1,7 @@
 ---
 title: "Extra IDE"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2009-11-04

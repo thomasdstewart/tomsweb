@@ -1,7 +1,7 @@
 ---
 title: "Spotify Traffic Analysis"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "networking"]
 categories: []
 date: 2011-03-04 16:59:00

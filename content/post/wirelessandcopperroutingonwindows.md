@@ -1,7 +1,7 @@
 ---
 title: "Wireless and Copper Routing on Windows"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "windows", "networking"]
 categories: []
 date: 2012-12-09 20:51:00

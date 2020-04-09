@@ -1,7 +1,7 @@
 ---
 title: "Panoramics"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["photography"]
 categories: []
 date: 2011-10-19

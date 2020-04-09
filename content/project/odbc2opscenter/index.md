@@ -1,7 +1,7 @@
 ---
 title: "ODBC2OpsCenter"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2010-09-17

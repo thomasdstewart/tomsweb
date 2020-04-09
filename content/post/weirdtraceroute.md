@@ -1,7 +1,7 @@
 ---
 title: "Weird Traceroute"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "networking"]
 categories: []
 date: 2010-07-29 22:56:00

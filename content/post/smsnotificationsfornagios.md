@@ -1,7 +1,7 @@
 ---
 title: "SMS Notifications for Nagios"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "debian", "nagios", "sms"]
 categories: []
 date: 2010-08-27 16:10:00

@@ -1,7 +1,7 @@
 ---
 title: "Linux Distributions"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2009-05-27

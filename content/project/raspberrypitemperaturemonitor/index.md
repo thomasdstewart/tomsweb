@@ -1,7 +1,7 @@
 ---
 title: "Raspberry Pi Temperature Monitor"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["pi"]
 categories: []
 date: 2018-07-06

@@ -1,7 +1,7 @@
 ---
 title: "CineworldScrape released to public"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "movies", "cineworld", "html", "webscrapers"]
 categories: []
 date: 2009-05-31 20:51:00

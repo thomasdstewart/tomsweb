@@ -1,7 +1,7 @@
 ---
 title: "Last Logon"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["windows"]
 categories: []
 date: 2010-07-08

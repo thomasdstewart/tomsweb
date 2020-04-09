@@ -1,7 +1,7 @@
 ---
 title: "Wedding Meal"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog"]
 categories: []
 date: 2009-08-03 20:16:00

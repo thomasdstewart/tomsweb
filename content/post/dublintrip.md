@@ -1,7 +1,7 @@
 ---
 title: "Dublin Trip"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "holiday", "ireland", "dublin"]
 categories: []
 date: 2009-11-20 21:58:00

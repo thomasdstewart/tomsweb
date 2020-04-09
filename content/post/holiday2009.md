@@ -1,7 +1,7 @@
 ---
 title: "I'm off on my holidays"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "holiday", "rss"]
 categories: []
 date: 2009-07-02 23:53:00

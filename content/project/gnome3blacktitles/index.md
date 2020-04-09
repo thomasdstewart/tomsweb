@@ -1,7 +1,7 @@
 ---
 title: "Gnome3 Black Titles"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux", "gnome"]
 categories: []
 date: 2015-06-23

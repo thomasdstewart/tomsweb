@@ -1,7 +1,7 @@
 ---
 title: "Rsync for Windows"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["rsync", "windows"]
 categories: []
 date: 2010-11-15

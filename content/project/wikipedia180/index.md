@@ -1,7 +1,7 @@
 ---
 title: "Wikipedia 180"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["wikipedia"]
 categories: []
 date: 2013-05-07

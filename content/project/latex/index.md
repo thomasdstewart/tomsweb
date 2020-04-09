@@ -1,7 +1,7 @@
 ---
 title: "LaTeX"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["latex"]
 categories: []
 date: 2013-11-18

@@ -1,7 +1,7 @@
 ---
 title: "Port Knock with HTTP"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2015-01-21

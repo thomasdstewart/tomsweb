@@ -1,7 +1,7 @@
 ---
 title: "Petrol Price"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["petrol"]
 categories: []
 date: 2011-03-28

@@ -1,7 +1,7 @@
 ---
 title: "Book List"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["book"]
 categories: []
 date: 2019-11-19

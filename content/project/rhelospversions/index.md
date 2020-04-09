@@ -1,7 +1,7 @@
 ---
 title: "RHEL OSP Versions"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux", "openstack"]
 categories: []
 date:  2018-03-22

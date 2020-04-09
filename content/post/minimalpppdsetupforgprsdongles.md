@@ -1,7 +1,7 @@
 ---
 title: "Minimal pppd Setup For GPRS Dongles"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "linux", "networking"]
 categories: []
 date: 2012-07-11 13:18:00

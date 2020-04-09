@@ -1,7 +1,7 @@
 ---
 title: "Linux MD"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2009-05-27

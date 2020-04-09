@@ -1,7 +1,7 @@
 ---
 title: "Openstack proof of concept"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["openstack"]
 categories: []
 date: 2016-03-18

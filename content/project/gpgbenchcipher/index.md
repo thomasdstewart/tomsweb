@@ -1,7 +1,7 @@
 ---
 title: "GPG Bench Cipher"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["linux", "pgp"]
 categories: []
 date: 2009-10-09

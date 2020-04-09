@@ -1,7 +1,7 @@
 ---
 title: "Cineworld have an public xml data source"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "movies", "cineworld"]
 categories: []
 date: 2009-06-24 21:30:00

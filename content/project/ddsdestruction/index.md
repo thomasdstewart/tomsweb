@@ -1,7 +1,7 @@
 ---
 title: "DDS Destruction"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["sysadmin"]
 categories: []
 date: 2009-05-21

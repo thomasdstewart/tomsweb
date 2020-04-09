@@ -1,7 +1,7 @@
 ---
 title: "Playlists"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["music", "perl", "mp3"]
 categories: []
 date: 2009-05-27

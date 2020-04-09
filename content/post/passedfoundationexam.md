@@ -1,7 +1,7 @@
 ---
 title: "Passed Foundation Exam"
 summary: ""
-authors: []
+authors: ["thomas"]
 tags: ["blog", "amaterradio"]
 categories: []
 date: 2009-06-18 17:05:00
