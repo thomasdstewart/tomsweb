@@ -4,7 +4,7 @@ summary: ""
 authors: []
 tags: ["movies"]
 categories: []
-date: 2013-11-31
+date: 2013-01-31
 ---
 I recently found out about the [Bechdel Test](http://en.wikipedia.org/wiki/Bechdel_Test), I was interested in how many of my [Essential Films]({{< relref "essentialfilms.md" >}}) passed the test. So I used the [Bechdel Test Movie List](http://bechdeltest.com/) to cross referance. I did some horable html dumps and scripting to do this, after I finished I found out that they provide an [API](http://bechdeltest.com/api/v1/doc) that can search based on IMDB id . I currently have 79 films in my list of these 64 has rating listed, or 81% of them.
 
