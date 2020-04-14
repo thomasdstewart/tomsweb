@@ -24,8 +24,11 @@ When I load that file I actually get the following:
 <head><title>Test</title></head> <body><img src="0239-mod.png" /></body> </html><script language="javascript">
 <!--bmi_SafeAddOnload(bmi_load,"bmi_orig_img",0);//-->
 </script>
-``
+```
 
 Yikes was my first reaction, bmi.js was nice an un-readable, however if you reformat it a bit it's mostly readable, it's on [pastebin](http://pastebin.com/Ht32CTDS) if your interested. As an aside 1.2.3.4 is actually a bogon network! Whois says "Address blocks listed with this contact are withheld from general use and are only routed briefly for passive testing." Well at least that are not using genuine allocated addresses. I'd be more worried of the mess it left the HTML in!
 
 After a bit of googeling, it turns out it's being going on for a while, bmi is some [bytemobile](http://www.bytemobile.com/products-applications/web.html) product. As ever a [stackoverflow](http://stackoverflow.com/questions/4113268/how-to-stop-javascript-injection-from-vodafone-proxy) was most useful. It seems some operators allow you to turn it off.
+
+* [3ghtmlabusetest.html](3ghtmlabusetest.html)
+* [3ghtmlabusetest.result.html](3ghtmlabusetest.result.html)
