@@ -2,7 +2,7 @@
 title: "Vim"
 summary: ""
 authors: ["thomas"]
-tags: ["linux"]
+tags: ["linux", "vim"]
 categories: []
 date: 2009-05-21
 ---

@@ -18,10 +18,11 @@ This script is not abandoned, email thomas@stewarts.org.uk if it breaks.
 
 I have a few screen shots so you can see what it looks like.
 
-[[attachment:IMDBAge1.png|{{attachment:IMDBAge1_thumb.png}}]]
-[[attachment:IMDBAge2.png|{{attachment:IMDBAge2_thumb.png}}]]
+![IMDBAge1.png](IMDBAge1_thumb.png)
+![IMDBAge2.png](IMDBAge2_thumb.png)
+![imdbagetest.png](imdbagetest.png)
 
-It was was created on 2005-03-29 but inspired sometime in 2001 and the last modification was on 2018-05-01. And the current version is v2.13. First you need [[https://addons.mozilla.org/firefox/addon/748|Greasemonkey]] installed then install the script. It is available [[attachment:IMDBAge.user.js|locally|&do=get]] or on the [[http://userscripts.org/scripts/show/1060|userscripts]] server (down), [[https://greasyfork.org/scripts/2798-imdbage|greasyfork]], [[https://monkeyguts.com/code.php?id=268|monkeyguts]], [[https://openuserjs.org/scripts/thomas_d_stewart/IMDBAge|openuserjs]] or [[https://github.com/thomasdstewart/IMDBAge/raw/master/IMDBAge.user.js|github]]
+It was was created on 2005-03-29 but inspired sometime in 2001 and the last modification was on 2018-05-01. And the current version is v2.13. First you need [Greasemonkey](https://addons.mozilla.org/firefox/addon/748) installed then install the script. It is available [locally](IMDBAge.user.js) or on the [userscripts](http://userscripts.org/scripts/show/1060) server (down), [greasyfork](https://greasyfork.org/scripts/2798-imdbage), [monkeyguts](https://monkeyguts.com/code.php?id=268) (down), [openuserjs](https://openuserjs.org/scripts/thomas_d_stewart/IMDBAge) or [github](https://github.com/thomasdstewart/IMDBAge/raw/master/IMDBAge.user.js).
 
 Changelog
  * 2.13 added https urls, removed scriptvals, fixed title pages

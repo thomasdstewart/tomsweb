@@ -102,6 +102,10 @@ TODO: inline png's of the signs, wp has some fre svg's http://en.wikipedia.org/w
 TODO: add ages to individual ages of actors to a film page, very hard, http req for each one, and then a xpath on the whole result
 TODO: adjust for logged in or logged off page, fix film ages on name page for old layout
 TODO: fix year grabbing code to handle year ranges eg Gilmore Girls 2000-2007
+TODO: fix date code for future events, eg "Alice will be 26"
+TODO: fix year parsing to handle "2007/I", eg http://us.imdb.com/title/tt0292816/
+TODO: handle no date information better, eg http://www.imdb.com/name/nm1723094/
+TODO: handle dead people working on current films, eg Little Miss Sunshine: (2006, 2 years ago while 128 years old) (writer: "Give My Regards to Broadway")
 */
 
 /*
