@@ -1,5 +1,5 @@
 ---
-title: "Debian Buzz"
+title: "Debian Buzz (1.1)"
 summary: ""
 authors: ["thomas"]
 tags: ["linux", "debian"]

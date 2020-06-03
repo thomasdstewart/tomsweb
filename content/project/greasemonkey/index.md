@@ -2,7 +2,7 @@
 title: "Greasemonkey"
 summary: ""
 authors: ["thomas"]
-tags: ["firefox"]
+tags: ["firefox", "greasemonkey"]
 categories: []
 date: 2009-05-21
 ---
@@ -11,3 +11,11 @@ date: 2009-05-21
 [Dive Into Greasemonkey](http://diveintogreasemonkey.org/) is an excellent guide for greasemonkey. It covers installing it all the way to very complex examples.
 
 In the start most people added their scripts to a [Wiki](http://dunck.us/collab/GreaseMonkeyUserScripts) (Dead). This soon exploded with user contributed scripts, hundreds of them. This soon grew very big, fortunately help was at hand and [userscripts.org](http://userscripts.org/) (Dead) was created. It is a much better repository.
+
+I wrote some (UPDATE: now unmaintained) greatemonkey scripts:
+
+DLC (Dead Link Checker) - 28/10/2005 [dlc.user.js](dlc.user.js)
+
+ScanHDPricePerGB - 21/01/2007 [ScanHDPricePerGB.user.js](ScanHDPricePerGB.user.js) [scanppg.png](scanppg.png)
+
+IMDBRatingAdj - 03/02/2009 [IMDBRatingAdj.user.js](IMDBRatingAdj.user.js)
