@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["wikipedia"]
 categories: []
 date: 2013-05-07
+aliases: [/tomsweb/Stuff/Wikipedia180/]
 ---
 Wikipedia cookies are now good for 180 days instead of 30!
 ![wikipedia180.png](wikipedia180.png)

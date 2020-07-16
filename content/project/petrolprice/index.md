@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["petrol"]
 categories: []
 date: 2011-03-28
+aliases: [/tomsweb/PetrolPrice/]
 ---
 Petrol prices always seem to be in the news. This is mostly because it costs a lot of money and continues to increase all the time. Duty increases and VAT increases are both usually blamed. Also the price of crude oil is often blamed. This made me wonder if there was an actual correlation between crude oil and petrol at the pump. I did a little searching but did not find anything solid. In fact the graphs I did find were particularly bad, including one graphs that plotted crude oil and petrel using different scales on the same graph. Some did produce vaguely interesting graphs but few provide their sources and none provided the raw source data.
 

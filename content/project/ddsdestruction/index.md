@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["sysadmin"]
 categories: []
 date: 2009-05-21
+aliases: [/tomsweb/DDSDestruction/]
 ---
 To see how hardy dds tapes were, I decided to do some tests. I apologise for the image quality. Anyway, on with the show.
 

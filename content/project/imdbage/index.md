@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["imdb", "javascript", "greasemonkey"]
 categories: []
 date: 2018-05-01
+aliases: [/tomsweb/IMDBAge/]
 ---
 IMDB Age is a [Greasemonkey]({{< relref "../../post/greasemonkey" >}}) script that I wrote. This script adds the age and other various info onto IMDB pages.
 

@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["openstack"]
 categories: []
 date: 2016-03-18
+aliases: [/tomsweb/CentOSOpenstackPOC/]
 ---
 {{% toc %}}
 ## Introduction

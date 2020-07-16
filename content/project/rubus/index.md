@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["pi", "openstack"]
 categories: []
 date: 2017-04-21
+aliases: [/tomsweb/Rubus/]
 ---
 {{% toc %}}
 

@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date:  2014-07-14
+aliases: [/tomsweb/Stuff/ExtractInitrdWithMicrocode/]
 ---
 If you try to extract a initrd and only file some uncompressed cpio:
 ```

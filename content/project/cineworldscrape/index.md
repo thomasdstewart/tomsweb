@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["movies", "python"]
 categories: []
 date: 2011-03-13
+aliases: [/tomsweb/CineworldScrape/]
 ---
 I love going to the cinema. I usually go once a week to my local [Cineworld](http://www.cineworld.co.uk/) multiplex. Their website has changed a few times over the years. Generally the changes have all been improvements and my [local cinema listing](http://www.cineworld.co.uk/cinemas/61) is good. However all cinema websites I have found lack an important view on the listings data. That is a chronological order rather than a film title order. Why is this useful you ask? Well if I want to go to the cinema on a particular evening I really don't care what other films are showing outside my allocated timeslot. I want to be able to easily see which films are going to start say between 7 and 8 that I have not already seen.
 

@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["pi"]
 categories: []
 date: 2017-11-26
+aliases: [/tomsweb/RaspebrryPiTapeRemote/]
 ---
 {{% toc %}}
 ## Introduction

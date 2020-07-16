@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["pi"]
 categories: []
 date: 2015-02-25
+aliases: [/tomsweb/RaspberryPiRouterBenchmark/]
 ---
 ## Introduction
 My ISP don't provide IPv6 and the wireless router they give out does not work with IPv6 Tunnels. So I setup a [Raspberry Pi](http://www.raspberrypi.org/) as a [router on a stick](https://en.wikipedia.org/wiki/One-armed_router) to route IPv6 on my home network to my IPv6 tunnel provider over IPv4. I mostly did this to start get get familar with IPv6, it does work and my home computers and phone get IPv6 addresses on the Internet. I ocasionally do a netstat and see a bunch of tcp6 connections established to google, facebook and youtube. My one worry was the performance of the Raspberry Pi, it's a single core Arm v6 running at 700Mhz with a 100M ethernet that sits on the USB bus. I have in the past noticed that when the Raspberry Pi is busy (mostly with cron) that the ability for it to forward packets does slow down. Very ocasionally it drops packets and makes the connection unusable for a short while. My internet connection is [FTTC/fiber to the cabinet](https://en.wikipedia.org/wiki/Fiber_to_the_x#Fiber_to_the_curb.2Fcabinet) and +100M, so I'm already limiting my connection speed if they go over the Raspberry Pi. I allways meant to run some bench marks on the Pi to see just how fast it can ship packets. With the advent of the newer Raspberry Pi 2 with it's quad Core Arm v8 running at 900Mhz I decided to do some proper testing.

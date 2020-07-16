@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["book"]
 categories: []
 date: 2019-11-19
+aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 

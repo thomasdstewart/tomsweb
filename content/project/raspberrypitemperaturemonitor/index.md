@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["pi"]
 categories: []
 date: 2018-07-06
+aliases: [/tomsweb/RaspberryPITemperatureMonitor/]
 ---
 {{% toc %}}
 ## Introduction

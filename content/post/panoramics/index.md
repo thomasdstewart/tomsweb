@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["photography"]
 categories: []
 date: 2011-10-19
+aliases: [/tomsweb/Panoramics/]
 ---
 This is a panoramic I took from the top of our apartment in Sharm el-Sheikh in Eygpy:
 {{< figure src="pansharm2011b.jpg" >}}

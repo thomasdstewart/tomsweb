@@ -1,8 +1,8 @@
 ---
-title: "ODBC2OpsCenter"
+title: "ODBC 2 OpsCenter Access"
 summary: ""
 authors: ["thomas"]
-tags: ["linux"]
+tags: ["blog", "linux", "backup", "netbackup"]
 categories: []
 date: 2010-09-17
 ---

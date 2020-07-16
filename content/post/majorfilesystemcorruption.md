@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["blog", "linux", "disk", "fsck"]
 categories: []
 date: 2010-10-06 10:36:00
+aliases: [/tomsweb/Stuff/MajorFilesystemCorruption/]
 ---
 On Sunday (03/10/2010) my laptop has a bad crash. The screen went blank, I could still see the cursor and move it around but could do nothing else. I could not even login on a virtual console, after I typed the user name it came straight back with a login prompt again. I rebooted, grub loaded, Linux ran, the initramfs loaded and started and then it moaned about not being able to mount the root filesystem and dropped me to a prompt.
 

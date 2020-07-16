@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["linux", "openstack"]
 categories: []
 date:  2018-03-22
+aliases: [/tomsweb/Stuff/RHELOSPVersions/]
 ---
 Red Hat Enterprise Linux OpenStack Platform Versions:
 

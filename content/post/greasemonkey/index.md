@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["firefox", "greasemonkey"]
 categories: []
 date: 2009-05-21
+aliases: [/tomsweb/Greasemonkey/]
 ---
 [Greasemonkey](http://www.greasespot.net/) is a [Firefox]({{< relref "firefox.md" >}}) extension that lets you edit the DOM (ie the page) on the fly after the page is downloaded and parsed, but before it is rendered. Thus making it very easy to tweak pages slightly. For example it could search text for text that starts with `http://` but is not a link, and replace the text with a link to the location. This provides a very powerful way to edit web pages on the fly.
 

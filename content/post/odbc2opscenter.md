@@ -24,4 +24,4 @@ On 2010-09-13 06:21, enterprise_support@symantec.com wrote:
 > like Crystal Reports.
 ```
 
-So much for Support! The age old saying, if you want something done, do it your self, thus I have documented ODBC2OpsCenter for any one else out there that needs it! I really wish I could use something more free to do all this stuff.
+So much for Support! The age old saying, if you want something done, do it your self, thus I have documented [ODBC 2 OpsCenter Access]({{< relref "odbc2opscenteraccess.md" >}}) for any one else out there that needs it! I really wish I could use something more free to do all this stuff.

@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["firefox"]
 categories: []
 date: 2009-05-21
+aliases: [/tomsweb/Firefox/]
 ---
 [Firefox](http://www.mozilla.com/firefox/) is an amazing browser, sometimes I think I would not browse as much as I do if it were not around. Here is my [user.js](user.js) which has taken many years to perfect.
 

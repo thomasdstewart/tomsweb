@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["latex"]
 categories: []
 date: 2013-11-18
+aliases: [/tomsweb/LaTeX/]
 ---
 Every so often I find myself recommending LaTeX to people that are either starting a PhD or are struggling with writing their thesis up in Microsoft Word. Over the years I found myself rewriting and improving the same email explaining what LaTeX is and why you should use it. I've decided to just publish it and email people a link instead.
 

@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2015-05-27
+aliases: [/tomsweb/Kdump/]
 ---
 I recently had to use kdump to do some investigation into why my Lenovo W540 started crashing with recent Linux kernels. I all started when I upgraded from Linux 3.14 to 3.16 and I started having random crashes soon after booting. Being lazy I just ignored it and continued to use the old kernel expecting the issue to go away. However try as I might the issue persisted in 3.17, 3.18, 3.19 and 4.0.
 

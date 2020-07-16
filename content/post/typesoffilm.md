@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["movies"]
 categories: []
 date: 2013-08-21
+aliases: [/tomsweb/TypesOfFilm/]
 ---
 There are only four types of film! For a while I (and possibly others) have been able to categorise all films into four different types. I can't imagine coming up with such an idea. Perhaps I read it somewhere, or read it in relation stories and writing in general. However no one I have spoken to has heard of it and I've not been able to find out much out it. The classic example is the original Star Wars trilogy, A New Hope is "into and out of hole", Empire is "into hole" and Jedi is "out of hole".
 

@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2015-10-17
+aliases: [/tomsweb/WDShareSpaceDebootstrap/]
 ---
 {{% toc %}}
 ## Intro

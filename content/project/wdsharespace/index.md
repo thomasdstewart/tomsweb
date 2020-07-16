@@ -5,9 +5,8 @@ authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2009-09-01
+aliases: [/tomsweb/WDShareSpace/]
 ---
-
-
 (Update 01/09/2009 - All of the below is now not necessary as the latest firmware has an option from the web interface to turn on remote root ssh shell access, YAY for Western Digital!)
 
 I recently bought a [Western Digital ShareSpace](http://www.wdc.com/en/products/products.asp?driveid=501). It's a larger version of the My Book World range of Products which have quite a following at [WDMBWE](http://mybookworld.wikidot.com/start). Mine is a 4TB version which has four 1TB drives in a raid 5 configuration giving 2.7T usable. They all run Linux, the Share Space ones seem to have some sort of u-boot and have the root file system on the first partition of the disks. Unfortunately getting a shell on these boxes is a bit harder than the original devices.

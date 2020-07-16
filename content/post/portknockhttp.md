@@ -5,6 +5,7 @@ authors: ["thomas"]
 tags: ["linux"]
 categories: []
 date: 2015-01-21
+aliases: [/tomsweb/PortKnockHTTP/]
 ---
 
 Port knocking is the act of connecting to a port or sequence of ports that in turn opens up another port. There are many methods to do this, read more about them on the [Port Knocking](https://wiki.archlinux.org/index.php/Port_Knocking) page on the Arch Linux wiki. I like just using the built in iptables module recent, I have used this for years to have port 22 closed unless the right port port connection sequence is performed. This does not really give much more security, but it does clean up the system log from failed password attempts.
