@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <clientConfig version="1.1">
   <emailProvider id="stewarts.org.uk">
     <domain>stewarts.org.uk</domain>
@@ -9,14 +8,14 @@
       <hostname>imap.stewarts.org.uk</hostname>
       <port>993</port>
       <socketType>SSL</socketType>
-      <authentication>password-encrypted</authentication>
+      <authentication>password-cleartext</authentication>
       <username>%EMAILADDRESS%</username>
     </incomingServer>
     <outgoingServer type="smtp">
       <hostname>smtp.stewarts.org.uk</hostname>
       <port>25</port>
       <socketType>STARTTLS</socketType>
-      <authentication>password-encrypted</authentication>
+      <authentication>password-cleartext</authentication>
       <username>%EMAILADDRESS%</username>
     </outgoingServer>
     <documentation url="https://stwarts.org.uk/post/services/">
