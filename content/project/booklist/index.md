@@ -10,7 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2020 (2)
- * Novae Spes: A New Hope - Terry Steward
+ * Novae Spes&#58; A New Hope - Terry Steward
  * Tombland - Ken Follett
 
 2019 (6)
