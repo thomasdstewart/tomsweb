@@ -4,13 +4,14 @@ summary: ""
 authors: ["thomas"]
 tags: ["book"]
 categories: []
-date: 2019-11-19
+date: 2020-09-09
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2020 (1)
-* Tombland - Ken Follett
+2020 (2)
+ * Novae Spes: A New Hope - Terry Steward
+ * Tombland - Ken Follett
 
 2019 (6)
  * Lamentation - Ken Follett
