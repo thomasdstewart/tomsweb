@@ -12,7 +12,7 @@ test:
 
 pages:
   script:
-  - hugo -v
+  - hugo -d
   artifacts:
     paths:
     - public
