@@ -4,7 +4,7 @@ summary: ""
 authors: ["thomas"]
 tags: ["book"]
 categories: []
-date: 2020-09-09
+date: 2020-9-9
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
