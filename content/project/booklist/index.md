@@ -4,13 +4,15 @@ summary: ""
 authors: ["thomas"]
 tags: ["book"]
 categories: []
-date: 2020-09-09
+date: 2020-09-18
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
 2020 (2)
- * Novae Spes A New Hope - Terry Steward
+ * The Lies of Locke Lamora - Scott Lynch 
+ * Novae Spes: A New Hope - Terry Steward
+ * Northern Lights: His Dark Materials 1 - Philip Pullman
  * Tombland - Ken Follett
 
 2019 (6)
