@@ -12,7 +12,8 @@ test:
 
 pages:
   script:
-  - hugo --debug
+    - apk add go
+    - hugo --debug
   artifacts:
     paths:
     - public
