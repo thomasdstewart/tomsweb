@@ -12,7 +12,7 @@ test:
 
 pages:
   script:
-    - apk add go
+    - apk add go git
     - hugo --debug
   artifacts:
     paths:
