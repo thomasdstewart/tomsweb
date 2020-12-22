@@ -18,7 +18,7 @@
       <authentication>password-cleartext</authentication>
       <username>%EMAILADDRESS%</username>
     </outgoingServer>
-    <documentation url="https://stwarts.org.uk/post/services/">
+    <documentation url="https://stewarts.org.uk/post/services/">
       <descr lang="en">Generic settings page</descr>
     </documentation>
   </emailProvider>
