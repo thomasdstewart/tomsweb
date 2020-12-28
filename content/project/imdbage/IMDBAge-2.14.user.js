@@ -72,7 +72,7 @@ var doFilmAge  = true;
 // @homepageURL https://stewarts.org.uk/project/imdbage/
 // @installURL  https://stewarts.org.uk/project/imdbage/IMDBAge.user.js
 // @icon        https://stewarts.org.uk/project/imdbage/icon.png
-// @license     GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
+// @license GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt
 // ==/UserScript==
 
 /*
