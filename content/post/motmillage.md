@@ -1,12 +1,34 @@
 ---
-title: "mot millage"
+title: "MOT Millage"
 summary: ""
 authors: ["thomas"]
 tags: ["car", "graph"]
 categories: []
-date: 2021-07-30 23:29:00
+date: 2021-06-30 22:50:00
 ---
-## Mot Millage
+Recently when checking the MOT on my car using the [Check the MOT history of a vehicle](https://www.gov.uk/check-mot-history) GOV.UK service I discovered that the entire car's millage history is recorded. This made me quite interested in my Toyota Celica 2002 millage over the years. I first got in 2004 when it was 2, the first MOT was in 2005. However it seems the services history starts at 2007, which if I recall was when MOT became a lot more electronic.
+
+Here is the millage data, I calculated the miles since the last MOT column. The average annual millage is 9525.
+
+| MOT Date   | Millage on clock | Calculated miles since last MOT | Notes |
+| ---------- | ---------------- | ------------------------------- | ----- |
+| 2007-02-22 | 24971            |                                 |
+| 2008-02-21 | 33622            | 8651                            |
+| 2009-02-27 | 42398            | 8776                            |
+| 2010-02-17 | 52661            | 10263                           |
+| 2011-02-25 | 61946            | 9285                            |
+| 2012-02-17 | 70854            | 8908                            |
+| 2013-02-13 | 79319            | 8465                            |
+| 2014-02-21 | 88099            | 8780                            |
+| 2015-03-26 | 100933           | 12834                           | Changed job
+| 2016-03-15 | 110861           | 9928                            |
+| 2017-03-22 | 122246           | 11385                           |
+| 2018-03-21 | 132911           | 10665                           |
+| 2019-03-20 | 144742           | 11831                           |
+| 2020-03-17 | 153386           | 8644                            | COVD-19!
+| 2021-03-27 | 158314           | 4928                            |
+
+So just using Google Charts this looks like:
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
@@ -33,7 +55,7 @@ date: 2021-07-30 23:29:00
         ]);
 
         var options = {
-                title: 'Difference between annual MOT millage',
+                title: 'Distance my Toyota Celeca drove since last MOT',
                 hAxis: {title: 'Year'},
                 vAxis: {title: 'Distance (miles)'},
                 legend: 'none'
@@ -44,5 +66,5 @@ date: 2021-07-30 23:29:00
       }
 
 </script>
-<div id="chart_div" style="width: 900px; height: 500px;"></div>
+<div id="chart_div" style="width: 720px; height: 500px;"></div>
 
