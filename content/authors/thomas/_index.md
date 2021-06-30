@@ -2,15 +2,8 @@
 # Display name
 name: Thomas Stewart
 
-# Username (this should match the folder name)
-authors:
-- thomas
-
 # Is this the primary user of the site?
 superuser: true
-
-# Role/position
-#role: Computer enthusiast and sysadmin
 
 # Short bio (displayed in user profile at end of posts)
 bio: Computer enthusiast and sysadmin
@@ -29,6 +22,9 @@ social:
 - icon: github
   icon_pack: fab
   link: https://github.com/thomasdstewart
+- icon: linkedin
+  icon_pack: fab
+  link: https://www.linkedin.com/
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
 email: "thomas@stewarts.org.uk"
