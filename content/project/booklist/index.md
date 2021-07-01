@@ -4,12 +4,15 @@ summary: ""
 authors: ["thomas"]
 tags: ["book"]
 categories: []
-date: 2020-09-18
+date: 2021-07-01
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2020 (2)
+2021 (1)
+ * Red Seas Under Red Skies - Scott Lynch
+
+2020 (4)
  * The Lies of Locke Lamora - Scott Lynch 
  * Novae Spes: A New Hope - Terry Steward
  * Northern Lights: His Dark Materials 1 - Philip Pullman
