@@ -14,6 +14,7 @@ pages:
   script:
     - apk add go git
     - hugo version
+    - hugo mod graph
     - hugo --debug
   artifacts:
     paths:
