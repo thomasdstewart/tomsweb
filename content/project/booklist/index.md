@@ -16,10 +16,10 @@ Books I've read:
  * The Lies of Locke Lamora - Scott Lynch 
  * Novae Spes: A New Hope - Terry Steward
  * Northern Lights: His Dark Materials 1 - Philip Pullman
- * Tombland - Sansom
+ * Tombland - C.J. Sansom
 
 2019 (6)
- * Lamentation - Sansom
+ * Lamentation - C.J. Sansom
  * The Pillars of the Earth - Ken Follett
  * Heartstone - C.J. Sansom
  * Murder on the Orient Express - Agatha Christie
