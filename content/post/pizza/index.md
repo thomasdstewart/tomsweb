@@ -14,6 +14,9 @@ Once healthy if kept at room temperature it will need feeding every day. Just th
 
 When healthy you can save flower you can pause a starter in a fridge. Take it out of the fridge and feed about 4-6 hours before using, eg First thing Friday morning for Saturday night Pizza.
 
+## Naming your starter
+Aparently you can name your started after 2 weeks, we called ours Moby.
+
 ## Pizza Dough
 1. Feed starter before 9am.
 2. Make the dough around lunch time, mix 450g flour and 4g of salt afterwards then mix 280ml water together and let it sit for a bit (10-30min).
@@ -34,3 +37,58 @@ When healthy you can save flower you can pause a starter in a fridge. Take it ou
 8. Apply other toppings.
 9. Cook for about 17min.
 
+## Pictures
+
+Moby straight from fridge
+{{< figure src="20210514_100959.jpg">}}
+
+Moby after feeding
+{{< figure src="20210514_101337.jpg">}}
+
+Moby covered
+{{< figure src="20210514_101402.jpg">}}
+
+Moby on the router
+{{< figure src="20210514_101439.jpg">}}
+
+Moby on the router before growth
+{{< figure src="20210514_101450.jpg">}}
+
+Moby on the router after growth
+{{< figure src="20210514_134527.jpg">}}
+
+Flour salt and water
+{{< figure src="20210514_135004.jpg">}}
+
+Flour salt and water mixed
+{{< figure src="20210514_135400.jpg">}}
+
+Flour salt and water fullymixed
+{{< figure src="20210514_135634.jpg">}}
+
+Adding Moby
+{{< figure src="20210514_135713.jpg">}}
+
+Moby added
+{{< figure src="20210514_135727.jpg">}}
+
+Mixing Moby in
+{{< figure src="20210514_135950.jpg">}}
+
+Mixed
+{{< figure src="20210514_140208.jpg">}}
+
+Proving
+{{< figure src="20210514_144318.jpg">}}
+
+Starting to rise
+{{< figure src="20210514_192319.jpg">}}
+
+Finished rise
+{{< figure src="20210514_220151.jpg">}}
+
+Envelope fold
+{{< figure src="20210514_220434.jpg">}}
+
+Ready for the fridge
+{{< figure src="20210514_220450.jpg">}}
