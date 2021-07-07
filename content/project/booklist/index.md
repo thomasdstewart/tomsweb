@@ -10,6 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2021 (1)
+ * The Republic of Thieves - Scott Lynch
  * Red Seas Under Red Skies - Scott Lynch
 
 2020 (4)
