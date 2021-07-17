@@ -9,7 +9,8 @@ aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2021 (1)
+2021 (3)
+ * Head Over Heel: Seduced by Southern Italy - Chris Harrison
  * The Republic of Thieves - Scott Lynch
  * Red Seas Under Red Skies - Scott Lynch
 
