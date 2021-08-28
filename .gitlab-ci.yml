@@ -1,7 +1,7 @@
 # All available Hugo versions are listed here: https://gitlab.com/pages/hugo/container_registry
-#image: registry.gitlab.com/pages/hugo/hugo_extended:latest
+image: registry.gitlab.com/pages/hugo/hugo_extended:latest
 #official reg seems to lag behind by a few days
-image: registry.gitlab.com/thomasdstewart/hugo/hugo_extended:0.84.3
+#image: registry.gitlab.com/thomasdstewart/hugo/hugo_extended:0.84.3
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
