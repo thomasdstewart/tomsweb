@@ -9,7 +9,9 @@ aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2021 (6)
+2021 (8)
+ * Holy Sister - Mark Lawrence
+ * Grey Sister - Mark Lawrence
  * Red Sister - Mark Lawrence
  * The Amber Spyglass: His Dark Materials - Philip Pullma
  * The Subtle Knife: His Dark Materials 2 - Philip Pullman
