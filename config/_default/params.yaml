@@ -166,3 +166,6 @@ cms:
 icon:
   pack:
     ai: true
+power_ups:
+  hide_published_with: true
+i_am_a_sponsor: true
