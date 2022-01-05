@@ -8,6 +8,12 @@ superuser: true
 # Short bio (displayed in user profile at end of posts)
 bio: Computer enthusiast and sysadmin
 
+# Interests to show in About widget
+interests:
+- Computers
+- Linux
+- Debian
+
 # Social/Academic Networking
 # For available icons, see: https://sourcethemes.com/academic/docs/page-builder/#icons
 #   For an email link, use "fas" icon pack, "envelope" icon, and a link in the
@@ -22,6 +28,9 @@ social:
 - icon: github
   icon_pack: fab
   link: https://github.com/thomasdstewart
+- icon: gitlab
+  icon_pack: fab
+  link: https://gitlab.com/thomasdstewart
 - icon: linkedin
   icon_pack: fab
   link: https://www.linkedin.com/
