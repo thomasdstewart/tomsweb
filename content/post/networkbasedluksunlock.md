@@ -41,18 +41,18 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9-beta/ht
 Before letting any of this loose on real infrastructure I decided to play with it on a pair of VM's first. One acting as the server and one acting as the client. With the intention that my real public cloud virtual machines would become clients, and the server would either run on another provider or at home. However I came across a number of observations:
 
 Observations with Tang:
- 1 It is a network based daemon that is written in C (https://sources.debian.org/src/tang/8-3+deb11u1/src/tangd.c/)
- 2 The version packaged for Debian Stable (Bullseye) runs as root, this is fixed in Debian Testing (Bookworm) (see: https://sources.debian.org/src/tang/8-3+deb11u1/units/tangd%2540.service.in/ vs https://sources.debian.org/src/tang/11-1/units/tangd%2540.service.in/)
- 3 The version packaged for Debian Stable (Bullseye) writes to /var/db/tang, this is fixed in Debian Testing (Bookworm) (see: https://sources.debian.org/src/tang/8-3+deb11u1/meson.build/#L19, https://sources.debian.org/src/tang/11-1/debian/patches/debian/2021-09-30.use-var-lib.patch/
- 4 It is a http server with everything operating in plaintext and does not have any SSL
- 5 It does not have any password protection
- 6 It does not have any network restriction functionality
+ 1. It is a network based daemon that is written in C (https://sources.debian.org/src/tang/8-3+deb11u1/src/tangd.c/)
+ 2. The version packaged for Debian Stable (Bullseye) runs as root, this is fixed in Debian Testing (Bookworm) (see: https://sources.debian.org/src/tang/8-3+deb11u1/units/tangd%2540.service.in/ vs https://sources.debian.org/src/tang/11-1/units/tangd%2540.service.in/)
+ 3. The version packaged for Debian Stable (Bullseye) writes to /var/db/tang, this is fixed in Debian Testing (Bookworm) (see: https://sources.debian.org/src/tang/8-3+deb11u1/meson.build/#L19, https://sources.debian.org/src/tang/11-1/debian/patches/debian/2021-09-30.use-var-lib.patch/
+ 4. It is a http server with everything operating in plaintext and does not have any SSL
+ 5. It does not have any password protection
+ 6. It does not have any network restriction functionality
 
-Discoveries with Clevis:
- 7 Debian defaults to initramfs-tools rather than dracut, clevis supports both, but obviously via slightly different scripts.
- 8 In order to make network requests when the initaramfs systems is running networking has to be configured. How this is done is not very well documented.
- 9 The initramfs system does not have a standards to to configure DNS.
- 10 The initramfs system does not have any certificate authority root certificates, which makes https or ssl hard to trust.
+Observations with Clevis:
+ 7. Debian defaults to initramfs-tools rather than dracut, clevis supports both, but obviously via slightly different scripts.
+ 8. In order to make network requests when the initaramfs systems is running networking has to be configured. How this is done is not very well documented.
+ 9. The initramfs system does not have a standards to to configure DNS.
+ 10. The initramfs system does not have any certificate authority root certificates, which makes https or ssl hard to trust.
 
 ## Workarounds
 So given that running C daemons as root is fairly scary at the best of times, I wanted to put some wrapping around the setup to protect it more (issue 1).
