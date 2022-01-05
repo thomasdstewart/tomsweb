@@ -5,9 +5,9 @@ authors: ["thomas"]
 tags: ["linux", "luks", "debian"]
 categories: []
 date: 2022-01-04 16:57:00
-updated: 2022-01-05 16:57:00
+lastmod: 2022-01-05 16:57:00
 ---
-Recently I wanted to see if I could make my public cloud based Linux infra more secure via LUKS (Linux Unified Key Setup) disk encryption. I realise that one must fully trust ones cloud provider, as they have access to the hardware. However it would be nice to know that data is encrypted when stored on disk. This does not mitigate against a very bad cloud provider, as ultimately if they are determined enough they can get at the data. However implementing some sort of encryption does offer some protection against reading the data if disks are re-used and certainly makes the barrier might higher for access casually.
+Recentl I wanted to see if I could make my public cloud based Linux infra more secure via LUKS (Linux Unified Key Setup) disk encryption. I realise that one must fully trust ones cloud provider, as they have access to the hardware. However it would be nice to know that data is encrypted when stored on disk. This does not mitigate against a very bad cloud provider, as ultimately if they are determined enough they can get at the data. However implementing some sort of encryption does offer some protection against reading the data if disks are re-used and certainly makes the barrier might higher for access casually.
 
 ## Ideas
 General Linux knowledge and a few Internet searches quickly gave me 4 options:
