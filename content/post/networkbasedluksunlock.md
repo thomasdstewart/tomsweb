@@ -64,6 +64,9 @@ So given that running C daemons as root is fairly scary at the best of times, I 
  * It's up to each script that calls ipconfig to implement DNS. For example ipconfig does configure the ip address, netmask and gateway but does not touch /etc/resolv.conf, it creates a temp file (eg /run/net-eth0.conf) with the details in. For example see https://sources.debian.org/src/open-iscsi/2.1.5-1/debian/extra/initramfs.local-top/?hl=130#L130 https://sources.debian.org/src/kxd/0.15-3/cryptsetup/initramfs-scripts/kxc-premount-net/?hl=26#L26. Unfortunately the clevis initramfs script do not setup resolv.conf (https://sources.debian.org/src/clevis/16-2/src/initramfs-tools/scripts/local-top/clevis.in/#L257). This needs to be fixed upstream or if not a new script that runs the configure_networking and the careful creation of /etc/resolv.conf before the clevis initramfs script runs (issue 9).
  * In order for the clevis script to run and use a https tang server, it ultimately uses curl to make the https request so will need a set of CA certificates to function correctly. The easiest way for this to work is an initramfs hook to include them (issue 10).
 
+## Implentation
+https://gitlab.com/thomasdstewart-infra/docker-tang
+
 
 ## Bugs
 
