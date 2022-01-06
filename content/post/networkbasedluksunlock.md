@@ -68,6 +68,67 @@ So given that running C daemons as root is fairly scary at the best of times, I 
 ## Implentation
 https://gitlab.com/thomasdstewart-infra/docker-tang
 
+```
+root@client:~# cat /etc/initramfs-tools/hooks/preclevis 
+#!/bin/sh
+set -e
+
+PREREQ=""
+
+prereqs()
+{
+        echo "$PREREQ"
+}
+
+case $1 in
+# get pre-requisites	
+prereqs)
+        prereqs
+        exit 0
+        ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+copy_exec /usr/lib/*/libnss_dns.so*
+
+mkdir -p "${DESTDIR}/etc/ssl"
+cp -a /etc/ssl/certs "${DESTDIR}/etc/ssl/certs"
+root@client:~# 
+```
+
+```
+root@client:~# cat /etc/initramfs-tools/scripts/init-premount/preclevis
+#!/bin/sh
+set -e
+
+PREREQ=""
+
+prereqs()
+{
+	echo "$PREREQ"
+}
+
+case $1 in
+# get pre-requisites
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+. /scripts/functions
+configure_networking
+
+if ! [ -s /etc/resolv.conf ]; then
+	for ns in "$IPV6DNS0" "$IPV6DNS1" "$IPV4DNS0" "$IPV4DNS1"; do
+		if [ -n "$ns" -a "$ns" != "0.0.0.0" ]; then
+			echo "nameserver $ns" >> /etc/resolv.conf
+		fi
+	done
+fi
+root@client:~#
+```
 
 ## Bugs
 
