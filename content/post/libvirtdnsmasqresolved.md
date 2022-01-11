@@ -74,7 +74,7 @@ vpn-up|vpn-down|hostname|dhcp4-change|dhcp6-change)
 esac
 ```
 
-In addition the libvirt dnsmasq needs to be told about these new domains, so edit the libvirt network with: ```virsh --connect qemu:///system net-edit default``` then under the <network> create a domain tag like: ```<domain name='default.libvirt' localOnly='yes'/>```
+In addition the libvirt dnsmasq needs to be told about these new domains, so edit the libvirt network with: ```virsh --connect qemu:///system net-edit default``` then after the <network> tag create a domain tag like: ```<domain name='default.libvirt' localOnly='yes'/>```
 
 Hosts can be created in two steps dhcp and dns eg:
 ```
@@ -82,9 +82,11 @@ $ virsh --connect qemu:///system net-update default add ip-dhcp-host "<host mac=
 $ virsh --connect qemu:///system net-update default add dns-host "<host ip='192.168.122.120'><hostname>debian</hostname></host>" --live --config
 ```
 
-Perhaps, the above could be populated with a combination of:
-```virsh --connect qemu:///system net-dhcp-leases default; virsh --connect qemu:///system list --all```
+Everything up to here works mostly, with some fantom dns nm interfaces need cleaning, a fix is needed for the hook script.
 
-Perhaps a systemd service that monitors: `/var/lib/libvirt/dnsmasq/default.*` and updates DNS acordingly.
+The issue is even after all this newly created VM's don't get the above hostname config which is what drives the DNS. he above could be populated dynamically with a combination of:
+```virsh --connect qemu:///system net-dhcp-leases default; virsh --connect qemu:///system list --all``` that takes the vm name and uses it for hostname, creating both dynamic and static entries and removing non existent ones in a script.
 
-Perhaps add host entry for dummy interface
+Perhaps a systemd service that monitors the file: `/var/lib/libvirt/dnsmasq/default.*` and runs the above script.
+
+add host entry in libvirt  for dummy interface dns interface i needed to reserve the IP.
