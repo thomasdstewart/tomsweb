@@ -139,3 +139,4 @@ Get the clevis-initramfs script to setup DNS
 Get the clevis-initramfs script to include root CA's
 
 https://github.com/latchset/clevis/issues/175
+https://github.com/latchset/clevis/issues/176
