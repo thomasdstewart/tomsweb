@@ -36,16 +36,18 @@ case "$2" in
 up)
     virsh --connect qemu:///system net-list \
         | sed "1,2d" | head -n -1 | awk '{print $1}' \
-        | while read VIRTNET; do
-            NETBR=$(virsh --connect qemu:///system net-info $VIRTNET | awk '/Bridge:/{print $2}')
-            if [ $IFACE = $NETBR ]; then
-                IP=$(nmcli connection show $IFACE | awk '/ipv4.addresses/{print $2}' | sed 's^.1/24^.254/32^')
-                DNS=$(nmcli connection show $IFACE | awk '/ipv4.addresses/{print $2}' | sed 's^/24^^') 
+        | while read -r VIRTNET; do
+            NETBR=$(virsh --connect qemu:///system net-info "$VIRTNET" | awk '/Bridge:/{print $2}')
+            if [ "$IFACE" = "$NETBR" ]; then
+                IP="$(nmcli connection show "$IFACE" | awk '/ipv4.addresses/{print $2}')"
+                IP="$(ipcalc -n "$IP" | awk '/HostMax:/{print $2}')/32"
+                DNS=$(nmcli connection show "$IFACE" | awk '/ipv4.addresses/{print $2}' | awk -F/ '{print $1}')
 
+                nmcli con del "${IFACE}-dns" 2> /dev/null|| true
                 nmcli connection add type dummy \
-                    con-name ${IFACE}-dns ifname ${IFACE}-dns \
-                    ipv4.method manual ipv4.addresses $IP \
-                    ipv4.dns $DNS \
+                    con-name "${IFACE}-dns" ifname "${IFACE}-dns" \
+                    ipv4.method manual ipv4.addresses "$IP" \
+                    ipv4.dns "$DNS" \
                     ipv4.dns-search "~${VIRTNET}.virt ${VIRTNET}.virt" \
                     ipv6.method disabled
             fi
@@ -55,10 +57,10 @@ up)
 down)
     virsh --connect qemu:///system net-list \
         | sed "1,2d" | head -n -1 | awk '{print $1}' \
-        | while read VIRTNET; do
-            NETBR=$(virsh --connect qemu:///system net-info $VIRTNET | awk '/Bridge:/{print $2}')
-            if [ $IFACE = $NETBR ]; then
-                nmcli con del ${IFACE}-dns
+        | while read -r VIRTNET; do
+            NETBR=$(virsh --connect qemu:///system net-info "$VIRTNET" | awk '/Bridge:/{print $2}')
+            if [ "$IFACE" = "$NETBR" ]; then
+                nmcli con del "${IFACE}-dns"
             fi
     done
     ;;
