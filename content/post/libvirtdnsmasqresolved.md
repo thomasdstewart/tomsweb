@@ -16,9 +16,9 @@ So to allow the system to talk to the libvirt dnsmaq process there has to be som
 
 Fortunately there are such hooks: /etc/NetworkManager/dispatcher.d/ which includes /etc/NetworkManager/dispatcher.d/01-ifupdown which in turn hooks: /etc/network/if-{up,down}.d. The idea is for this hook to add the necessary DNS server and search path. However when DNS settings are updated after libvirt has created the bridge they don't take effect until the connection is downed and up again, eg when running "sudo nmcli connection modify virbr0 ipv4.dns 192.168.122.1" and "sudo nmcli connection modify virbr0 ipv4.dns-search '~virt;virt'" those settings don't appear to be applied immediately or appear in nmcli output. Also if the underlying connection with the ~ search syntax is down, then the name servers don't apply, which means that unless there is at least one VM running the per connection DNS server is not used.
 
-One hack round this is to create a dummy interface with the right information on, which has the dns servres set when the connection is created which takes effect immidiatly. I have found that in order for a NetworkManager connection to have ipv4 dns settings it requires either auto or manual ipv4.method, to prevent the interface sitting in an eternal connecting state as there is no DHCP server just giving it the last address of the external subnet works. Thus after libvirt creates virbr0 when you run: "sudo nmcli connection add type dummy ifname virbr0-dns con-name virbr0-dns ipv4.method manual ipv4.addresses 192.168.122.254/32 ipv4.dns 192.168.122.1 ipv4.dns-search '~virt virt' ipv6.method disabled" the queries for foo.virt are directed to 192.168.122.1 and whats more virt is added to the serch list so foo should also resolve.
+One hack round this is to create a dummy interface with the right information on, which has the DNS servers set when the connection is created which takes effect immediately. I have found that in order for a NetworkManager connection to have ipv4 dns settings it requires either auto or manual ipv4.method, to prevent the interface sitting in an eternal connecting state as there is no DHCP server just giving it the last address of the external subnet works. Thus after libvirt creates virbr0 when you run: "sudo nmcli connection add type dummy ifname virbr0-dns con-name virbr0-dns ipv4.method manual ipv4.addresses 192.168.122.254/32 ipv4.dns 192.168.122.1 ipv4.dns-search '~virt virt' ipv6.method disabled" the queries for foo.virt are directed to 192.168.122.1 and whats more virt is added to the serch list so foo should also resolve.
 
-While I was configuring this to test I found the following usefull to restart resolved, turn up it's debug level, flush it's cache, follow it's log and start a tshark session to see what queries are going where:
+While I was configuring this to test I found the following useful to restart resolved, turn up it's debug level, flush it's cache, follow it's log and start a tshark session to see what queries are going where:
 ```sudo systemctl restart systemd-resolved; sudo resolvectl log-level debug; sudo resolvectl flush-caches; sudo journalctl -fu systemd-resolved; sudo tshark -n -i any -f "port 53"```
 
 After I used resolvectl to test lookups with: "resolvectl query debian.virt"
@@ -84,11 +84,75 @@ $ virsh --connect qemu:///system net-update default add ip-dhcp-host "<host mac=
 $ virsh --connect qemu:///system net-update default add dns-host "<host ip='192.168.122.120'><hostname>debian</hostname></host>" --live --config
 ```
 
-Everything up to here works mostly, with some fantom dns nm interfaces need cleaning, a fix is needed for the hook script.
+However this configuration is not added as part of virtian machine creation and needs to be done for each virtual machine. When machines start this virtual nics create entries in /var/lib/libvirt/dnsmasq/{networkname}.macs eg virbr0.macs. So creating a systemd path unit to monitor this file and when it's modified to run a another service, this can then hook in an update script.
 
-The issue is even after all this newly created VM's don't get the above hostname config which is what drives the DNS. he above could be populated dynamically with a combination of:
-```virsh --connect qemu:///system net-dhcp-leases default; virsh --connect qemu:///system list --all``` that takes the vm name and uses it for hostname, creating both dynamic and static entries and removing non existent ones in a script.
+Create /etc/systemd/system/updatelibvirtdns.path
+```
+[Unit]
+Description="Monitor /var/lib/libvirt/dnsmasq/virbr0.macs for changes"
 
-Perhaps a systemd service that monitors the file: `/var/lib/libvirt/dnsmasq/default.*` and runs the above script.
+[Path]
+PathModified=/var/lib/libvirt/dnsmasq/virbr0.macs
+Unit=updatelibvirtdns.service
 
-add host entry in libvirt  for dummy interface dns interface i needed to reserve the IP.
+[Install]
+WantedBy=multi-user.target
+```
+
+And create /etc/systemd/system/updatelibvirtdns.service
+```
+[Unit] 
+Description="Update libvirt DNS"
+
+[Service]
+ExecStart=/usr/local/bin/updatelibvirtdns.sh
+```
+
+So now whenever virbr0.macs changes, the /usr/local/bin/updatelibvirtdns.sh script is run. If we assume that the qemu machine name matches the name for dns. This `macs` file is a json file that has the virtual machine name and mac address. It also needs to find on the IP address allocated from dnsmasq. The net-dhcp-leases virsh command can be used to get this information (eg  "virsh --connect qemu:///system net-dhcp-leases default"). This information can then be used to call the above net-update commands. The script needs to find out the name of the network (eg default).
+
+Create this script: /usr/local/bin/updatelibvirtdns.sh
+```
+#!/bin/bash -eu
+#set -x
+
+# run when /var/lib/libvirt/dnsmasq/*.macs update, eg virbr0.macs
+for br in /var/lib/libvirt/dnsmasq/*.macs; do
+        brif=$(basename "$br" | awk -F. '{print $1}')
+        netfile=$(grep -l "interface=$brif" /var/lib/libvirt/dnsmasq/*.conf)
+        net=$(basename "$netfile" | sed 's/\.conf//')
+
+        jq -r '.[] | {domain: .domain, mac: .macs[0]} | join(" ")' < "$br" | while read -r entry; do
+                #eg entry=debian 52:54:00:5b:33:65
+                name=$(echo "$entry" | awk '{print $1}')
+                mac=$(echo "$entry" | awk '{print $2}')
+                ip=$(virsh --connect qemu:///system net-dhcp-leases default | grep "$mac" | awk -F'[\t /]+' '{print $6}')
+
+                # Add to default.hostsfile
+                #52:54:00:5b:33:65,192.168.122.123,debian11
+                echo -n "Adding entry '$mac,$ip,$name' to /var/lib/libvirt/dnsmasq/$net.hostsfile ... "
+                res=$(grep -c "$mac,$ip,$name" "/var/lib/libvirt/dnsmasq/$net.hostsfile" || true)
+                if [ "$res" -ne 1 ]; then
+                        virsh --connect qemu:///system net-update default add ip-dhcp-host "<host mac='$mac' name='$name' ip='$ip' />" --live --config || true
+                        echo "done."
+                else
+                        echo "allready added."
+                fi
+
+                # Add to default.addnhosts
+                #192.168.122.123 debian11
+                echo -n "Adding entry '$ip $name' to /var/lib/libvirt/dnsmasq/$net.addnhosts ... "
+                res=$(grep -E -c "$ip.*$name" "/var/lib/libvirt/dnsmasq/$net.addnhosts" || true)
+                if [ "$res" -ne 1 ]; then
+                        virsh --connect qemu:///system net-update default add dns-host "<host ip='$ip'><hostname>$name</hostname></host>" --live --config || true
+                        echo "done."
+                else
+                        echo "allready added."
+                fi
+        done
+done
+```
+
+TODO:
+ * The updatelibvirtdns.sh script never delete entries.
+ * The systemd unit should search for all *.macs files, it seems that PathModifiedGlob does not exist yet so mutiple path units need to be created, or paramaterised ones created.
+ * The NetworkManager dispatcher should add host entry in libvirt for dummy dns interface to reserve the IP.
