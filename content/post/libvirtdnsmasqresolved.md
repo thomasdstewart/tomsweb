@@ -14,11 +14,11 @@ What I wanted is more DNS integration with libvirt. The issue is that libvirt al
 
 So to allow the system to talk to the libvirt dnsmaq process there has to be some sort of linkage. The way this is configured usually is for NetworkManager to use a ~ syntax for the dns search, thus is ~virt is set in the search then foo.virt is directed to the dns servers set in that connection. However because libvirt creates and destroys its networks there needs to be some sort of hook to modify the network.
 
-Fortunately there are such hooks: /etc/NetworkManager/dispatcher.d/ which includes /etc/NetworkManager/dispatcher.d/01-ifupdown which in turn hooks: /etc/network/if-{up,down}.d. The idea is for this hook to add the necessary DNS server and search path. However I have found that when I update the DNS settings after libvirt has created the bridge that they don't take effect until the connection is downed and up again, eg when running "sudo nmcli connection modify virbr0 ipv4.dns 192.168.122.1" and "sudo nmcli connection modify virbr0 ipv4.dns-search '~virt;virt'" those settings don't appear in nmcli output. I have also see that if the underlying connection with the ~ search syntax is down, they the name servers don't apply, which means that unless there is at least one VM running the per connection DNS server is not used.
+Fortunately there are such hooks: /etc/NetworkManager/dispatcher.d/ which includes /etc/NetworkManager/dispatcher.d/01-ifupdown which in turn hooks: /etc/network/if-{up,down}.d. The idea is for this hook to add the necessary DNS server and search path. However when DNS settings are updated after libvirt has created the bridge they don't take effect until the connection is downed and up again, eg when running "sudo nmcli connection modify virbr0 ipv4.dns 192.168.122.1" and "sudo nmcli connection modify virbr0 ipv4.dns-search '~virt;virt'" those settings don't appear to be applied immediately or appear in nmcli output. Also if the underlying connection with the ~ search syntax is down, then the name servers don't apply, which means that unless there is at least one VM running the per connection DNS server is not used.
 
 One hack round this is to create a dummy interface with the right information on, which has the dns servres set when the connection is created which takes effect immidiatly. I have found that in order for a NetworkManager connection to have ipv4 dns settings it requires either auto or manual ipv4.method, to prevent the interface sitting in an eternal connecting state as there is no DHCP server just giving it the last address of the external subnet works. Thus after libvirt creates virbr0 when you run: "sudo nmcli connection add type dummy ifname virbr0-dns con-name virbr0-dns ipv4.method manual ipv4.addresses 192.168.122.254/32 ipv4.dns 192.168.122.1 ipv4.dns-search '~virt virt' ipv6.method disabled" the queries for foo.virt are directed to 192.168.122.1 and whats more virt is added to the serch list so foo should also resolve.
 
-While I was configuring this to test I found the following usefull to restart resolved, turn up it's debug level, flush it's cache, follow it's log and start a shark session to see what queries are going where:
+While I was configuring this to test I found the following usefull to restart resolved, turn up it's debug level, flush it's cache, follow it's log and start a tshark session to see what queries are going where:
 ```sudo systemctl restart systemd-resolved; sudo resolvectl log-level debug; sudo resolvectl flush-caches; sudo journalctl -fu systemd-resolved; sudo tshark -n -i any -f "port 53"```
 
 After I used resolvectl to test lookups with: "resolvectl query debian.virt"
@@ -74,16 +74,18 @@ vpn-up|vpn-down|hostname|dhcp4-change|dhcp6-change)
 esac
 ```
 
-Which then dnsmasq needs to be told about these new domains, so edit the libvirt network with: "virsh --connect qemu:///system net-edit default" then under the <network> create a domain tag like: "<domain name='default.libvirt' localOnly='yes'/>"
+In addition the libvirt dnsmasq needs to be told about these new domains, so edit the libvirt network with: ```virsh --connect qemu:///system net-edit default``` then under the <network> create a domain tag like: ```<domain name='default.libvirt' localOnly='yes'/>```
 
-Then hosts can be created with:
+Hosts can be created in two steps dhcp and dns eg:
+```
 $ virsh --connect qemu:///system net-update default add ip-dhcp-host "<host mac='52:54:00:de:97:a8' name='debian' ip='192.168.122.120' />" --live --config
 $ virsh --connect qemu:///system net-update default add dns-host "<host ip='192.168.122.120'><hostname>debian</hostname></host>" --live --config
+```
 
 Perhaps, the above could be populated with a combination of:
-virsh --connect qemu:///system net-dhcp-leases default
-virsh --connect qemu:///system list --all
+```virsh --connect qemu:///system net-dhcp-leases default```
+```virsh --connect qemu:///system list --all``1
 
-Perhaps a systemd service that monitors: /var/lib/libvirt/dnsmasq/default.* and updates DNS acordingly.
+Perhaps a systemd service that monitors: `/var/lib/libvirt/dnsmasq/default.*` and updates DNS acordingly.
 
 Perhaps add host entry for dummy interface
