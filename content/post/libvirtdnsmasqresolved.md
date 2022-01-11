@@ -83,8 +83,7 @@ $ virsh --connect qemu:///system net-update default add dns-host "<host ip='192.
 ```
 
 Perhaps, the above could be populated with a combination of:
-```virsh --connect qemu:///system net-dhcp-leases default```
-```virsh --connect qemu:///system list --all```
+```virsh --connect qemu:///system net-dhcp-leases default; virsh --connect qemu:///system list --all```
 
 Perhaps a systemd service that monitors: `/var/lib/libvirt/dnsmasq/default.*` and updates DNS acordingly.
 
