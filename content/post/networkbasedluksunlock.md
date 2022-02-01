@@ -52,8 +52,8 @@ Observations with Clevis:
 
  7. Debian defaults to initramfs-tools rather than dracut, clevis supports both, but obviously via slightly different scripts.
  8. In order to make network requests when the initaramfs systems is running networking has to be configured. How this is done is not very well documented.
- 9. The initramfs system does not have a standards to to configure DNS.
- 10. The initramfs system does not have any certificate authority root certificates, which makes https or ssl hard to trust.
+ 9. The initramfs system does not have a standard way to configure DNS.
+ 10. The initramfs system does not have any certificate authority root certificates collection, which makes https or ssl hard to trust.
 
 ## Workarounds
 So given that running C daemons as root is fairly scary at the best of times, I wanted to put some wrapping around the setup to protect it more (issue 1).
