@@ -7,10 +7,13 @@ categories: []
 date: 2016-03-18
 aliases: [/tomsweb/CentOSOpenstackPOC/]
 ---
-{{% toc %}}
 ## Introduction
 
-This is a short howto on creating a small Openstack proof of concept on CentOS. It's mostly cobbled together with the aid of:
+This is a short howto on creating a small Openstack proof of concept on CentOS.  The aim is to create a proof of concept Openstack Liberty deployment on a single Linux testing machine, where the deployment matches real world hardware deployments. The aim is not to just install all the Openstack components in a single machine or virtual machine. The aim is to make use of Linux, KVM and libvirt to create virtual hardware to run the various Openstack components to match a real world deployment. Each virtual machine represents what could be a physical host. It will use CentOS 7 as the base operating system and use the RDO Openstack packages. This matches the Red Hat Openstack Platform, however does not need subscriptions to install and test test.
+
+The deployment will use tripleo and ironic for deployment and provisioning. Meaning that a small cutdown Openstack cloud called the undercloud will look after the hardware. Then this will deploy a production Openstack cloud with all the Components running, this is called the overcloud. The deployment consist of 1 x undercloud virtual machine and 3 x overcloud virtual machines. One of these machines will run all the usual Openstack components (ie be a Controller in RDO/Red Hat terms) and the other two will run Nova (ie be Compute in RDO/Red Hat terms).
+
+It's mostly cobbled together with the aid of:
  * https://trickycloud.wordpress.com/2015/11/15/openstack-lab-on-your-laptop-with-tripleo-and-director/
  * http://keithtenzer.com/2015/10/14/howto-openstack-deployment-using-tripleo-and-the-red-hat-openstack-director/
  * https://repos.fedorapeople.org/repos/openstack-m/rdo-manager-docs/liberty/basic_deployment/basic_deployment_cli.html.
@@ -19,9 +22,7 @@ This is a short howto on creating a small Openstack proof of concept on CentOS. 
  * http://docs.openstack.org/developer/tripleo-docs/
  * http://docs.openstack.org/developer/tripleo-docs/troubleshooting/troubleshooting-overcloud.html
 
-The aim is to create a proof of concept Openstack Liberty deployment on a single Linux testing machine, where the deployment matches real world hardware deployments. The aim is not to just install all the Openstack components in a single machine or virtual machine. The aim is to make use of Linux, KVM and libvirt to create virtual hardware to run the various Openstack components to match a real world deployment. Each virtual machine represents what could be a physical host. It will use CentOS 7 as the base operating system and use the RDO Openstack packages. This matches the Red Hat Openstack Platform, however does not need subscriptions to install and test test.
-
-The deployment will use tripleo and ironic for deployment and provisioning. Meaning that a small cutdown Openstack cloud called the undercloud will look after the hardware. Then this will deploy a production Openstack cloud with all the Components running, this is called the overcloud. The deployment consist of 1 x undercloud virtual machine and 3 x overcloud virtual machines. One of these machines will run all the usual Openstack components (ie be a Controller in RDO/Red Hat terms) and the other two will run Nova (ie be Compute in RDO/Red Hat terms).
+{{% toc %}}
 
 ## Preparation
 A few preparations are needed before getting started. First you need a Linux machine, the more CPUs, memory and fast disk the better. This deployment was done on an Intel i5 laptop with 16GB RAM and a SSD. Next you need to get KVM and libvirt running. I used Debian and a simple "apt-get install virt-manager" was enough for me to start playing. However this should be very dooable on any other Debian or Fedora derived distribution.
