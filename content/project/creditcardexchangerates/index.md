@@ -2,7 +2,7 @@
 title: "Credit Card Exchange Rates"
 summary: ""
 authors: ["thomas"]
-tags: ["creditcard", "exchangerate"]
+tags: ["creditcard", "exchangerate", "other"]
 categories: []
 date: 2013-01-23 
 aliases: [/tomsweb/Stuff/CreditCardExchangeRates/]

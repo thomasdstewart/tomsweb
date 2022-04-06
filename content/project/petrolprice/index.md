@@ -2,7 +2,7 @@
 title: "Petrol Price"
 summary: ""
 authors: ["thomas"]
-tags: ["petrol"]
+tags: ["petrol", "other"]
 categories: []
 date: 2011-03-28
 aliases: [/tomsweb/PetrolPrice/]

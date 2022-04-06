@@ -2,7 +2,7 @@
 title: "IMDB Age"
 summary: ""
 authors: ["thomas"]
-tags: ["imdb", "javascript", "greasemonkey"]
+tags: ["imdb", "javascript", "greasemonkey", "movies"]
 categories: []
 date: 2020-12-28
 aliases: [/tomsweb/IMDBAge/]

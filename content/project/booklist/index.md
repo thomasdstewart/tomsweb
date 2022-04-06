@@ -2,7 +2,7 @@
 title: "Book List"
 summary: ""
 authors: ["thomas"]
-tags: ["book"]
+tags: ["book", "other"]
 categories: []
 date: 2021-07-01
 aliases: [/tomsweb/BookList/]

@@ -2,7 +2,7 @@
 title: "Openstack proof of concept"
 summary: ""
 authors: ["thomas"]
-tags: ["openstack"]
+tags: ["openstack", "linux"]
 categories: []
 date: 2016-03-18
 aliases: [/tomsweb/CentOSOpenstackPOC/]
