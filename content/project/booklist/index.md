@@ -9,6 +9,9 @@ aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
+2022 (1)
+ * Catch-22 - Joseph Heller
+
 2021 (8)
  * Holy Sister - Mark Lawrence
  * Grey Sister - Mark Lawrence
