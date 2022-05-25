@@ -4,7 +4,7 @@ summary: ""
 authors: ["thomas"]
 tags: ["book", "other"]
 categories: []
-date: 2022-06-25
+date: 2022-06-24
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
