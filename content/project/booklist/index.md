@@ -4,12 +4,13 @@ summary: ""
 authors: ["thomas"]
 tags: ["book", "other"]
 categories: []
-date: 2022-05-25
+date: 2022-05-28
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2022 (1)
+2022 (2)
+ * We Are Legion (We Are Bob): Bobiverse, Book 1 - Dennis E. Taylor
  * Catch-22 - Joseph Heller
 
 2021 (8)
