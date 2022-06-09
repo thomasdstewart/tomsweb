@@ -16,6 +16,7 @@ This is the result of that I have found out and a set of instructions that can b
  * https://fedoraproject.org/wiki/Architectures/RISC-V/Allwinner
  * https://open.allwinnertech.com/
  * https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv/
+ * https://linux-sunxi.org/Allwinner_Nezha
 
 ## Prerequisites and prepare environment
 Obviously this needs Linux to run, I run and use Debian Testing for this. I expect Debian based distros might work with a little work, other distros will probably need more work. Step one is to install some prerequisite packages, create a work dir and rootfs dir eg /home/thomas/devterm and /home/thomas/devterm/rootfs. About 15G of disk space is required.
@@ -218,7 +219,7 @@ EOF
 ```
 
 ## Disable some services
-Disable some
+To speed up booting disable tome services: apt-daily, apt-daily-upgrade, ModemManager, avahi-daemon, NetworkManager-wait-online:
 ```
 rm rootfs/etc/systemd/system/timers.target.wants/apt-daily.timer
 rm rootfs/etc/systemd/system/timers.target.wants/apt-daily-upgrade.timer
@@ -231,14 +232,16 @@ rm rootfs/etc/systemd/system/network-online.target.wants/NetworkManager-wait-onl
 ```
 
 ## Create user
+Create a user, set the password and add to the sudo group.
 ```
 sudo chroot rootfs adduser --gecos thomas --add_extra_groups --disabled-password thomas
-pass=$(mkpasswd -m sha-512 password)
+pass=$(mkpasswd -m sha-512 CorrectHorseBatteryStaple)
 sudo chroot rootfs usermod -a -G sudo -p "$pass" thomas
 ```
 
 ## Install clockworkpi repos
-* This does not work yet due to deps on python2.7
+The official image contains some extra software for audio, backlight, fan, keyboard, printer and wiringpi. The below are the steps to install them, however it does not work as one of the debian packages depends on python2.7. However it's not clear how these package were created. For example devterm-keyboard-firmware installs /usr/local/bin/devterm_keyboard_firmware_flash.sh which is a self extracting sh, extracting that clones https://github.com/cuu/stm32duino_bootloader_upload.git along with devterm_keyboard.ino.bin. The firmware then seems to come from https://github.com/cuu/devterm_keyboard.
+
 ```
 curl https://raw.githubusercontent.com/clockworkpi/apt/main/debian/KEY.gpg | sudo tee rootfs/etc/apt/trusted.gpg.d/clockworkpi.asc
 echo "deb https://raw.githubusercontent.com/clockworkpi/apt/main/debian/ stable main" | sudo tee rootfs/etc/apt/sources.list.d/clockworkpi.list  
@@ -246,8 +249,8 @@ sudo chroot rootfs apt-get update
 sudo chroot rootfs apt-get install devterm-audio-patch devterm-backlight-cpi devterm-fan-temp-daemon-rpi devterm-keyboard-firmware devterm-thermal-printer devterm-thermal-printer-cups devterm-wiringpi-cpi
 ```
 
-## create auto login
- * I've not done this
+## Official image autologin, and home dir files
+The official image implements auto login with a getty systemd override. It then has a .bash_profile to startx and an .xinit to start gkrelm and twm. There is a copy of the home dir and screenshots of the default twm theme here: https://github.com/clockworkpi/DevTerm/tree/main/Code/R01. This is how the getty systemd override, I have not implement this, but am including as I think it's quite a nice solution.
 ```
 sudo mkdir -p rootfs/etc/systemd/system/getty@tty1.service.d
 cat <<EOF | sudo tee rootfs/etc/systemd/system/getty@tty1.service.d/override.conf
@@ -257,26 +260,10 @@ ExecStart=-/sbin/agetty --autologin thomas %I $TERM
 EOF
 ```
 
-## Create home dir files
- * I've not done this
-```
-sudo wget -O rootfs/home/thomas/d1_twm.tar.bz2 https://github.com/clockworkpi/DevTerm/blob/main/Code/R01/d1_twm.tar.bz2?raw=true
-root@devterm:~# cat /home/thomas/.bash_profile 
-if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
-    echo Loading Xorg...
-    sleep 1
-    exec startx
-fi
-root@devterm:~# 
-
-root@devterm:~# cat /home/thomas/.xinit 
-exec /usr/bin/gkrellm &
-exec /usr/bin/twm
-root@devterm:~# 
-
-```
+I chose not to do this and just installed xdm and expect to play with different window managers going forward.
 
 ## Copy rootfs to disk image and sd card
+Then the disk image needs to be mounted, the root filesystem copied into it, unmounted, then copied to an sd card and then the filesystem increased to cover the rest of the sd card.
 ```
 d=$(sudo losetup --show -f -P disk.img)
 sudo mount ${d}p2 disk.img.d
@@ -285,23 +272,31 @@ sudo rsync -vax --delete rootfs/. disk.img.d/.
 sudo umount disk.img.d/boot disk.img.d
 sudo losetup -d $d
 pv disk.img | sudo dd bs=1M of=/dev/sdX
+echo "resizepart 2 100%" | sudo parted /dev/sdX
+sudo partprobe
+sudo fsck -C -t ext4 -f -y /dev/sdX2
+sudo resize2fs /dev/sdX2
 ```
 
 ## update sd card
-If updates in roofs need to go to sd card without rewriting entire sd card
+If updates are needed directly from the rootfs directory to the sd card without rewriting entire sd card
 ```
-sudo umount /dev/sdb1 /dev/sdb2; sudo mount /dev/sdb2 /mnt; sudo mount /dev/sdb1 /mnt/boot
+sudo umount /dev/sdX1 /dev/sdX2; sudo mount /dev/sdX2 /mnt; sudo mount /dev/sdX1 /mnt/boot
 sudo rsync -vaxP --delete rootfs/. /mnt/.
 sudo umount /mnt/boot /mnt
 ```
 
-## Post booted steps
-configure wifi with nmtui
-grow fs
+## WiFi
+To configure the wifi either use nmtui of nmcli:
+```
+sudo nmcli dev wifi connect "MyWifi" password "my-password"
+```
 
-## Job
+## Jobs
 
  * How to package SPL
  * How to package OpenSBI/u-boot
- * Find what patches were applied are needed in mainline
+ * Find what patches were applied are needed in mainline Linux
+ * Package Linux
+ * Repackage clockworkpi debs
 
