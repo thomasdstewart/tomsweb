@@ -46,6 +46,9 @@ I got one of each of the below (shipped from the US):
    *  Data Sheet: http://www.farnell.com/datasheets/1658178.
    *  http://uk.farnell.com/cooper-interconnect/86-cp11/plug-socket-connector-plug-11/dp/1311360
 
+{{< figure src="e9037a94ebfac1b815c4246f7d22cc67_400x.jpg">}}
+{{< figure src="il_570xN.757943401_3j4o.jpg">}}
+
 ## Control Cable
 There are 6 functions and one ground, I needed 7 wires in total. Given that Cat5e has 8 wires, I thought it a lovely idea to use Cat5e for the control cable for this project. I wired my cable as follows:
 
