@@ -22,7 +22,7 @@ This is the result of that I have found out and a set of instructions that can b
 Obviously this needs Linux to run, I run and use Debian Testing for this. I expect Debian based distros might work with a little work, other distros will probably need more work. Step one is to install some prerequisite packages, create a work dir and rootfs dir eg /home/thomas/devterm and /home/thomas/devterm/rootfs. About 15G of disk space is required.
 
 ```
-sudo apt-get install binfmt-support binutils-riscv64-linux-gnu debian-ports-archive-keyring debootstrap gcc-11-riscv64-linux-gnu qemu-user-static qemu-user-static sfdisk swig uuid
+sudo apt-get install binfmt-support binutils-riscv64-linux-gnu debian-ports-archive-keyring debootstrap gcc-11-riscv64-linux-gnu qemu-user-static qemu-user-static fdisk swig uuid
 mkdir -p ~/devterm/rootfs
 cd ~/devterm
 ```
