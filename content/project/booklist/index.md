@@ -9,8 +9,10 @@ aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2022 (2)
- * We Are Legion (We Are Bob): Bobiverse, Book 1 - Dennis E. Taylor
+2022 (4)
+ * All These Worlds: Bobiverse Series, Book 3 - Dennis E. Taylo
+ * For We Are Many: Bobiverse Series, Book 2 - Dennis E. Taylor
+ * We Are Legion (We Are Bob): Bobiverse Series, Book 1 - Dennis E. Taylor
  * Catch-22 - Joseph Heller
 
 2021 (8)
