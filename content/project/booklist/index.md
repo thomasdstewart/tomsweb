@@ -10,6 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2022 (4)
+ * The Eye of the World (The Wheel of Time book 1)- Robert Jordan
  * All These Worlds: Bobiverse Series, Book 3 - Dennis E. Taylo
  * For We Are Many: Bobiverse Series, Book 2 - Dennis E. Taylor
  * We Are Legion (We Are Bob): Bobiverse Series, Book 1 - Dennis E. Taylor
