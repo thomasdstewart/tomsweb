@@ -1,12 +1,11 @@
 ---
-title: "Routerbench"
+title: "Opinionated Router Benchmark"
 summary: ""
 authors: ["thomas"]
 tags: ["linux", "networking", "debian"]
 categories: []
 date: 2022-12-08 19:54:00
 ---
-# Opinionated Router Benchmark
 My home Internet connection is a VDSL, fibre to the cabinet which comes over the telephone line into a BT master socket which has an ADSL filter and requires a modem. The modems are now usually built into the BT Home/Smart Hub CPE (Customer-premises equipment) but I still use a Huawei HG612 standalone modem as I don't particluraly like the CPE I was given. So I need router to talk PPPoE to the modem and also firewallm route and NAT my home lan traffic to the Internet. I used a pair of Linksys WRT3200ACM devices: one as a router and wireless access point and the other as just a wireless access point. However while I was quite happy with them, the overall experience was not great: Ring devices would not connect, Tapo devices would not upgrade firmware and the overall signal quality around the house was not very good. So I upgraded to some Aruba Mesh style wireless access points, which turned out to be great. However this left most of the functionality of the WRT3200ACM unneeded in what is quite a large physical footprint, also I don't want to overload the device by turning my internet router into a NAS. Thus I needed to find a replacement device that just does the routing. Also with the new access points I also changed to a managed network swtiches with vlans to allow guest wifi, untrusted iot network, etc. Thus the new decice could just be a single port router on a stick setup with a single trunk link.
 
 My random set of requirements for the new device:
