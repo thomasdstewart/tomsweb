@@ -148,7 +148,7 @@ sudo virt-install --connect qemu:///system --name client --os-variant debian11 -
 
 The client can then benchmark the setup by running
 ```
-ping 
+ping
 iperf3 -c 192.168.122
 ```
 
@@ -172,16 +172,16 @@ debian@client:~$ iperf3 -c 192.168.122.95
 Connecting to host 192.168.122.95, port 5201
 [  5] local 192.168.10.191 port 44110 connected to 192.168.122.95 port 5201
 [ ID] Interval           Transfer     Bitrate         Retr  Cwnd
-[  5]   0.00-1.00   sec  75.7 MBytes   635 Mbits/sec  197    128 KBytes       
-[  5]   1.00-2.00   sec  65.1 MBytes   546 Mbits/sec  119   99.8 KBytes       
-[  5]   2.00-3.00   sec  64.1 MBytes   538 Mbits/sec   66    105 KBytes       
-[  5]   3.00-4.00   sec  67.2 MBytes   564 Mbits/sec   72    131 KBytes       
-[  5]   4.00-5.00   sec  96.3 MBytes   808 Mbits/sec  304    134 KBytes       
-[  5]   5.00-6.00   sec  85.0 MBytes   713 Mbits/sec  305    105 KBytes       
-[  5]   6.00-7.00   sec  60.3 MBytes   506 Mbits/sec  124    121 KBytes       
-[  5]   7.00-8.00   sec  41.2 MBytes   345 Mbits/sec   15    132 KBytes       
-[  5]   8.00-9.00   sec  37.1 MBytes   311 Mbits/sec   22    115 KBytes       
-[  5]   9.00-10.00  sec  35.2 MBytes   295 Mbits/sec   21    115 KBytes       
+[  5]   0.00-1.00   sec  75.7 MBytes   635 Mbits/sec  197    128 KBytes
+[  5]   1.00-2.00   sec  65.1 MBytes   546 Mbits/sec  119   99.8 KBytes
+[  5]   2.00-3.00   sec  64.1 MBytes   538 Mbits/sec   66    105 KBytes
+[  5]   3.00-4.00   sec  67.2 MBytes   564 Mbits/sec   72    131 KBytes
+[  5]   4.00-5.00   sec  96.3 MBytes   808 Mbits/sec  304    134 KBytes
+[  5]   5.00-6.00   sec  85.0 MBytes   713 Mbits/sec  305    105 KBytes
+[  5]   6.00-7.00   sec  60.3 MBytes   506 Mbits/sec  124    121 KBytes
+[  5]   7.00-8.00   sec  41.2 MBytes   345 Mbits/sec   15    132 KBytes
+[  5]   8.00-9.00   sec  37.1 MBytes   311 Mbits/sec   22    115 KBytes
+[  5]   9.00-10.00  sec  35.2 MBytes   295 Mbits/sec   21    115 KBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bitrate         Retr
 [  5]   0.00-10.00  sec   627 MBytes   526 Mbits/sec  1245             sender
@@ -197,16 +197,16 @@ debian@client:~$ iperf3 -c 192.168.122.95
 Connecting to host 192.168.122.95, port 5201
 [  5] local 192.168.10.191 port 47560 connected to 192.168.122.95 port 5201
 [ ID] Interval           Transfer     Bitrate         Retr  Cwnd
-[  5]   0.00-1.00   sec   581 MBytes  4.88 Gbits/sec   82   1.24 MBytes       
-[  5]   1.00-2.00   sec   525 MBytes  4.40 Gbits/sec    0   1.49 MBytes       
-[  5]   2.00-3.00   sec   616 MBytes  5.17 Gbits/sec    8   1.28 MBytes       
-[  5]   3.00-4.00   sec   776 MBytes  6.51 Gbits/sec    0   1.65 MBytes       
-[  5]   4.00-5.00   sec   761 MBytes  6.39 Gbits/sec   57   1.51 MBytes       
-[  5]   5.00-6.00   sec   786 MBytes  6.60 Gbits/sec    8   1.37 MBytes       
-[  5]   6.00-7.00   sec   659 MBytes  5.53 Gbits/sec    0   1.67 MBytes       
-[  5]   7.00-8.00   sec   741 MBytes  6.22 Gbits/sec   14   1.52 MBytes       
-[  5]   8.00-9.00   sec   775 MBytes  6.50 Gbits/sec   25   1.36 MBytes       
-[  5]   9.00-10.00  sec   665 MBytes  5.58 Gbits/sec  173   1.22 MBytes       
+[  5]   0.00-1.00   sec   581 MBytes  4.88 Gbits/sec   82   1.24 MBytes
+[  5]   1.00-2.00   sec   525 MBytes  4.40 Gbits/sec    0   1.49 MBytes
+[  5]   2.00-3.00   sec   616 MBytes  5.17 Gbits/sec    8   1.28 MBytes
+[  5]   3.00-4.00   sec   776 MBytes  6.51 Gbits/sec    0   1.65 MBytes
+[  5]   4.00-5.00   sec   761 MBytes  6.39 Gbits/sec   57   1.51 MBytes
+[  5]   5.00-6.00   sec   786 MBytes  6.60 Gbits/sec    8   1.37 MBytes
+[  5]   6.00-7.00   sec   659 MBytes  5.53 Gbits/sec    0   1.67 MBytes
+[  5]   7.00-8.00   sec   741 MBytes  6.22 Gbits/sec   14   1.52 MBytes
+[  5]   8.00-9.00   sec   775 MBytes  6.50 Gbits/sec   25   1.36 MBytes
+[  5]   9.00-10.00  sec   665 MBytes  5.58 Gbits/sec  173   1.22 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bitrate         Retr
 [  5]   0.00-10.00  sec  6.72 GBytes  5.78 Gbits/sec  367             sender
@@ -224,7 +224,7 @@ Before:
 ```
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum.bits_per_second  | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
 104.85571253398	143.95832408612	117.39315248792	115.34301625102	5.4882634175596
-debian@client:~$ 
+debian@client:~$
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second  | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
 133.98202421683	144.32368834649	140.3129998568	141.43796553478	2.5905254520476
 ```
@@ -245,7 +245,7 @@ debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum
 3407.9367981071	7025.5153129482	4044.6904311882	3884.878633075	784.2084891605
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second  | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
 1890.4471346964	4153.3714598987	2504.8815592132	2501.6399877285	258.67402567204
-debian@client:~$ 
+debian@client:~$
 ```
 
 ```
@@ -254,18 +254,18 @@ PING 192.168.122.95 (192.168.122.95) 56(84) bytes of data.
 
 --- 192.168.122.95 ping statistics ---
 60 packets transmitted, 60 received, 0% packet loss, time 59139ms
-debian@client:~$ 
+debian@client:~$
 rtt min/avg/max/mdev = 0.677/1.202/1.521/0.180 ms
 ```
 
 
-### EdgeRouter Lite 3
+### EdgeRouter Lite 3 (OpenWrt)
 ```
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
 706.61852598118	734.05754152285	725.6825833986	723.51744	5.8027997673159
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
 160.23678182446	171.19735264291	167.98059278326	168.92555441074	2.878500629021
-debian@client:~$ 
+debian@client:~$
 ```
 
 ```
@@ -275,8 +275,44 @@ PING 192.168.122.95 (192.168.122.95) 56(84) bytes of data.
 --- 192.168.122.95 ping statistics ---
 60 packets transmitted, 60 received, 0% packet loss, time 59103ms
 rtt min/avg/max/mdev = 1.125/1.423/1.586/0.094 ms
-debian@client:~$ 
+debian@client:~$
 ```
+
+#### no firewall
+```
+debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
+165.5792028678	175.05476890865	171.40044218374	171.5606591917	1.8826983637162
+debian@client:~$
+```
+
+removing most chains and masking everything accepted, only small speedup
+
+### EdgeRouter Lite 3 (EdgeOS)
+```
+debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
+912.25655252287	941.33247951664	925.32853800863	922.74688	6.4803021324805
+debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
+908.55730208848	922.29672042931	919.64223701208	921.58126702043	3.6364279057688
+debian@client:~$
+```
+
+```
+debian@client:~$ ping -c 60 -i 1 -n -q 192.168.122.95
+PING 192.168.122.95 (192.168.122.95) 56(84) bytes of data.
+
+--- 192.168.122.95 ping statistics ---
+60 packets transmitted, 60 received, 0% packet loss, time 59109ms
+rtt min/avg/max/mdev = 1.186/1.405/1.555/0.078 ms
+debian@client:~$
+```
+
+root@EdgeRouter-Lite-3-Port:~# show configuration commands | grep offload
+set system offload hwnat disable
+set system offload ipv4 forwarding enable
+set system offload ipv4 pppoe enable
+root@EdgeRouter-Lite-3-Port:~#
+
+
 
 ### GL.iNet GL-AR150
 ```
@@ -294,7 +330,7 @@ PING 192.168.122.95 (192.168.122.95) 56(84) bytes of data.
 --- 192.168.122.95 ping statistics ---
 60 packets transmitted, 60 received, 0% packet loss, time 59108ms
 rtt min/avg/max/mdev = 1.106/1.478/1.653/0.094 ms
-debian@client:~$ 
+debian@client:~$
 ```
 
 ### Raspberry Pi 2 Model B
@@ -303,7 +339,7 @@ debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum
 73.390486317627	105.71252088727	85.822886371737	83.885785001224	4.9785002239775
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
 80.373190822421	90.963557398859	85.710453470725	85.781736853189	1.1961847937278
-debian@client:~$ 
+debian@client:~$
 ```
 
 ```
@@ -313,12 +349,27 @@ PING 192.168.122.95 (192.168.122.95) 56(84) bytes of data.
 --- 192.168.122.95 ping statistics ---
 60 packets transmitted, 60 received, 0% packet loss, time 59116ms
 rtt min/avg/max/mdev = 1.482/1.751/2.141/0.110 ms
-debian@client:~$ 
+debian@client:~$
 ```
 
 ### Raspberry Pi 3 Model B
+```
+debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
+73.397021398245	111.44259586084	85.568767681851	83.885785001062	5.1750214271792
+debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
+78.968253833831	90.905772132877	85.325661839878	85.299583148203	1.142636239204
+debian@client:~$
+```
 
+```
+debian@client:~$ ping -c 60 -i 1 -n -q 192.168.122.95
+PING 192.168.122.95 (192.168.122.95) 56(84) bytes of data.
 
+--- 192.168.122.95 ping statistics ---
+60 packets transmitted, 60 received, 0% packet loss, time 59117ms
+rtt min/avg/max/mdev = 1.419/1.690/2.119/0.110 ms
+debian@client:~$
+```
 
 ### Raspberry Pi 4 Model B
 ```
@@ -326,7 +377,7 @@ debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum
 922.19292596138	933.28114752119	928.33027868969	933.21306041908	5.2897155626168
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
 915.57773987793	923.95114144332	923.48623632296	923.75259182339	1.1501744224565
-debian@client:~$ 
+debian@client:~$
 ```
 
 ```
@@ -336,19 +387,20 @@ PING 192.168.122.95 (192.168.122.95) 56(84) bytes of data.
 --- 192.168.122.95 ping statistics ---
 60 packets transmitted, 60 received, 0% packet loss, time 59118ms
 rtt min/avg/max/mdev = 0.798/1.036/1.225/0.088 ms
-debian@client:~$ 
+debian@client:~$
 
 ```
 
 ## Results Summary
-| Device                    | Average download speed (Mbit/s) | Average upload speed (Mbit/s) | Average ping round trip time (milliseconds) |
-| ------------------------- | --------- | --------- | ----- |
-| EdgeRouter Lite 3         | 168       | 726       | 1.423 |
-| GL.iNet GL-AR150          | 90        | 91        | 1.478 |
-| Linksys WRT3200ACM        |           |           |       |
-| Raspberry Pi 2 Model B    | 86        | 86        | 1.751 |
-| Raspberry Pi 3 Model B    |           |           |       |
-| Raspberry Pi 4 Model B    | 923       | 928       | 1.036 |
+| Device                      | Average download speed (Mbit/s) | Average upload speed (Mbit/s) | Average ping round trip time (milliseconds) |
+| --------------------------- | ------------------------------- | ----------------------------- | ------------------------------------------- |
+| EdgeRouter Lite 3 (OpenWrt) | 168                             | 726                           | 1.423                                       |
+| EdgeRouter Lite 3 (EdgeOS)) | 919                             | 925                           | 1.405                                       |
+| GL.iNet GL-AR150            | 90                              | 91                            | 1.478                                       |
+| Linksys WRT3200ACM          |                                 |                               |                                             |
+| Raspberry Pi 2 Model B      | 86                              | 86                            | 1.751                                       |
+| Raspberry Pi 3 Model B      | 85                              | 86                            | 1.690                                       |
+| Raspberry Pi 4 Model B      | 923                             | 928                           | 1.036                                       |
 
 ## Result graphs
 
@@ -359,13 +411,14 @@ debian@client:~$
 
     function drawStuff() {
         var data = google.visualization.arrayToDataTable([
-            ['Device',                  'Average download speed', 'Average upload speed'],
-            ['EdgeRouter Lite 3',       168,      726],
-            ['GL.iNet GL-AR150',        90,       91],
-            ['Linksys WRT3200ACM',      '',       ''],
-            ['Raspberry Pi 2 Model B',  86,       86],
-            ['Raspberry Pi 3 Model B',  '',       ''],
-            ['Raspberry Pi 4 Model B',  923,      928]
+            ['Device',                      'Average download speed', 'Average upload speed'],
+            ['EdgeRouter Lite 3 (OpenWrt)', 168, 726],
+            ['EdgeRouter Lite 3 (EdgeOS)',  919, 925],
+            ['GL.iNet GL-AR150',            90,  91],
+            ['Linksys WRT3200ACM',          '',  ''],
+            ['Raspberry Pi 2 Model B',      86,  86],
+            ['Raspberry Pi 3 Model B',      85,  86],
+            ['Raspberry Pi 4 Model B',      923, 928]
         ]);
 
         var view = new google.visualization.DataView(data);
@@ -403,13 +456,14 @@ debian@client:~$
 
     function drawStuff() {
         var data = google.visualization.arrayToDataTable([
-            ['Device',                  'Average ping round trip time'],
-            ['EdgeRouter Lite 3',       1.423 ],
-            ['GL.iNet GL-AR150',        1.478],
-            ['Linksys WRT3200ACM',      ''],
-            ['Raspberry Pi 2 Model B',  1.751],
-            ['Raspberry Pi 3 Model B',  ''],
-            ['Raspberry Pi 4 Model B',  1.036 ]
+            ['Device',                      'Average ping round trip time'],
+            ['EdgeRouter Lite 3 (OpenWrt)', 1.423 ],
+            ['EdgeRouter Lite 3 (EdgeOS)',  1.405 ],
+            ['GL.iNet GL-AR150',            1.478],
+            ['Linksys WRT3200ACM',          ''],
+            ['Raspberry Pi 2 Model B',      1.751],
+            ['Raspberry Pi 3 Model B',      1.690],
+            ['Raspberry Pi 4 Model B',      1.036 ]
 
         ]);
 
