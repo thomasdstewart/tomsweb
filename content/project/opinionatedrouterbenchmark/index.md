@@ -447,7 +447,7 @@ debian@client:~$
         chart.draw(view, options);
     };
 </script>
-<div id="chart_div_speed" style="width: 720px; height: 500px;"></div>
+<div id="chart_div_speed" style="width: 720px; height: 600px;"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
@@ -489,7 +489,7 @@ debian@client:~$
         chart.draw(view, options);
     };
 </script>
-<div id="chart_div_ping" style="width: 720px; height: 500px;"></div>
+<div id="chart_div_ping" style="width: 720px; height: 600px;"></div>
 
 
 ## Remarks
