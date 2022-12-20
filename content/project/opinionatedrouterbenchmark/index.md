@@ -44,6 +44,8 @@ iperf3 -c $target -i 1 -t 60 -Z -J | jq .intervals[].sum.bits_per_second | while
 ping -c 60 -i 1 -n -q $target
 ```
 
+After the fact it was pointed out that measuring power usage would also be interesting, so retrospectfully I used my cheap [https://www.amazon.co.uk/gp/product/B07H1ZFVFM/](Nevsetpo Power Meter).
+
 ## Network setup
 The test setup creates some networks using libvirt the three required networks and three test virtual machines. The server virtual machine is connected to the default network which allows the host to ssh in. It is also on a wan network without any IP, the server runs the PPPoE process on this network, emulating the ISP. The router virtual machine is also on the wan network and runs the PPPoE client and connects to the server and uses the server as its router. It's also connected to a separate lan network which it runs DHCP services for. The final virtual machine called client it only connected to the lan network.
 
@@ -306,13 +308,70 @@ rtt min/avg/max/mdev = 1.186/1.405/1.555/0.078 ms
 debian@client:~$
 ```
 
+```
 root@EdgeRouter-Lite-3-Port:~# show configuration commands | grep offload
 set system offload hwnat disable
 set system offload ipv4 forwarding enable
 set system offload ipv4 pppoe enable
 root@EdgeRouter-Lite-3-Port:~#
+```
 
+The ethtool utility did not revielt anything too interesting when chanting the above offload parameters.
 
+```
+ubnt@EdgeRouter-Lite-3-Port:~$ sudo ethtool -k eth0
+Features for eth0:
+rx-checksumming: off [fixed]
+tx-checksumming: off
+        tx-checksum-ipv4: off [fixed]
+        tx-checksum-ip-generic: off [fixed]
+        tx-checksum-ipv6: off [fixed]
+        tx-checksum-fcoe-crc: off [fixed]
+        tx-checksum-sctp: off [fixed]
+scatter-gather: on
+        tx-scatter-gather: on [fixed]
+        tx-scatter-gather-fraglist: on [fixed]
+tcp-segmentation-offload: off
+        tx-tcp-segmentation: off [fixed]
+        tx-tcp-ecn-segmentation: off [fixed]
+        tx-tcp-mangleid-segmentation: off [fixed]
+        tx-tcp6-segmentation: off [fixed]
+udp-fragmentation-offload: off [fixed]
+generic-segmentation-offload: on
+generic-receive-offload: on
+large-receive-offload: off [fixed]
+rx-vlan-offload: off [fixed]
+tx-vlan-offload: off [fixed]
+ntuple-filters: off [fixed]
+receive-hashing: off [fixed]
+highdma: off [fixed]
+rx-vlan-filter: off [fixed]
+vlan-challenged: off [fixed]
+tx-lockless: on [fixed]
+netns-local: off [fixed]
+tx-gso-robust: off [fixed]
+tx-fcoe-segmentation: off [fixed]
+tx-gre-segmentation: off [fixed]
+tx-gre-csum-segmentation: off [fixed]
+tx-ipxip4-segmentation: off [fixed]
+tx-ipxip6-segmentation: off [fixed]
+tx-udp_tnl-segmentation: off [fixed]
+tx-udp_tnl-csum-segmentation: off [fixed]
+tx-gso-partial: off [fixed]
+tx-sctp-segmentation: off [fixed]
+fcoe-mtu: off [fixed]
+tx-nocache-copy: off
+loopback: off [fixed]
+rx-fcs: off [fixed]
+rx-all: off [fixed]
+tx-vlan-stag-hw-insert: off [fixed]
+rx-vlan-stag-hw-parse: off [fixed]
+rx-vlan-stag-filter: off [fixed]
+l2-fwd-offload: off [fixed]
+busy-poll: off [fixed]
+hw-tc-offload: off [fixed]
+ubnt@EdgeRouter-Lite-3-Port:~$ 
+```
 
 ### GL.iNet GL-AR150
 ```
@@ -392,15 +451,15 @@ debian@client:~$
 ```
 
 ## Results Summary
-| Device                      | Average download speed (Mbit/s) | Average upload speed (Mbit/s) | Average ping round trip time (milliseconds) |
-| --------------------------- | ------------------------------- | ----------------------------- | ------------------------------------------- |
-| EdgeRouter Lite 3 (OpenWrt) | 168                             | 726                           | 1.423                                       |
-| EdgeRouter Lite 3 (EdgeOS)) | 919                             | 925                           | 1.405                                       |
-| GL.iNet GL-AR150            | 90                              | 91                            | 1.478                                       |
-| Linksys WRT3200ACM          |                                 |                               |                                             |
-| Raspberry Pi 2 Model B      | 86                              | 86                            | 1.751                                       |
-| Raspberry Pi 3 Model B      | 85                              | 86                            | 1.690                                       |
-| Raspberry Pi 4 Model B      | 923                             | 928                           | 1.036                                       |
+| Device                      | Average download speed (Mbit/s) | Average upload speed (Mbit/s) | Average ping round trip time (milliseconds) | Power usage when idle |
+| --------------------------- | ------------------------------- | ----------------------------- | ------------------------------------------- | --------------------- |
+| EdgeRouter Lite 3 (OpenWrt) | 168                             | 726                           | 1.423                                       |                       |
+| EdgeRouter Lite 3 (EdgeOS)) | 919                             | 925                           | 1.405                                       | 5.9                   |
+| GL.iNet GL-AR150            | 90                              | 91                            | 1.478                                       | 0.8                   |
+| Linksys WRT3200ACM          |                                 |                               |                                             |                       |
+| Raspberry Pi 2 Model B      | 86                              | 86                            | 1.751                                       | 2.3 (no sd card)      |
+| Raspberry Pi 3 Model B      | 85                              | 86                            | 1.690                                       | 2.3 (with pgs hat)    |
+| Raspberry Pi 4 Model B      | 923                             | 928                           | 1.036                                       | 3.1 (no sd card)      |
 
 ## Result graphs
 
@@ -412,13 +471,13 @@ debian@client:~$
     function drawStuff() {
         var data = google.visualization.arrayToDataTable([
             ['Device',                      'Average download speed', 'Average upload speed'],
-            ['EdgeRouter Lite 3 (OpenWrt)', 168, 726],
-            ['EdgeRouter Lite 3 (EdgeOS)',  919, 925],
-            ['GL.iNet GL-AR150',            90,  91],
-            ['Linksys WRT3200ACM',          '',  ''],
-            ['Raspberry Pi 2 Model B',      86,  86],
-            ['Raspberry Pi 3 Model B',      85,  86],
-            ['Raspberry Pi 4 Model B',      923, 928]
+            ['EdgeRouter Lite 3 (OpenWrt)', 168, 726 ],
+            ['EdgeRouter Lite 3 (EdgeOS)',  919, 925 ],
+            ['GL.iNet GL-AR150',            90,  91 ],
+            ['Linksys WRT3200ACM',          '',  '' ],
+            ['Raspberry Pi 2 Model B',      86,  86 ],
+            ['Raspberry Pi 3 Model B',      85,  86 ],
+            ['Raspberry Pi 4 Model B',      923, 928 ]
         ]);
 
         var view = new google.visualization.DataView(data);
@@ -459,10 +518,10 @@ debian@client:~$
             ['Device',                      'Average ping round trip time'],
             ['EdgeRouter Lite 3 (OpenWrt)', 1.423 ],
             ['EdgeRouter Lite 3 (EdgeOS)',  1.405 ],
-            ['GL.iNet GL-AR150',            1.478],
-            ['Linksys WRT3200ACM',          ''],
-            ['Raspberry Pi 2 Model B',      1.751],
-            ['Raspberry Pi 3 Model B',      1.690],
+            ['GL.iNet GL-AR150',            1.478 ],
+            ['Linksys WRT3200ACM',          '' ],
+            ['Raspberry Pi 2 Model B',      1.751 ],
+            ['Raspberry Pi 3 Model B',      1.690 ],
             ['Raspberry Pi 4 Model B',      1.036 ]
 
         ]);
@@ -491,6 +550,45 @@ debian@client:~$
 </script>
 <div id="chart_div_ping" style="width: 720px; height: 600px;"></div>
 
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawStuff);
+
+    function drawStuff() {
+        var data = google.visualization.arrayToDataTable([
+            ['Device',                      'Power usage when idle'],
+            ['EdgeRouter Lite 3 (EdgeOS)',  5.9 ],
+            ['GL.iNet GL-AR150',            0.8 ],
+            ['Raspberry Pi 2 Model B',      2.3 ],
+            ['Raspberry Pi 3 Model B',      2.3 ],
+            ['Raspberry Pi 4 Model B',      3.1 ]
+
+        ]);
+
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+            { calc: "stringify",
+              sourceColumn: 1,
+              type: "string",
+              role: "annotation" }
+        ]);
+
+        var options = {
+            title: 'Router power comparion',
+            hAxis: {
+                slantedText: true,
+                slantedTextAngle: 45
+            },
+            vAxis: { title: '{Power usage when idle\n(Watts)'},
+            chartArea: { height:'50%' }
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_power'));
+        chart.draw(view, options);
+    };
+</script>
+<div id="chart_div_power" style="width: 720px; height: 600px;"></div>
 
 ## Remarks
 The virtual router was able to reach speeds greater than 2 Gigabits per second, with latency low, albeit variable. Thus proving the test setup worked and is performant enough to saturate a 1G device. Furthermore the results for the Raspberry Pi 4 prove the test hosts ethernet and managed switch is also cable of 1G line level performance.
