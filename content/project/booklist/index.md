@@ -4,12 +4,15 @@ summary: ""
 authors: ["thomas"]
 tags: ["book", "other"]
 categories: []
-date: 2022-05-28
+date: 2023-01-09
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2022 (6)
+2023
+ * Feet of Clay - Terry Pratchett
+
+2022 (8)
  * Men At Arms - Terry Pratchett
  * Guards Guards - Terry Pratchett
  * My Wonderfull Life: A Memoir - Sid Mynott
