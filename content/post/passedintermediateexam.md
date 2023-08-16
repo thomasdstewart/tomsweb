@@ -2,7 +2,7 @@
 title: "Passed Intermediate Exam"
 summary: ""
 authors: ["thomas"]
-tags: ["blog", "amaterradio"]
+tags: ["blog", "amaterradio", "hamradio"]
 categories: []
 date: 2009-11-27 15:22:00
 ---
