@@ -4,12 +4,13 @@ summary: ""
 authors: ["thomas"]
 tags: ["book", "other"]
 categories: []
-date: 2023-01-09
+date: 2023-09-07
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
 2023
+ * Jingo - Terry Pratchett
  * Feet of Clay - Terry Pratchett
 
 2022 (8)
