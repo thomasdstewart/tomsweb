@@ -5,7 +5,6 @@
 
 title: TomsWeb # Website name
 baseurl: '/' # Website URL
-copyright: '&copy; {year} Thomas Stewart' # Footer text, e.g. '© {year} Me'
 
 ############################
 ## LANGUAGE
