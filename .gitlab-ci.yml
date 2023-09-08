@@ -17,7 +17,7 @@ pages:
     - apk add go git
     - hugo version
     - hugo mod graph
-    - hugo --debug
+    - hugo --debug --minify
   artifacts:
     paths:
     - public
