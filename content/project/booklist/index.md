@@ -10,6 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2023
+ * 1984 - George Orwell
  * Jingo - Terry Pratchett
  * Feet of Clay - Terry Pratchett
 
