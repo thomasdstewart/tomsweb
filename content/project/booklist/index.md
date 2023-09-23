@@ -4,12 +4,13 @@ summary: ""
 authors: ["thomas"]
 tags: ["book", "other"]
 categories: []
-date: 2023-09-07
+date: 2023-09-23
 aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
 2023
+ * Royal Assassin (Farseer trilogy book 1) - Robin Hobb
  * Three Men in a Boat - Jerome K. Jerome
  * 1984 - George Orwell
  * Jingo - Terry Pratchett
