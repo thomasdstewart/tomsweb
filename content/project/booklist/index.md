@@ -10,6 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2023
+ * Royal Assassin (Farseer trilogy book 2) - Robin Hobb
  * Royal Assassin (Farseer trilogy book 1) - Robin Hobb
  * Three Men in a Boat - Jerome K. Jerome
  * 1984 - George Orwell
