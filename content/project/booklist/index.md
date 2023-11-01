@@ -10,6 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2023
+ * Berlin Game - Len Deighton
  * Assassin's Quest (Farseer trilogy book 3) - Robin Hobb
  * Royal Assassin (Farseer trilogy book 2) - Robin Hobb
  * Assassin's Apprentice (Farseer trilogy book 1) - Robin Hobb
