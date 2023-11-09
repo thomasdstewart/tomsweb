@@ -392,6 +392,25 @@ rtt min/avg/max/mdev = 1.106/1.478/1.653/0.094 ms
 debian@client:~$
 ```
 
+### Linksys WRT3200ACM
+```
+debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
+912.25296382292 933.26623870959 928.12493555184 933.19715260779 5.5982782386045
+debian@client:~$
+debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J -R | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
+916.27660222073 927.55690500113 923.47683545513 923.68469375834 1.2490526292657
+debian@client:~$
+```
+
+```
+debian@client:~$ ping -c 60 -i 1 -n -q 192.168.122.95
+
+--- 192.168.122.95 ping statistics ---
+60 packets transmitted, 60 received, 0% packet loss, time 59095ms
+rtt min/avg/max/mdev = 0.948/1.282/1.604/0.115 ms
+debian@client:~$
+```
+
 ### Raspberry Pi 2 Model B
 ```
 debian@client:~$ iperf3 -c 192.168.122.95 -i 1 -t 60 -Z -J | jq .intervals[].sum.bits_per_second | while read n; do echo "$n / 1000 / 1000" | bc -l; done | datamash --sort min 1 max 1 mean 1 median 1 sstdev 1
@@ -456,7 +475,7 @@ debian@client:~$
 | EdgeRouter Lite 3 (OpenWrt) | 168                             | 726                           | 1.423                                       |                       |
 | EdgeRouter Lite 3 (EdgeOS)) | 919                             | 925                           | 1.405                                       | 5.9                   |
 | GL.iNet GL-AR150            | 90                              | 91                            | 1.478                                       | 0.8                   |
-| Linksys WRT3200ACM          |                                 |                               |                                             |                       |
+| Linksys WRT3200ACM          | 924                             | 928                           | 1.282                                       |                       |
 | Raspberry Pi 2 Model B      | 86                              | 86                            | 1.751                                       | 2.3 (no sd card)      |
 | Raspberry Pi 3 Model B      | 85                              | 86                            | 1.690                                       | 2.3 (with pgs hat)    |
 | Raspberry Pi 4 Model B      | 923                             | 928                           | 1.036                                       | 3.1 (no sd card)      |
@@ -474,7 +493,7 @@ debian@client:~$
             ['EdgeRouter Lite 3 (OpenWrt)', 168, 726 ],
             ['EdgeRouter Lite 3 (EdgeOS)',  919, 925 ],
             ['GL.iNet GL-AR150',            90,  91 ],
-            ['Linksys WRT3200ACM',          '',  '' ],
+            ['Linksys WRT3200ACM',          924, 928 ],
             ['Raspberry Pi 2 Model B',      86,  86 ],
             ['Raspberry Pi 3 Model B',      85,  86 ],
             ['Raspberry Pi 4 Model B',      923, 928 ]
@@ -519,7 +538,7 @@ debian@client:~$
             ['EdgeRouter Lite 3 (OpenWrt)', 1.423 ],
             ['EdgeRouter Lite 3 (EdgeOS)',  1.405 ],
             ['GL.iNet GL-AR150',            1.478 ],
-            ['Linksys WRT3200ACM',          '' ],
+            ['Linksys WRT3200ACM',          1.282 ],
             ['Raspberry Pi 2 Model B',      1.751 ],
             ['Raspberry Pi 3 Model B',      1.690 ],
             ['Raspberry Pi 4 Model B',      1.036 ]
