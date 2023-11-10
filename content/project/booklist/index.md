@@ -10,6 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2023
+ * Mexico Set - Len Deighton
  * Berlin Game - Len Deighton
  * Assassin's Quest (Farseer trilogy book 3) - Robin Hobb
  * Royal Assassin (Farseer trilogy book 2) - Robin Hobb
