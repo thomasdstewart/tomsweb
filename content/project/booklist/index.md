@@ -9,7 +9,10 @@ aliases: [/tomsweb/BookList/]
 ---
 Books I've read:
 
-2023
+2024
+ * Doctor Sleep - Stephen King
+
+2023 (10)
  * London Match - Len Deighton
  * Mexico Set - Len Deighton
  * Berlin Game - Len Deighton
