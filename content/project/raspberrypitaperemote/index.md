@@ -197,19 +197,19 @@ qemu-system-arm -kernel kernel-qemu-4.1.13-jessie -cpu arm1176 -m 256 -M versati
 
 Once running the system will have a read-only root, that way the device can be powered off without worrying about file system corruption. If small changes are needed on the fly, the root filesystem can be remounted rw in order to make small changes.
 
-## Zeus Update
-Build nodes for Zeus
+## Nanbield Update
+Build nodes for Nanbield
 
 ```
-sudo apt-get -y install build-essential chrpath cpio debianutils diffstat gawk gcc-multilib git iputils-ping libsdl1.2-dev python python3 python3-pexpect python3-pip socat sudo texinfo unzip wget xterm xz-utils 
+sudo apt-get -y install bmap-tools build-essential chrpath cpio debianutils diffstat gawk gcc-multilib git iputils-ping libsdl1.2-dev python3 python3-pexpect python3-pip socat sudo texinfo unzip wget xterm xz-utils 
 sudo apt-get -y install screen dstat qemu-system-arm
 ```
 
 ```
-git clone http://git.yoctoproject.org/git/poky -b zeus
-cd poky
-git clone http://git.openembedded.org/meta-openembedded -b zeus
-git clone http://git.yoctoproject.org/git/meta-raspberrypi -b zeus
+git clone http://git.yoctoproject.org/git/poky -b nanbield rptr
+cd rptr
+git clone http://git.openembedded.org/meta-openembedded -b nanbield
+git clone http://git.yoctoproject.org/git/meta-raspberrypi -b nanbield
 git clone https://github.com/thomasdstewart/meta-rptr.git
 . oe-init-build-env
 bitbake-layers add-layer $PWD/../meta-openembedded/meta-oe
@@ -219,15 +219,17 @@ bitbake-layers add-layer $PWD/../meta-raspberrypi
 bitbake-layers add-layer $PWD/../meta-rptr
 echo 'MACHINE = "raspberrypi"' >> conf/local.conf
 echo 'DISTRO = "rptr"' >> conf/local.conf
-echo 'ROOT_PASSWORD = "password"' >> conf/local.conf
+p=$(printf "%q" $(mkpasswd -m sha-512 password))
+echo "ROOT_PASSWORD_HASH = \"$p\"" >> conf/local.conf
 echo 'WIFI_SSID = "someapssid"' >> conf/local.conf
 echo 'WIFI_PSK = "somepassword"' >> conf/local.conf
 bitbake rpi-rptr-image
+bmaptool copy tmp/deploy/images/raspberrypi/rpi-rptr-image-raspberrypi.rootfs.wic.bz2 img.raw
 ```
 
 ```
 wget https://github.com/dhruvvyas90/qemu-rpi-kernel/raw/master/kernel-qemu-4.4.34-jessie
-qemu-system-arm -M versatilepb -cpu arm1176 -m 256 -kernel kernel-qemu-4.4.34-jessie -no-reboot -append "root=/dev/sda2 rootfstype=ext4 rw" -hda tmp/deploy/images/raspberrypi/rpi-rptr-image-raspberrypi.rpi-sdimg
+qemu-system-arm -M versatilepb -cpu arm1176 -m 256 -kernel kernel-qemu-4.4.34-jessie -no-reboot -append "root=/dev/sda2 rootfstype=ext4 rw" -hda img.raw
 
 ```
 
