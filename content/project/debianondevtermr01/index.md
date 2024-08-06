@@ -22,7 +22,7 @@ This is the result of that I have found out and a set of instructions that can b
 Obviously this needs Linux to run, I run and use Debian Testing for this. I expect Debian based distros might work with a little work, other distros will probably need more work. Step one is to install some prerequisite packages, create a work dir and rootfs dir eg /home/thomas/devterm and /home/thomas/devterm/rootfs. About 15G of disk space is required.
 
 ```
-sudo apt-get install binfmt-support binutils-riscv64-linux-gnu debian-ports-archive-keyring debootstrap gcc-11-riscv64-linux-gnu gcc-riscv64-linux-gnu qemu-user-static qemu-user-static fdisk swig uuid
+sudo apt-get install binfmt-support binutils-riscv64-linux-gnu debian-ports-archive-keyring debootstrap gcc-riscv64-linux-gnu gcc-riscv64-linux-gnu qemu-user-static qemu-user-static fdisk swig uuid
 mkdir -p ~/devterm/rootfs
 cd ~/devterm
 ```
@@ -79,8 +79,10 @@ EOF
 cp opensbi/build/platform/generic/firmware/fw_dynamic.bin u-boot/
 (cd u-boot; tools/mkimage -T sunxi_toc1 -d toc1.cfg u-boot.toc1)
 
-sudo dd if=sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=disk.img bs=512 seek=16
-sudo dd if=u-boot/u-boot.toc1 of=disk.img bs=512 seek=32800
+d=$(sudo losetup --show -f -P disk.img)
+sudo dd if=sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=${d} bs=512 seek=16
+sudo dd if=u-boot/u-boot.toc1 of=${d} bs=512 seek=32800
+sudo losetup -d $d
 ```
 
 ## Compile Linux
@@ -97,11 +99,11 @@ export PATH=`pwd`/riscv64-glibc-gcc-thead_20200702/bin:$PATH
 
 Grab the kernel config from the clockworkpi image.
 ```
-wget -c ttp://dl.clockworkpi.com/DevTerm_R01_v0.1.img.bz2
-bunzip2 DevTerm_R01_v0.1.img.bz2
-u=$(sudo losetup --show -f -P DevTerm_R01_v0.1.img)
-mkdir ubuntu
-sudo mount ${d}p4 ubuntu
+wget -c http://dl.clockworkpi.com/DevTerm_R01_v0.2a.img.bz2
+bunzip2 DevTerm_R01_v0.2a.img.bz2
+u=$(sudo losetup --show -f -P DevTerm_R01_v0.2a.img)
+mkdir -p ubuntu
+sudo mount ${u}p3 ubuntu
 
 sudo cp ubuntu/boot/config-5.4.61 .
 sudo umount ubuntu
@@ -131,7 +133,7 @@ export PATH=$OLDPATH
 ## Create root file system, install packages and configure
 Just use debootstrap to create a clean install. Set a few debconfig values, install locales and then install a bunch of useful packages.
 ```
-sudo debootstrap --arch=riscv64 --keyring /usr/share/keyrings/debian-ports-archive-keyring.gpg --include=debian-ports-archive-keyring unstable /thomas/home/devterm/rootfs http://deb.debian.org/debian-ports
+sudo debootstrap --arch=riscv64 unstable rootfs http://deb.debian.org/debian-ports
 
 sudo chroot rootfs apt-get update
 
@@ -180,11 +182,11 @@ echo "        fdt /board.dtb" | sudo tee -a rootfs/boot/extlinux/extlinux.conf
 ## Install Firmware
 The Wifi requires some firmware, I was not able to find this, I assume it's behind the allwinner site. I got the 3 files from the clockworkpi image.
 ```
-wget -c http://dl.clockworkpi.com/DevTerm_R01_v0.1.img.bz2
-bunzip2 DevTerm_R01_v0.1.img.bz2
-u=$(sudo losetup --show -f -P DevTerm_R01_v0.1.img)
-mkdir ubuntu
-sudo mount ${d}p4 ubuntu
+wget -c http://dl.clockworkpi.com/DevTerm_R01_v0.2a.img.bz2
+bunzip2 DevTerm_R01_v0.2a.img.bz2
+u=$(sudo losetup --show -f -P DevTerm_R01_v0.2a.img)
+mkdir -p ubuntu
+sudo mount ${u}p4 ubuntu
 
 sudo mkdir -p rootfs/lib/firmware/brcm
 sudo cp ubuntu/lib/firmware/brcm/brcmfmac43456-sdio.* rootfs/lib/firmware/brcm
@@ -221,14 +223,14 @@ EOF
 ## Disable some services
 To speed up booting disable tome services: apt-daily, apt-daily-upgrade, ModemManager, avahi-daemon, NetworkManager-wait-online:
 ```
-rm rootfs/etc/systemd/system/timers.target.wants/apt-daily.timer
-rm rootfs/etc/systemd/system/timers.target.wants/apt-daily-upgrade.timer
-rm rootfs/etc/systemd/system/dbus-org.freedesktop.ModemManager1.service
-rm rootfs/etc/systemd/system/multi-user.target.wants/ModemManager.service
-rm rootfs/etc/systemd/system/dbus-org.freedesktop.Avahi.service
-rm rootfs/etc/systemd/system/sockets.target.wants/avahi-daemon.socket
-rm rootfs/etc/systemd/system/multi-user.target.wants/avahi-daemon.service
-rm rootfs/etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service
+sudo rm rootfs/etc/systemd/system/timers.target.wants/apt-daily.timer
+sudo rm rootfs/etc/systemd/system/timers.target.wants/apt-daily-upgrade.timer
+sudo rm rootfs/etc/systemd/system/dbus-org.freedesktop.ModemManager1.service
+sudo rm rootfs/etc/systemd/system/multi-user.target.wants/ModemManager.service
+sudo rm rootfs/etc/systemd/system/dbus-org.freedesktop.Avahi.service
+sudo rm rootfs/etc/systemd/system/sockets.target.wants/avahi-daemon.socket
+sudo rm rootfs/etc/systemd/system/multi-user.target.wants/avahi-daemon.service
+sudo rm rootfs/etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service
 ```
 
 ## Create user
@@ -296,7 +298,49 @@ sudo nmcli dev wifi connect "MyWifi" password "my-password"
 
  * How to package SPL
  * How to package OpenSBI/u-boot
+ * Find what patches are needed for SPL/OpenSBI/u-boot
  * Find what patches were applied are needed in mainline Linux
  * Package Linux
+ * Update Linux
  * Repackage clockworkpi debs
 
+## Notes for update 2023-12-08
+
+opensbi patch:
+```
+diff --git a/Makefile b/Makefile
+index 062883e..3913600 100644
+--- a/Makefile
++++ b/Makefile
+@@ -223,7 +223,7 @@ ifndef PLATFORM_RISCV_ABI
+ endif
+ ifndef PLATFORM_RISCV_ISA
+   ifneq ($(PLATFORM_RISCV_TOOLCHAIN_DEFAULT), 1)
+-    PLATFORM_RISCV_ISA = rv$(PLATFORM_RISCV_XLEN)imafdc
++    PLATFORM_RISCV_ISA = rv$(PLATFORM_RISCV_XLEN)imafdc_zifencei
+   else
+     PLATFORM_RISCV_ISA = $(OPENSBI_CC_ISA)
+   endif
+```
+
+u-boot patch:
+```
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index 0b80eb8d86..7814d02bbd 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -24,7 +24,7 @@ ifeq ($(CONFIG_CMODEL_MEDANY),y)
+    CMODEL = medany
+ endif
+ 
+-ARCH_FLAGS = -march=$(ARCH_BASE)$(ARCH_A)$(ARCH_C) -mabi=$(ABI) \
++ARCH_FLAGS = -march=$(ARCH_BASE)$(ARCH_A)$(ARCH_C)_zicsr_zifencei -mabi=$(ABI) \
+         -mcmodel=$(CMODEL)
+ 
+ PLATFORM_CPPFLAGS  += $(ARCH_FLAGS)
+```
+
+
+https://github.com/sbabic/meta-swupdate-boards/blob/master/recipes-extended/images/update-image.bb
+https://github.com/smaeul/linux/blob/d1/wip/arch/riscv/configs/nezha_defconfig
+https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv/
