@@ -147,7 +147,7 @@ exit
 
 ## Create root file system, install packages and configure
 Just use debootstrap to create a clean install. Set a few debconf values, install locales and then install a bunch of useful packages.
-``
+```
 sudo mkdir -p rootfs
 sudo debootstrap --arch=riscv64 sid rootfs http://deb.debian.org/debian
 
