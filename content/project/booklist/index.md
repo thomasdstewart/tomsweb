@@ -10,6 +10,7 @@ aliases: [/tomsweb/BookList/]
 Books I've read:
 
 2024
+ * The Girl and the Mountain (The Book of the Ice book 2) - Mark Lawrence
  * The Girl and the Stars (The Book of the Ice book 1) - Mark Lawrence
  * Doctor Sleep - Stephen King
 
