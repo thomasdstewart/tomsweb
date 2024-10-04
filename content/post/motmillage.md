@@ -28,6 +28,8 @@ Here is the millage data, I calculated the miles since the last MOT column. The 
 | 2020-03-17 | 153386           | 8644                            | COVD-19!
 | 2021-03-27 | 158314           | 4928                            |
 | 2022-03-25 | 165704           | 7390                            |
+| 2023-03-24 | 173678           | 7974                            |
+| 2024-02-08 | 174409           | 731                             | Sold
 
 So just using Google Charts this looks like:
 
@@ -54,6 +56,8 @@ So just using Google Charts this looks like:
                 [ new Date('2020-03-17'), 8644],
                 [ new Date('2021-03-27'), 4928],
                 [ new Date('2022-03-25'), 7390]
+                [ new Date('2023-03-24'), 7974]
+                [ new Date('2024-02-08'), 731]
         ]);
 
         var options = {
