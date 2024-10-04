@@ -55,8 +55,8 @@ So just using Google Charts this looks like:
                 [ new Date('2019-03-20'), 11831],
                 [ new Date('2020-03-17'), 8644],
                 [ new Date('2021-03-27'), 4928],
-                [ new Date('2022-03-25'), 7390]
-                [ new Date('2023-03-24'), 7974]
+                [ new Date('2022-03-25'), 7390],
+                [ new Date('2023-03-24'), 7974],
                 [ new Date('2024-02-08'), 731]
         ]);
 
