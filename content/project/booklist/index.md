@@ -4,11 +4,10 @@ summary: ""
 authors: ["thomas"]
 tags: ["book", "other"]
 categories: []
-date: 2023-09-23
+date: 2024-10-08
 aliases: [/tomsweb/BookList/]
 ---
-Books I've read:
-(https://isbnsearch.org/)
+Books I've read per year. Title - Author (IDBN) (https://isbnsearch.org/)
 
 2024
  * The Girl and the Mountain (The Book of the Ice book 2) - Mark Lawrence (9781479245529)
@@ -117,8 +116,8 @@ Books I've read:
  * Black Man (Th1rte3n) - Richard K. Morgan (9780345480897)
  * The Professor, the Banker, and the Suicide King: Inside the Richest Poker Game of All Time - Michael Craig (9780446694971)
  * Kitchen Confidential - Anthony Bourdain (9780747553557)
- * Breaking Dawn (The Twilight Saga book 3) - Stephenie Meyer (9780316328326)
- * Eclipse (The Twilight Saga book 2) - Stephenie Meyer (9780316328142)
+ * Breaking Dawn (The Twilight Saga book 4) - Stephenie Meyer (9780316328326)
+ * Eclipse (The Twilight Saga book 3) - Stephenie Meyer (9780316328142)
  * The Cookoo's Egg - Cliff Stoll (9781416507789)
  * The Truth - Terry Pratchett (9780062307361)
 
@@ -133,12 +132,18 @@ Books I've read:
  * Making Money - Terry Pratchett (9780062334992)
  * A Thief of Time - Terry Pratchett (9780062307392)
  * Woken Furies - Richard K. Morgan (9780575081277)
- * The Magicians - Lev Grossman
- * New Moon - Stephenie Meyer
- * Broken Angels - Richard K. Morgan
- * Altered Carbon - Richard K. Morgan
- * Starship Troopers - Robert A. Heinlein
- * Twilight (The Twilight Saga book 1) - Stephenie Meyer
- * Blow Fly - Patricia Cornwell
- * Guards Guards - Terry Pratchett
+ * The Magicians - Lev Grossman (9780099534440)
+ * New Moon (The Twilight Saga book 2)- Stephenie Meyer (9780316327787)
+ * Broken Angels - Richard K. Morgan (9780345457714)
+ * Altered Carbon - Richard K. Morgan (9780345457684)
+ * Starship Troopers - Robert A. Heinlein (9780441014101)
+ * Twilight (The Twilight Saga book 1) - Stephenie Meyer (9780316327336)
+ * Blow Fly - Patricia Cornwell (9780425266724)
+ * Guards Guards - Terry Pratchett (9780063373761)
+
+Earlier
+ * The Hobbit - J.R.R. Tolkien (9780547928227)
+ * The Fellowship of the Ring (The Lord of the Rings book 1) - J.R.R. Tolkien (9780547928210)
+ * The Two Towers (The Lord of the Rings book 2) - J.R.R. Tolkien (9780345339713)
+ * The Return of the King (The Lord of the Rings book 3) - J.R.R. Tolkien (9780547952048)
 
