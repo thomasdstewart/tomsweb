@@ -9,7 +9,10 @@ aliases: [/tomsweb/BookList/]
 ---
 Books I've read per year. Title - Author (IDBN) (https://isbnsearch.org/)
 
-2024
+2025
+ * The Girl and the Moon (The Book of the Ice book 3) - Mark Lawrence (9780008284886)
+
+2024 (3)
  * The Girl and the Mountain (The Book of the Ice book 2) - Mark Lawrence (9781479245529)
  * The Girl and the Stars (The Book of the Ice book 1) - Mark Lawrence (9780008284794)
  * Doctor Sleep - Stephen King (9781451698855)
