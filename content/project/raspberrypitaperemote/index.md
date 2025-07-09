@@ -234,7 +234,7 @@ qemu-system-arm -M versatilepb -cpu arm1176 -m 256 -kernel kernel-qemu-4.4.34-je
 ```
 
 ## Walnascar Update
-Build nodes for Nanbield
+Build nodes for Walnascar
 
 ```
 sudo apt-get -y install bmap-tools build-essential chrpath cpio debianutils diffstat gawk gcc-multilib git iputils-ping libsdl1.2-dev python3 python3-pexpect python3-pip socat sudo texinfo unzip wget xterm xz-utils 
