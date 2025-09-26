@@ -7,9 +7,12 @@ categories: []
 date: 2024-10-08
 aliases: [/tomsweb/BookList/]
 ---
-Books I've read per year. Title - Author (IDBN) (https://isbnsearch.org/)
+Books I've read per year. Title - Author (ISBN) (https://isbnsearch.org/)
 
 2025
+ * Spy Line - Len Deighton (9780141996059)
+ * Spy Hook - Len Deighton (9780141996042)
+ * French Kids Eat Everything - Karen Le Billon (9780749958510)
  * The Girl and the Moon (The Book of the Ice book 3) - Mark Lawrence (9780008284886)
 
 2024 (3)
