@@ -88,15 +88,6 @@ sys	0m16.324s
 ```
 
 ```
-$ time sha512sum test
-68eaa567f0ede602c8a89bae07093d42afa5bb42306c99c2a9f2c124d688e42e323bae405b3ca06f5dc360d13325159e09e2ab89a9c82822356e25344fadc787  test
-
-real	1m15.987s
-user	1m0.268s
-sys	0m15.133s
-```
-
-```
 $ time sha256sum test
 2109856cb6642099b7ae3ee3bdf2b1bd7f64af573b04958e8cdd278a786252cc  test
 
@@ -105,7 +96,61 @@ user	0m27.751s
 sys	0m12.037s
 ```
 
-## Results
+```
+$ time sha512sum test
+68eaa567f0ede602c8a89bae07093d42afa5bb42306c99c2a9f2c124d688e42e323bae405b3ca06f5dc360d13325159e09e2ab89a9c82822356e25344fadc787  test
+
+real	1m15.987s
+user	1m0.268s
+sys	0m15.133s
+```
+
+## Graphs
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawStuff);
+
+    function drawStuff() {
+        var data = google.visualization.arrayToDataTable([
+            ['Hash',        'Seconds'],
+            ['Python crc',  46 ],
+            ['python md5',  91 ],
+            ['md5sum',      86],
+            ['sha1sum',     48 ],
+            ['sha224',      53 ],
+            ['sha256',      40 ],
+            ['sha512',      76 ],
+
+        ]);
+
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+            { calc: "stringify",
+              sourceColumn: 1,
+              type: "string",
+              role: "annotation" }
+        ]);
+
+        var options = {
+            title: 'Hash benchmarks',
+            hAxis: {
+                slantedText: true,
+                slantedTextAngle: 45
+            },
+            vAxis: { title: '{Time to complete hash of 40G\n(seconds)'},
+            chartArea: { height:'50%' }
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_power'));
+        chart.draw(view, options);
+    };
+</script>
+<div id="chart_div_power" style="width: 720px; height: 600px;"></div>
+
+
+## Conclusions
 
 
 
