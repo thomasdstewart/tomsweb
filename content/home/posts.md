@@ -17,10 +17,10 @@ content:
   filters:
     folders:
       - post
-    tag: ''
-    category: ''
-    publication_type: ''
-    author: ''
+    tag: ""
+    category: ""
+    publication_type: ""
+    author: ""
     exclude_featured: false
     exclude_future: false
     exclude_past: false
@@ -34,5 +34,5 @@ content:
 design:
   # Choose a view for the listings:
   view: compact
-  columns: '2'
+  columns: "2"
 ---

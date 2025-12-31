@@ -6,16 +6,23 @@ tags: ["linux", "python", "crc", "md5", "sha"]
 categories: []
 date: 2025-04-04 10:38:00
 ---
+
 ## Intro
-This is far far from exhastive, but I needed to perform some light benchmarks in CRC, MD5 and SHA hashing. The idea was to compare crc, md5 and sha as well as compare Naive Python hashing to Linux based tools.
+
+This is far far from exhastive, but I needed to perform some light benchmarks in
+CRC, MD5 and SHA hashing. The idea was to compare crc, md5 and sha as well as
+compare Naive Python hashing to Linux based tools.
 
 ## Method
+
 First a 40G test file was created:
+
 ```
 dd if=/dev/zero bs=1M of=/home/thomas/test count=40960
 ```
 
 This short Python script was used to perform CRC, as crc.py:
+
 ```
 #!/usr/bin/env python3
 import zlib
@@ -29,6 +36,7 @@ print(format(crc32_hash & 0xFFFFFFFF, '08x'))
 ```
 
 and md5.py:
+
 ```
 #!/usr/bin/env python3
 import hashlib
@@ -42,6 +50,7 @@ print(md5.hexdigest())
 ```
 
 ## Results
+
 ```
 $ time ./crc.py
 e38a6876
@@ -149,10 +158,4 @@ sys	0m15.133s
 </script>
 <div id="chart_div_power" style="width: 720px; height: 600px;"></div>
 
-
 ## Conclusions
-
-
-
-
-

@@ -7,21 +7,63 @@ categories: []
 date: 2015-02-25
 aliases: [/tomsweb/RaspberryPiRouterBenchmark/]
 ---
+
 ## Introduction
-My ISP don't provide IPv6 and the wireless router they give out does not work with IPv6 Tunnels. So I setup a [Raspberry Pi](http://www.raspberrypi.org/) as a [router on a stick](https://en.wikipedia.org/wiki/One-armed_router) to route IPv6 on my home network to my IPv6 tunnel provider over IPv4. I mostly did this to start get get familar with IPv6, it does work and my home computers and phone get IPv6 addresses on the Internet. I ocasionally do a netstat and see a bunch of tcp6 connections established to google, facebook and youtube. My one worry was the performance of the Raspberry Pi, it's a single core Arm v6 running at 700Mhz with a 100M ethernet that sits on the USB bus. I have in the past noticed that when the Raspberry Pi is busy (mostly with cron) that the ability for it to forward packets does slow down. Very ocasionally it drops packets and makes the connection unusable for a short while. My internet connection is [FTTC/fiber to the cabinet](https://en.wikipedia.org/wiki/Fiber_to_the_x#Fiber_to_the_curb.2Fcabinet) and +100M, so I'm already limiting my connection speed if they go over the Raspberry Pi. I allways meant to run some bench marks on the Pi to see just how fast it can ship packets. With the advent of the newer Raspberry Pi 2 with it's quad Core Arm v8 running at 900Mhz I decided to do some proper testing.
+
+My ISP don't provide IPv6 and the wireless router they give out does not work
+with IPv6 Tunnels. So I setup a [Raspberry Pi](http://www.raspberrypi.org/) as a
+[router on a stick](https://en.wikipedia.org/wiki/One-armed_router) to route
+IPv6 on my home network to my IPv6 tunnel provider over IPv4. I mostly did this
+to start get get familar with IPv6, it does work and my home computers and phone
+get IPv6 addresses on the Internet. I ocasionally do a netstat and see a bunch
+of tcp6 connections established to google, facebook and youtube. My one worry
+was the performance of the Raspberry Pi, it's a single core Arm v6 running at
+700Mhz with a 100M ethernet that sits on the USB bus. I have in the past noticed
+that when the Raspberry Pi is busy (mostly with cron) that the ability for it to
+forward packets does slow down. Very ocasionally it drops packets and makes the
+connection unusable for a short while. My internet connection is
+[FTTC/fiber to the cabinet](https://en.wikipedia.org/wiki/Fiber_to_the_x#Fiber_to_the_curb.2Fcabinet)
+and +100M, so I'm already limiting my connection speed if they go over the
+Raspberry Pi. I allways meant to run some bench marks on the Pi to see just how
+fast it can ship packets. With the advent of the newer Raspberry Pi 2 with it's
+quad Core Arm v8 running at 900Mhz I decided to do some proper testing.
 
 {{% toc %}}
 
 ## Setup
-I used a [Dlink DGS-1008D](http://www.dlink.com/uk/en/business-solutions/switching/unmanaged-switches/desktop/dgs-1008d-8-port-10-100-1000mbps-gigabit-switch) unmanaged swtich to connect my desktop, a laptop Lenovo X220 (Intel Core i5-2520), a Raspbery Pi Model B and a Raspbery 2 Pi Model B. I also configured the test laptop to use it's ethernet port as a bridge and installed a new virtual machine which connects to that bridge also. So all 4 test machines are bridged together at layer 2. I installed all the machines with Debian testing/sid and updated them all. I wanted to first see what the hardware can do, so I have a fairly stripped down setup. Alomost no processes are running and the iptable modules are no loaded. So on all 4 machines "iptables-save" produces nothing. The test laptop was running Gnome 3, however during the testing the test laptop and virtual machine were practically idle. Both machines are capable of saturating a 1G link. Any background processes running should not interfeer with saturating a 100M link with tcp.
 
-The plan was to use iperf to test networking from the laptop to virtual machine via a layer 3 router, in this case a Raspberry Pi router on a stick. This is not same same test as my original useage, ie routing IPv6 traffic to a IPv6 tunnel over IPv4. However I wanted to see how fast it would route and forward packets. Also to make sure eveything went via the Raspberry Pi I turned off ICMP redirect's on all 4 machines using:
+I used a
+[Dlink DGS-1008D](http://www.dlink.com/uk/en/business-solutions/switching/unmanaged-switches/desktop/dgs-1008d-8-port-10-100-1000mbps-gigabit-switch)
+unmanaged swtich to connect my desktop, a laptop Lenovo X220 (Intel Core
+i5-2520), a Raspbery Pi Model B and a Raspbery 2 Pi Model B. I also configured
+the test laptop to use it's ethernet port as a bridge and installed a new
+virtual machine which connects to that bridge also. So all 4 test machines are
+bridged together at layer 2. I installed all the machines with Debian
+testing/sid and updated them all. I wanted to first see what the hardware can
+do, so I have a fairly stripped down setup. Alomost no processes are running and
+the iptable modules are no loaded. So on all 4 machines "iptables-save" produces
+nothing. The test laptop was running Gnome 3, however during the testing the
+test laptop and virtual machine were practically idle. Both machines are capable
+of saturating a 1G link. Any background processes running should not interfeer
+with saturating a 100M link with tcp.
+
+The plan was to use iperf to test networking from the laptop to virtual machine
+via a layer 3 router, in this case a Raspberry Pi router on a stick. This is not
+same same test as my original useage, ie routing IPv6 traffic to a IPv6 tunnel
+over IPv4. However I wanted to see how fast it would route and forward packets.
+Also to make sure eveything went via the Raspberry Pi I turned off ICMP
+redirect's on all 4 machines using:
 
 ```
 echo 0 | tee /proc/sys/net/ipv4/conf/*/accept_redirects /proc/sys/net/ipv4/conf/*/send_redirects
 ```
+
 ### Addresses
-So all 4 machines are connected to the same layer 2 bridge. The 192.168.1.0/24 addresses are given out by my home Internet router. I chose the 10.0.0.0/8 addresses to test with. For the IPv6 addresses I generated 4 address ranges from the simple [dns](http://www.simpledns.com/private-ipv6.aspx) generator.
+
+So all 4 machines are connected to the same layer 2 bridge. The 192.168.1.0/24
+addresses are given out by my home Internet router. I chose the 10.0.0.0/8
+addresses to test with. For the IPv6 addresses I generated 4 address ranges from
+the simple [dns](http://www.simpledns.com/private-ipv6.aspx) generator.
 
 They were allocated as follows:
 
@@ -29,25 +71,30 @@ They were allocated as follows:
 | --------------- | ----------------------------------------------- | ------------------------------------------------------- |
 | Laptop          | 192.168.1.64/24<br> 10.0.0.5/24<br> 10.0.2.5/24 | fd2b:656a:6fdb:a3a8::5/64<br> fd57:d1b1:9c79:40af::5/64 |
 | Virtual Machine | 192.168.1.65/24<br> 10.0.1.5/24<br> 10.0.3.5/24 | fd14:9aa4:e604:ec36::1/64<br> fd45:64bf:295c:5631::1/64 |
-| Raspberry Pi    | 10.0.0.1/24    <br> 10.0.1.1/24                 | fd2b:656a:6fdb:a3a8::1/64<br> fd14:9aa4:e604:ec36::2/64 |
-| Raspberry Pi 2  | 10.0.2.1/24    <br> 10.0.3.1/24                 | fd57:d1b1:9c79:40af::1/64<br> fd45:64bf:295c:5631::2/64 |
+| Raspberry Pi    | 10.0.0.1/24 <br> 10.0.1.1/24                    | fd2b:656a:6fdb:a3a8::1/64<br> fd14:9aa4:e604:ec36::2/64 |
+| Raspberry Pi 2  | 10.0.2.1/24 <br> 10.0.3.1/24                    | fd57:d1b1:9c79:40af::1/64<br> fd45:64bf:295c:5631::2/64 |
 
 The routing tables look at follows:
 
-| Device          | Route |
-| --------------- | ----- |
-| Laptop          | 10.0.0.0/24 dev br0  proto kernel  scope link  src 10.0.0.5 <br>10.0.1.0/24 via 10.0.0.1 dev br0 <br>10.0.2.0/24 dev br0  proto kernel  scope link  src 10.0.2.5 <br>10.0.3.0/24 via 10.0.2.1 dev br0 <br>|
-| Virtual Machine | 10.0.0.0/24 via 10.0.1.1 dev eth0 <br>10.0.1.0/24 dev eth0  proto kernel  scope link  src 10.0.1.5 <br>10.0.2.0/24 via 10.0.3.1 dev eth0 <br>10.0.3.0/24 dev eth0  proto kernel  scope link  src 10.0.3.5 <br>|
-| Laptop          | fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0  metric 1024<br> fd2b:656a:6fdb:a3a8::/64 dev br0  proto kernel  metric 256<br> fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0  metric 1024<br> fd57:d1b1:9c79:40af::/64 dev br0  proto kernel  metric 256 <br>|
-| Virtual Machine | fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0  metric 1024<br> fd2b:656a:6fdb:a3a8::/64 dev br0  proto kernel  metric 256<br> fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0  metric 1024<br> fd57:d1b1:9c79:40af::/64 dev br0  proto kernel  metric 256<br>|
-| Raspberry Pi    | fd14:9aa4:e604:ec36::1 dev ipv6tun  metric 1024<br> fd14:9aa4:e604:ec36::/64 dev ipv6tun  proto kernel  metric 256<br> fd2b:656a:6fdb:a3a8::/64 dev eth0  proto kernel  metric 256<br>|
-| Raspberry Pi 2  | fd45:64bf:295c:5631::1 dev ipv6tun  metric 1024<br> fd45:64bf:295c:5631::/64 dev ipv6tun  proto kernel  metric 256<br> fd57:d1b1:9c79:40af::/64 dev eth0  proto kernel  metric 256<br>|
-
+| Device          | Route                                                                                                                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Laptop          | 10.0.0.0/24 dev br0 proto kernel scope link src 10.0.0.5 <br>10.0.1.0/24 via 10.0.0.1 dev br0 <br>10.0.2.0/24 dev br0 proto kernel scope link src 10.0.2.5 <br>10.0.3.0/24 via 10.0.2.1 dev br0 <br>                                                                               |
+| Virtual Machine | 10.0.0.0/24 via 10.0.1.1 dev eth0 <br>10.0.1.0/24 dev eth0 proto kernel scope link src 10.0.1.5 <br>10.0.2.0/24 via 10.0.3.1 dev eth0 <br>10.0.3.0/24 dev eth0 proto kernel scope link src 10.0.3.5 <br>                                                                           |
+| Laptop          | fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0 metric 1024<br> fd2b:656a:6fdb:a3a8::/64 dev br0 proto kernel metric 256<br> fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0 metric 1024<br> fd57:d1b1:9c79:40af::/64 dev br0 proto kernel metric 256 <br> |
+| Virtual Machine | fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0 metric 1024<br> fd2b:656a:6fdb:a3a8::/64 dev br0 proto kernel metric 256<br> fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0 metric 1024<br> fd57:d1b1:9c79:40af::/64 dev br0 proto kernel metric 256<br>  |
+| Raspberry Pi    | fd14:9aa4:e604:ec36::1 dev ipv6tun metric 1024<br> fd14:9aa4:e604:ec36::/64 dev ipv6tun proto kernel metric 256<br> fd2b:656a:6fdb:a3a8::/64 dev eth0 proto kernel metric 256<br>                                                                                                  |
+| Raspberry Pi 2  | fd45:64bf:295c:5631::1 dev ipv6tun metric 1024<br> fd45:64bf:295c:5631::/64 dev ipv6tun proto kernel metric 256<br> fd57:d1b1:9c79:40af::/64 dev eth0 proto kernel metric 256<br>                                                                                                  |
 
 ### General info (verison, arch, cpuinfo, memory)
-I decided that during the write up I would not obscure the machines when pasting commands. The laptop is known as lenovo, the virtual machine is debian, the raspberry pi is lace and the raspberry pi 2 is is jessie-rpi. This it just some general information about the machines. Also note that the machine's are not running NTP, so timestamps sometimes look odd.
+
+I decided that during the write up I would not obscure the machines when pasting
+commands. The laptop is known as lenovo, the virtual machine is debian, the
+raspberry pi is lace and the raspberry pi 2 is is jessie-rpi. This it just some
+general information about the machines. Also note that the machine's are not
+running NTP, so timestamps sometimes look odd.
 
 #### Laptop
+
 ```
 root@lenovo:~# cat /etc/debian_version
 8.0
@@ -135,7 +182,9 @@ Mem:         15966       1325      14641         90         42        563
 Swap:         7590          0       7590
 root@lenovo:~#
 ```
+
 #### Virtual Machine
+
 ```
 root@debian:~# cat /etc/debian_version
 8.0
@@ -199,6 +248,7 @@ root@debian:~#
 ```
 
 #### Raspberry Pi
+
 ```
 root@lace:~# cat /etc/debian_version
 8.0
@@ -246,6 +296,7 @@ root@lace:~#
 ```
 
 #### Raspberry Pi 2
+
 ```
 root@jessie-rpi:~# cat /etc/debian_version
 8.0
@@ -324,9 +375,13 @@ Mem:           925         62        863          6          8         27
 Swap:            0          0          0
 root@jessie-rpi:~#
 ```
+
 ### Network Settings
+
 Next follows the actual network settings I used.
+
 #### Laptop
+
 ```
 root@lenovo:~# cat /etc/network/interfaces
 iface eth0 inet manual
@@ -385,6 +440,7 @@ root@lenovo:~#
 ```
 
 #### Virtual Machine
+
 ```
 root@debian:~# cat /etc/network/interfaces
 auto eth0
@@ -431,6 +487,7 @@ root@debian:~#
 ```
 
 #### Raspberry Pi
+
 ```
 root@lace:~# cat /etc/network/interfaces
 auto eth0:0
@@ -473,6 +530,7 @@ root@lace:~#
 ```
 
 #### Raspberry Pi 2
+
 ```
 root@jessie-rpi:~# cat /etc/network/interfaces
 auto eth0:0
@@ -512,15 +570,18 @@ root@jessie-rpi:~#
 ```
 
 ### IPv6 Network Settings
+
 #### Lenovo
+
 section in /etc/network/interfaces:
+
 ```
 auto br0:3
 iface br0:3 inet6 static
 	address fd2b:656a:6fdb:a3a8::5
 	netmask 64
 	post-up  /sbin/ip route add fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0
-	pre-down /sbin/ip route del fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0 
+	pre-down /sbin/ip route del fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0
 
 auto br0:4
 iface br0:4 inet6 static
@@ -528,40 +589,42 @@ iface br0:4 inet6 static
 	netmask 64
 	post-up  /sbin/ip route add fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0
 	pre-down /sbin/ip route del fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0
- 
+
 ```
 
 ```
 root@lenovo:~# ip -6 addr
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 
-    inet6 ::1/128 scope host 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
-5: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 
-    inet6 fd57:d1b1:9c79:40af::5/64 scope global deprecated 
+5: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500
+    inet6 fd57:d1b1:9c79:40af::5/64 scope global deprecated
        valid_lft forever preferred_lft 0sec
-    inet6 fd2b:656a:6fdb:a3a8::5/64 scope global deprecated 
+    inet6 fd2b:656a:6fdb:a3a8::5/64 scope global deprecated
        valid_lft forever preferred_lft 0sec
-    inet6 fe80::f2de:f1ff:fedb:3597/64 scope link 
+    inet6 fe80::f2de:f1ff:fedb:3597/64 scope link
        valid_lft forever preferred_lft forever
 6: vnet0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qlen 500
-    inet6 fe80::fc54:ff:fe99:771d/64 scope link 
+    inet6 fe80::fc54:ff:fe99:771d/64 scope link
        valid_lft forever preferred_lft forever
 root@lenovo:~#
 ```
 
 ```
 root@lenovo:~# ip -6 route
-fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0  metric 1024 
-fd2b:656a:6fdb:a3a8::/64 dev br0  proto kernel  metric 256 
-fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0  metric 1024 
-fd57:d1b1:9c79:40af::/64 dev br0  proto kernel  metric 256 
-fe80::/64 dev br0  proto kernel  metric 256 
-fe80::/64 dev vnet0  proto kernel  metric 256 
-root@lenovo:~# 
+fd14:9aa4:e604:ec36::/64 via fd2b:656a:6fdb:a3a8::1 dev br0  metric 1024
+fd2b:656a:6fdb:a3a8::/64 dev br0  proto kernel  metric 256
+fd45:64bf:295c:5631::/64 via fd57:d1b1:9c79:40af::1 dev br0  metric 1024
+fd57:d1b1:9c79:40af::/64 dev br0  proto kernel  metric 256
+fe80::/64 dev br0  proto kernel  metric 256
+fe80::/64 dev vnet0  proto kernel  metric 256
+root@lenovo:~#
 ```
 
 #### Virtual Machine
+
 section in /etc/network/interfaces:
+
 ```
 auto ipv6tun
 iface ipv6tun inet6 v4tunnel
@@ -586,39 +649,41 @@ iface ipv6tun2 inet6 v4tunnel
 
 ```
 thomas@debian:~$ ip -6 addr
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 
-    inet6 ::1/128 scope host 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qlen 1000
-    inet6 fe80::5054:ff:fe99:771d/64 scope link 
+    inet6 fe80::5054:ff:fe99:771d/64 scope link
        valid_lft forever preferred_lft forever
-10: ipv6tun@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480 
-    inet6 fd14:9aa4:e604:ec36::1/64 scope global 
+10: ipv6tun@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480
+    inet6 fd14:9aa4:e604:ec36::1/64 scope global
        valid_lft forever preferred_lft forever
-    inet6 fe80::a00:105/64 scope link 
+    inet6 fe80::a00:105/64 scope link
        valid_lft forever preferred_lft forever
-11: ipv6tun2@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480 
-    inet6 fd45:64bf:295c:5631::1/64 scope global 
+11: ipv6tun2@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480
+    inet6 fd45:64bf:295c:5631::1/64 scope global
        valid_lft forever preferred_lft forever
-    inet6 fe80::a00:305/64 scope link 
+    inet6 fe80::a00:305/64 scope link
        valid_lft forever preferred_lft forever
 thomas@debian:~$
 ```
 
 ```
 thomas@debian:~$ ip -6 route
-fd14:9aa4:e604:ec36::/64 dev ipv6tun  proto kernel  metric 256 
-fd2b:656a:6fdb:a3a8::/64 via fd14:9aa4:e604:ec36::2 dev ipv6tun  metric 1024 
-fd45:64bf:295c:5631::/64 dev ipv6tun2  proto kernel  metric 256 
-fd57:d1b1:9c79:40af::/64 via fd45:64bf:295c:5631::2 dev ipv6tun2  metric 1024 
-fe80::/64 dev eth0  proto kernel  metric 256 
-fe80::/64 dev ipv6tun  proto kernel  metric 256 
-fe80::/64 dev ipv6tun2  proto kernel  metric 256 
-thomas@debian:~$ 
+fd14:9aa4:e604:ec36::/64 dev ipv6tun  proto kernel  metric 256
+fd2b:656a:6fdb:a3a8::/64 via fd14:9aa4:e604:ec36::2 dev ipv6tun  metric 1024
+fd45:64bf:295c:5631::/64 dev ipv6tun2  proto kernel  metric 256
+fd57:d1b1:9c79:40af::/64 via fd45:64bf:295c:5631::2 dev ipv6tun2  metric 1024
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev ipv6tun  proto kernel  metric 256
+fe80::/64 dev ipv6tun2  proto kernel  metric 256
+thomas@debian:~$
 ```
 
 #### Raspberry Pi
+
 section in /etc/network/interfaces:
+
 ```
 auto eth0:2
 iface eth0:2 inet6 static
@@ -638,40 +703,43 @@ iface ipv6tun inet6 v4tunnel
 
 ```
 root@lace:~# ip -6 addr
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 
-    inet6 ::1/128 scope host 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qlen 1000
-    inet6 fd2b:656a:6fdb:a3a8::1/64 scope global deprecated 
+    inet6 fd2b:656a:6fdb:a3a8::1/64 scope global deprecated
        valid_lft forever preferred_lft 0sec
-    inet6 fe80::ba27:ebff:fe4a:1b21/64 scope link 
+    inet6 fe80::ba27:ebff:fe4a:1b21/64 scope link
        valid_lft forever preferred_lft forever
-7: ipv6tun@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480 
-    inet6 fd14:9aa4:e604:ec36::2/64 scope global 
+7: ipv6tun@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480
+    inet6 fd14:9aa4:e604:ec36::2/64 scope global
        valid_lft forever preferred_lft forever
-    inet6 fe80::a00:101/64 scope link 
+    inet6 fe80::a00:101/64 scope link
        valid_lft forever preferred_lft forever
-root@lace:~# 
+root@lace:~#
 ```
 
 ```
 root@lace:~# ip -6 route
-fd14:9aa4:e604:ec36::1 dev ipv6tun  metric 1024 
-fd14:9aa4:e604:ec36::/64 dev ipv6tun  proto kernel  metric 256 
-fd2b:656a:6fdb:a3a8::/64 dev eth0  proto kernel  metric 256 
-fe80::/64 dev eth0  proto kernel  metric 256 
-fe80::/64 dev ipv6tun  proto kernel  metric 256 
-default via fd14:9aa4:e604:ec36::1 dev ipv6tun  metric 1024 
-root@lace:~# 
+fd14:9aa4:e604:ec36::1 dev ipv6tun  metric 1024
+fd14:9aa4:e604:ec36::/64 dev ipv6tun  proto kernel  metric 256
+fd2b:656a:6fdb:a3a8::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev ipv6tun  proto kernel  metric 256
+default via fd14:9aa4:e604:ec36::1 dev ipv6tun  metric 1024
+root@lace:~#
 ```
 
 ```
 root@lace:~# cat /proc/sys/net/ipv6/conf/all/forwarding
 1
-root@lace:~# 
+root@lace:~#
 ```
+
 #### Raspberry Pi 2
+
 section in /etc/network/interfaces:
+
 ```
 auto eth0:2
 iface eth0:2 inet6 static
@@ -690,43 +758,47 @@ iface ipv6tun inet6 v4tunnel
 
 ```
 root@jessie-rpi:~# ip -6 addr
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 
-    inet6 ::1/128 scope host 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qlen 1000
-    inet6 fd57:d1b1:9c79:40af::1/64 scope global deprecated 
+    inet6 fd57:d1b1:9c79:40af::1/64 scope global deprecated
        valid_lft forever preferred_lft 0sec
-    inet6 fe80::ba27:ebff:fe27:51b9/64 scope link 
+    inet6 fe80::ba27:ebff:fe27:51b9/64 scope link
        valid_lft forever preferred_lft forever
-4: ipv6tun@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480 
-    inet6 fd45:64bf:295c:5631::2/64 scope global 
+4: ipv6tun@NONE: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1480
+    inet6 fd45:64bf:295c:5631::2/64 scope global
        valid_lft forever preferred_lft forever
-    inet6 fe80::a00:301/64 scope link 
+    inet6 fe80::a00:301/64 scope link
        valid_lft forever preferred_lft forever
-root@jessie-rpi:~# 
+root@jessie-rpi:~#
 ```
 
 ```
 root@jessie-rpi:~# ip -6 route
-fd45:64bf:295c:5631::1 dev ipv6tun  metric 1024 
-fd45:64bf:295c:5631::/64 dev ipv6tun  proto kernel  metric 256 
-fd57:d1b1:9c79:40af::/64 dev eth0  proto kernel  metric 256 
-fe80::/64 dev eth0  proto kernel  metric 256 
-fe80::/64 dev ipv6tun  proto kernel  metric 256 
-default via fd45:64bf:295c:5631::1 dev ipv6tun  metric 1024 
-root@jessie-rpi:~# 
+fd45:64bf:295c:5631::1 dev ipv6tun  metric 1024
+fd45:64bf:295c:5631::/64 dev ipv6tun  proto kernel  metric 256
+fd57:d1b1:9c79:40af::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev ipv6tun  proto kernel  metric 256
+default via fd45:64bf:295c:5631::1 dev ipv6tun  metric 1024
+root@jessie-rpi:~#
 ```
 
 ```
 root@jessie-rpi:~# cat /proc/sys/net/ipv6/conf/all/forwarding
 1
-root@jessie-rpi:~# 
+root@jessie-rpi:~#
 ```
 
 ### Process tables
-As I mentioned the Raspberry machines were fairly simple without many backgroud tasks running that could potentially effect the results. Next is the full process listing from both.
+
+As I mentioned the Raspberry machines were fairly simple without many backgroud
+tasks running that could potentially effect the results. Next is the full
+process listing from both.
 
 #### Raspberry Pi
+
 ```
 root@lace:~# ps auxww
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
@@ -787,6 +859,7 @@ root@lace:~#
 ```
 
 #### Raspberry Pi 2
+
 ```
 root@jessie-rpi:~# ps auxww
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
@@ -876,9 +949,11 @@ root@jessie-rpi:~#
 ```
 
 ## Testing the Setup
+
 I wanted to make sure that my setup worked.
 
 ### Ping test Raspberry Pi
+
 ```
 root@lenovo:~# ping -n -c 1 10.0.1.5
 PING 10.0.1.5 (10.0.1.5) 56(84) bytes of data.
@@ -895,10 +970,11 @@ PING 10.0.0.5 (10.0.0.5) 56(84) bytes of data.
 --- 10.0.0.5 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 1.174/1.174/1.174/0.000 ms
-root@debian:~# 
+root@debian:~#
 ```
 
 on lace:
+
 ```
 15:36:22.694730 IP 10.0.0.5 > 10.0.1.5: ICMP echo request, id 6361, seq 1, length 64
 15:36:22.694839 IP 10.0.0.5 > 10.0.1.5: ICMP echo request, id 6361, seq 1, length 64
@@ -918,7 +994,7 @@ PING fd14:9aa4:e604:ec36::1(fd14:9aa4:e604:ec36::1) 56 data bytes
 --- fd14:9aa4:e604:ec36::1 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 1.815/1.815/1.815/0.000 ms
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -938,13 +1014,16 @@ PING fd2b:656a:6fdb:a3a8::5(fd2b:656a:6fdb:a3a8::5) 56 data bytes
 rtt min/avg/max/mdev = 1.592/1.592/1.592/0.000 ms
 root@debian:~#
 ```
+
 ```
 16:52:24.635238 IP 10.0.1.5 > 10.0.1.1: IP6 fd14:9aa4:e604:ec36::1 > fd2b:656a:6fdb:a3a8::5: ICMP6, echo request, seq 1, length 64
 16:52:24.635535 IP6 fd14:9aa4:e604:ec36::1 > fd2b:656a:6fdb:a3a8::5: ICMP6, echo request, seq 1, length 64
 16:52:24.636044 IP6 fd2b:656a:6fdb:a3a8::5 > fd14:9aa4:e604:ec36::1: ICMP6, echo reply, seq 1, length 64
 16:52:24.636270 IP 10.0.1.1 > 10.0.1.5: IP6 fd2b:656a:6fdb:a3a8::5 > fd14:9aa4:e604:ec36::1: ICMP6, echo reply, seq 1, length 64
 ```
+
 ### Ping test Raspberry Pi 2
+
 ```
 root@lenovo:~# ping -n -c 1 10.0.3.5
 PING 10.0.3.5 (10.0.3.5) 56(84) bytes of data.
@@ -953,7 +1032,7 @@ PING 10.0.3.5 (10.0.3.5) 56(84) bytes of data.
 --- 10.0.3.5 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.938/0.938/0.938/0.000 ms
-root@lenovo:~# 
+root@lenovo:~#
 root@debian:~# ping -n -c 1 10.0.2.5
 PING 10.0.2.5 (10.0.2.5) 56(84) bytes of data.
 64 bytes from 10.0.2.5: icmp_seq=1 ttl=63 time=0.948 ms
@@ -961,10 +1040,11 @@ PING 10.0.2.5 (10.0.2.5) 56(84) bytes of data.
 --- 10.0.2.5 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.948/0.948/0.948/0.000 ms
-root@debian:~# 
+root@debian:~#
 ```
 
 on jessie-rpi:
+
 ```
 04:41:49.288131 IP 10.0.2.5 > 10.0.3.5: ICMP echo request, id 6432, seq 1, length 64
 04:41:49.288194 IP 10.0.2.5 > 10.0.3.5: ICMP echo request, id 6432, seq 1, length 64
@@ -984,7 +1064,7 @@ PING fd45:64bf:295c:5631::1(fd45:64bf:295c:5631::1) 56 data bytes
 --- fd45:64bf:295c:5631::1 ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 1.301/1.301/1.301/0.000 ms
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -1013,22 +1093,25 @@ root@debian:~#
 ```
 
 ### iperf to test 1G links on Laptop and Virtual machine
-These iperf tests were run from another machine on my network and show that both the laptop and the virtual machine are capable of handling the traffic.
+
+These iperf tests were run from another machine on my network and show that both
+the laptop and the virtual machine are capable of handling the traffic.
+
 ```
 homas@diamond:~$ iperf3 -c 192.168.1.64 -i 1 -t 10
 Connecting to host 192.168.1.64, port 5201
 [  4] local 192.168.1.149 port 53778 connected to 192.168.1.64 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-1.00   sec   112 MBytes   943 Mbits/sec    0    147 KBytes       
-[  4]   1.00-2.00   sec   112 MBytes   941 Mbits/sec    0    160 KBytes       
-[  4]   2.00-3.00   sec   112 MBytes   942 Mbits/sec    0    160 KBytes       
-[  4]   3.00-4.00   sec   112 MBytes   941 Mbits/sec    0    165 KBytes       
-[  4]   4.00-5.00   sec   112 MBytes   941 Mbits/sec    0    168 KBytes       
-[  4]   5.00-6.00   sec   112 MBytes   941 Mbits/sec    0    168 KBytes       
-[  4]   6.00-7.00   sec   112 MBytes   941 Mbits/sec    0    168 KBytes       
-[  4]   7.00-8.00   sec   112 MBytes   941 Mbits/sec    0    174 KBytes       
-[  4]   8.00-9.00   sec   101 MBytes   848 Mbits/sec    0    178 KBytes       
-[  4]   9.00-10.00  sec   101 MBytes   849 Mbits/sec    0    182 KBytes       
+[  4]   0.00-1.00   sec   112 MBytes   943 Mbits/sec    0    147 KBytes
+[  4]   1.00-2.00   sec   112 MBytes   941 Mbits/sec    0    160 KBytes
+[  4]   2.00-3.00   sec   112 MBytes   942 Mbits/sec    0    160 KBytes
+[  4]   3.00-4.00   sec   112 MBytes   941 Mbits/sec    0    165 KBytes
+[  4]   4.00-5.00   sec   112 MBytes   941 Mbits/sec    0    168 KBytes
+[  4]   5.00-6.00   sec   112 MBytes   941 Mbits/sec    0    168 KBytes
+[  4]   6.00-7.00   sec   112 MBytes   941 Mbits/sec    0    168 KBytes
+[  4]   7.00-8.00   sec   112 MBytes   941 Mbits/sec    0    174 KBytes
+[  4]   8.00-9.00   sec   101 MBytes   848 Mbits/sec    0    178 KBytes
+[  4]   9.00-10.00  sec   101 MBytes   849 Mbits/sec    0    182 KBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-10.00  sec  1.07 GBytes   923 Mbits/sec    0             sender
@@ -1039,89 +1122,94 @@ thomas@diamond:~$ iperf3 -c 192.168.1.65 -i 1 -t 10
 Connecting to host 192.168.1.65, port 5201
 [  4] local 192.168.1.149 port 44367 connected to 192.168.1.65 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-1.00   sec   112 MBytes   940 Mbits/sec    0    194 KBytes       
-[  4]   1.00-2.00   sec   112 MBytes   942 Mbits/sec    0    238 KBytes       
-[  4]   2.00-3.00   sec   112 MBytes   941 Mbits/sec    0    260 KBytes       
-[  4]   3.00-4.00   sec   112 MBytes   939 Mbits/sec    0    301 KBytes       
-[  4]   4.00-5.00   sec   112 MBytes   941 Mbits/sec    0    321 KBytes       
-[  4]   5.00-6.00   sec   112 MBytes   942 Mbits/sec    0    338 KBytes       
-[  4]   6.00-7.00   sec   112 MBytes   940 Mbits/sec    0    366 KBytes       
-[  4]   7.00-8.00   sec   112 MBytes   942 Mbits/sec    0    382 KBytes       
-[  4]   8.00-9.00   sec   112 MBytes   941 Mbits/sec    0    390 KBytes       
-[  4]   9.00-10.00  sec   112 MBytes   941 Mbits/sec    0    397 KBytes       
+[  4]   0.00-1.00   sec   112 MBytes   940 Mbits/sec    0    194 KBytes
+[  4]   1.00-2.00   sec   112 MBytes   942 Mbits/sec    0    238 KBytes
+[  4]   2.00-3.00   sec   112 MBytes   941 Mbits/sec    0    260 KBytes
+[  4]   3.00-4.00   sec   112 MBytes   939 Mbits/sec    0    301 KBytes
+[  4]   4.00-5.00   sec   112 MBytes   941 Mbits/sec    0    321 KBytes
+[  4]   5.00-6.00   sec   112 MBytes   942 Mbits/sec    0    338 KBytes
+[  4]   6.00-7.00   sec   112 MBytes   940 Mbits/sec    0    366 KBytes
+[  4]   7.00-8.00   sec   112 MBytes   942 Mbits/sec    0    382 KBytes
+[  4]   8.00-9.00   sec   112 MBytes   941 Mbits/sec    0    390 KBytes
+[  4]   9.00-10.00  sec   112 MBytes   941 Mbits/sec    0    397 KBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-10.00  sec  1.10 GBytes   941 Mbits/sec    0             sender
 [  4]   0.00-10.00  sec  1.09 GBytes   941 Mbits/sec                  receiver
 
 iperf Done.
-thomas@diamond:~$ 
+thomas@diamond:~$
 ```
 
 ### iperf to test internal laptop bridge
+
 ```
 root@lenovo:~# iperf3 -c 192.168.1.65 -i 1 -t 10
 Connecting to host 192.168.1.65, port 5201
 [  4] local 192.168.1.64 port 45713 connected to 192.168.1.65 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-1.00   sec  1.82 GBytes  15.6 Gbits/sec    0   2.27 MBytes       
-[  4]   1.00-2.00   sec  1.84 GBytes  15.8 Gbits/sec    0   3.00 MBytes       
-[  4]   2.00-3.00   sec  1.80 GBytes  15.5 Gbits/sec    0   3.01 MBytes       
-[  4]   3.00-4.00   sec  1.75 GBytes  15.0 Gbits/sec    0   3.01 MBytes       
-[  4]   4.00-5.00   sec  1.83 GBytes  15.7 Gbits/sec    0   3.01 MBytes       
-[  4]   5.00-6.00   sec  1.79 GBytes  15.4 Gbits/sec    0   3.01 MBytes       
-[  4]   6.00-7.00   sec  1.78 GBytes  15.3 Gbits/sec    0   3.01 MBytes       
-[  4]   7.00-8.00   sec  1.83 GBytes  15.7 Gbits/sec    0   3.01 MBytes       
-[  4]   8.00-9.00   sec  1.83 GBytes  15.7 Gbits/sec    0   3.01 MBytes       
-[  4]   9.00-10.00  sec  1.82 GBytes  15.6 Gbits/sec    0   3.01 MBytes       
+[  4]   0.00-1.00   sec  1.82 GBytes  15.6 Gbits/sec    0   2.27 MBytes
+[  4]   1.00-2.00   sec  1.84 GBytes  15.8 Gbits/sec    0   3.00 MBytes
+[  4]   2.00-3.00   sec  1.80 GBytes  15.5 Gbits/sec    0   3.01 MBytes
+[  4]   3.00-4.00   sec  1.75 GBytes  15.0 Gbits/sec    0   3.01 MBytes
+[  4]   4.00-5.00   sec  1.83 GBytes  15.7 Gbits/sec    0   3.01 MBytes
+[  4]   5.00-6.00   sec  1.79 GBytes  15.4 Gbits/sec    0   3.01 MBytes
+[  4]   6.00-7.00   sec  1.78 GBytes  15.3 Gbits/sec    0   3.01 MBytes
+[  4]   7.00-8.00   sec  1.83 GBytes  15.7 Gbits/sec    0   3.01 MBytes
+[  4]   8.00-9.00   sec  1.83 GBytes  15.7 Gbits/sec    0   3.01 MBytes
+[  4]   9.00-10.00  sec  1.82 GBytes  15.6 Gbits/sec    0   3.01 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-10.00  sec  18.1 GBytes  15.5 Gbits/sec    0             sender
 [  4]   0.00-10.00  sec  18.1 GBytes  15.5 Gbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ## Tests
+
 ### IPv4
+
 #### No Monitoring
+
 ##### Raspberry Pi
+
 ```
 root@lenovo:~# iperf3 -c 10.0.1.5 -i 30 -t 900
 Connecting to host 10.0.1.5, port 5201
 [  4] local 10.0.0.5 port 43257 connected to 10.0.1.5 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   236 MBytes  66.1 Mbits/sec  254   1.19 MBytes       
-[  4]  30.00-60.00  sec   233 MBytes  65.0 Mbits/sec  128   1.58 MBytes       
-[  4]  60.00-90.00  sec   234 MBytes  65.4 Mbits/sec  210   1.19 MBytes       
-[  4]  90.00-120.00 sec   231 MBytes  64.7 Mbits/sec  130   1.87 MBytes       
-[  4] 120.00-150.00 sec   235 MBytes  65.7 Mbits/sec  273   1.23 MBytes       
-[  4] 150.00-180.00 sec   235 MBytes  65.7 Mbits/sec  334   1.08 MBytes       
-[  4] 180.00-210.00 sec   234 MBytes  65.3 Mbits/sec  116   1.25 MBytes       
-[  4] 210.00-240.00 sec   235 MBytes  65.6 Mbits/sec  317   1.18 MBytes       
-[  4] 240.00-270.00 sec   235 MBytes  65.7 Mbits/sec  110   1.36 MBytes       
-[  4] 270.00-300.00 sec   230 MBytes  64.4 Mbits/sec  248   1.16 MBytes       
-[  4] 300.00-330.00 sec   235 MBytes  65.7 Mbits/sec   86   1.68 MBytes       
-[  4] 330.00-360.00 sec   236 MBytes  66.1 Mbits/sec  358   1.21 MBytes       
-[  4] 360.00-390.00 sec   236 MBytes  66.1 Mbits/sec  171   1.95 MBytes       
-[  4] 390.00-420.00 sec   234 MBytes  65.4 Mbits/sec  272   1.21 MBytes       
-[  4] 420.00-450.00 sec   236 MBytes  66.0 Mbits/sec  291   1.11 MBytes       
-[  4] 450.00-480.00 sec   236 MBytes  66.1 Mbits/sec  186   1.28 MBytes       
-[  4] 480.00-510.00 sec   236 MBytes  66.1 Mbits/sec  302   1.17 MBytes       
-[  4] 510.00-540.00 sec   234 MBytes  65.3 Mbits/sec  137   1.36 MBytes       
-[  4] 540.00-570.00 sec   233 MBytes  65.2 Mbits/sec  184   1.16 MBytes       
-[  4] 570.00-600.00 sec   235 MBytes  65.7 Mbits/sec  119   1.56 MBytes       
-[  4] 600.00-630.00 sec   236 MBytes  66.1 Mbits/sec  480   1.05 MBytes       
-[  4] 630.00-660.00 sec   235 MBytes  65.7 Mbits/sec   52   1.21 MBytes       
-[  4] 660.00-690.00 sec   236 MBytes  66.0 Mbits/sec  336   1.18 MBytes       
-[  4] 690.00-720.00 sec   236 MBytes  66.0 Mbits/sec  184   1.43 MBytes       
-[  4] 720.00-750.02 sec   235 MBytes  65.8 Mbits/sec  293   1.19 MBytes       
-[  4] 750.02-780.00 sec   235 MBytes  65.8 Mbits/sec  167   1.62 MBytes       
-[  4] 780.00-810.00 sec   234 MBytes  65.4 Mbits/sec  202   1.21 MBytes       
-[  4] 810.00-840.00 sec   236 MBytes  66.0 Mbits/sec  339   1.25 MBytes       
-[  4] 840.00-870.00 sec   235 MBytes  65.8 Mbits/sec  334   1.18 MBytes       
-[  4] 870.00-900.00 sec   233 MBytes  65.1 Mbits/sec  114   1.36 MBytes       
+[  4]   0.00-30.00  sec   236 MBytes  66.1 Mbits/sec  254   1.19 MBytes
+[  4]  30.00-60.00  sec   233 MBytes  65.0 Mbits/sec  128   1.58 MBytes
+[  4]  60.00-90.00  sec   234 MBytes  65.4 Mbits/sec  210   1.19 MBytes
+[  4]  90.00-120.00 sec   231 MBytes  64.7 Mbits/sec  130   1.87 MBytes
+[  4] 120.00-150.00 sec   235 MBytes  65.7 Mbits/sec  273   1.23 MBytes
+[  4] 150.00-180.00 sec   235 MBytes  65.7 Mbits/sec  334   1.08 MBytes
+[  4] 180.00-210.00 sec   234 MBytes  65.3 Mbits/sec  116   1.25 MBytes
+[  4] 210.00-240.00 sec   235 MBytes  65.6 Mbits/sec  317   1.18 MBytes
+[  4] 240.00-270.00 sec   235 MBytes  65.7 Mbits/sec  110   1.36 MBytes
+[  4] 270.00-300.00 sec   230 MBytes  64.4 Mbits/sec  248   1.16 MBytes
+[  4] 300.00-330.00 sec   235 MBytes  65.7 Mbits/sec   86   1.68 MBytes
+[  4] 330.00-360.00 sec   236 MBytes  66.1 Mbits/sec  358   1.21 MBytes
+[  4] 360.00-390.00 sec   236 MBytes  66.1 Mbits/sec  171   1.95 MBytes
+[  4] 390.00-420.00 sec   234 MBytes  65.4 Mbits/sec  272   1.21 MBytes
+[  4] 420.00-450.00 sec   236 MBytes  66.0 Mbits/sec  291   1.11 MBytes
+[  4] 450.00-480.00 sec   236 MBytes  66.1 Mbits/sec  186   1.28 MBytes
+[  4] 480.00-510.00 sec   236 MBytes  66.1 Mbits/sec  302   1.17 MBytes
+[  4] 510.00-540.00 sec   234 MBytes  65.3 Mbits/sec  137   1.36 MBytes
+[  4] 540.00-570.00 sec   233 MBytes  65.2 Mbits/sec  184   1.16 MBytes
+[  4] 570.00-600.00 sec   235 MBytes  65.7 Mbits/sec  119   1.56 MBytes
+[  4] 600.00-630.00 sec   236 MBytes  66.1 Mbits/sec  480   1.05 MBytes
+[  4] 630.00-660.00 sec   235 MBytes  65.7 Mbits/sec   52   1.21 MBytes
+[  4] 660.00-690.00 sec   236 MBytes  66.0 Mbits/sec  336   1.18 MBytes
+[  4] 690.00-720.00 sec   236 MBytes  66.0 Mbits/sec  184   1.43 MBytes
+[  4] 720.00-750.02 sec   235 MBytes  65.8 Mbits/sec  293   1.19 MBytes
+[  4] 750.02-780.00 sec   235 MBytes  65.8 Mbits/sec  167   1.62 MBytes
+[  4] 780.00-810.00 sec   234 MBytes  65.4 Mbits/sec  202   1.21 MBytes
+[  4] 810.00-840.00 sec   236 MBytes  66.0 Mbits/sec  339   1.25 MBytes
+[  4] 840.00-870.00 sec   235 MBytes  65.8 Mbits/sec  334   1.18 MBytes
+[  4] 870.00-900.00 sec   233 MBytes  65.1 Mbits/sec  114   1.36 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  6.88 GBytes  65.6 Mbits/sec  6727             sender
@@ -1137,36 +1225,36 @@ Connecting to host 10.0.1.5, port 5201
 Reverse mode, remote host 10.0.1.5 is sending
 [  4] local 10.0.0.5 port 43738 connected to 10.0.1.5 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   222 MBytes  62.2 Mbits/sec                  
-[  4]  30.00-60.00  sec   225 MBytes  62.9 Mbits/sec                  
-[  4]  60.00-90.00  sec   222 MBytes  62.2 Mbits/sec                  
-[  4]  90.00-120.00 sec   223 MBytes  62.4 Mbits/sec                  
-[  4] 120.00-150.00 sec   223 MBytes  62.3 Mbits/sec                  
-[  4] 150.00-180.00 sec   223 MBytes  62.4 Mbits/sec                  
-[  4] 180.00-210.00 sec   222 MBytes  62.2 Mbits/sec                  
-[  4] 210.00-240.00 sec   225 MBytes  62.9 Mbits/sec                  
-[  4] 240.00-270.00 sec   225 MBytes  62.8 Mbits/sec                  
-[  4] 270.00-300.00 sec   225 MBytes  62.8 Mbits/sec                  
-[  4] 300.00-330.00 sec   223 MBytes  62.3 Mbits/sec                  
-[  4] 330.00-360.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 360.00-390.00 sec   224 MBytes  62.5 Mbits/sec                  
-[  4] 390.00-420.00 sec   222 MBytes  62.2 Mbits/sec                  
-[  4] 420.00-450.00 sec   227 MBytes  63.5 Mbits/sec                  
-[  4] 450.00-480.00 sec   227 MBytes  63.4 Mbits/sec                  
-[  4] 480.00-510.00 sec   223 MBytes  62.3 Mbits/sec                  
-[  4] 510.00-540.00 sec   224 MBytes  62.8 Mbits/sec                  
-[  4] 540.00-570.00 sec   225 MBytes  62.9 Mbits/sec                  
-[  4] 570.00-600.00 sec   227 MBytes  63.6 Mbits/sec                  
-[  4] 600.00-630.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 630.00-660.00 sec   227 MBytes  63.5 Mbits/sec                  
-[  4] 660.00-690.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 690.00-720.00 sec   227 MBytes  63.4 Mbits/sec                  
-[  4] 720.00-750.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 750.00-780.00 sec   227 MBytes  63.4 Mbits/sec                  
-[  4] 780.00-810.00 sec   227 MBytes  63.4 Mbits/sec                  
-[  4] 810.00-840.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 840.00-870.00 sec   227 MBytes  63.3 Mbits/sec                  
-[  4] 870.00-900.00 sec   226 MBytes  63.2 Mbits/sec                  
+[  4]   0.00-30.00  sec   222 MBytes  62.2 Mbits/sec
+[  4]  30.00-60.00  sec   225 MBytes  62.9 Mbits/sec
+[  4]  60.00-90.00  sec   222 MBytes  62.2 Mbits/sec
+[  4]  90.00-120.00 sec   223 MBytes  62.4 Mbits/sec
+[  4] 120.00-150.00 sec   223 MBytes  62.3 Mbits/sec
+[  4] 150.00-180.00 sec   223 MBytes  62.4 Mbits/sec
+[  4] 180.00-210.00 sec   222 MBytes  62.2 Mbits/sec
+[  4] 210.00-240.00 sec   225 MBytes  62.9 Mbits/sec
+[  4] 240.00-270.00 sec   225 MBytes  62.8 Mbits/sec
+[  4] 270.00-300.00 sec   225 MBytes  62.8 Mbits/sec
+[  4] 300.00-330.00 sec   223 MBytes  62.3 Mbits/sec
+[  4] 330.00-360.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 360.00-390.00 sec   224 MBytes  62.5 Mbits/sec
+[  4] 390.00-420.00 sec   222 MBytes  62.2 Mbits/sec
+[  4] 420.00-450.00 sec   227 MBytes  63.5 Mbits/sec
+[  4] 450.00-480.00 sec   227 MBytes  63.4 Mbits/sec
+[  4] 480.00-510.00 sec   223 MBytes  62.3 Mbits/sec
+[  4] 510.00-540.00 sec   224 MBytes  62.8 Mbits/sec
+[  4] 540.00-570.00 sec   225 MBytes  62.9 Mbits/sec
+[  4] 570.00-600.00 sec   227 MBytes  63.6 Mbits/sec
+[  4] 600.00-630.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 630.00-660.00 sec   227 MBytes  63.5 Mbits/sec
+[  4] 660.00-690.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 690.00-720.00 sec   227 MBytes  63.4 Mbits/sec
+[  4] 720.00-750.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 750.00-780.00 sec   227 MBytes  63.4 Mbits/sec
+[  4] 780.00-810.00 sec   227 MBytes  63.4 Mbits/sec
+[  4] 810.00-840.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 840.00-870.00 sec   227 MBytes  63.3 Mbits/sec
+[  4] 870.00-900.00 sec   226 MBytes  63.2 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  6.59 GBytes  62.9 Mbits/sec  817             sender
@@ -1177,41 +1265,42 @@ root@lenovo:~#
 ```
 
 ##### Raspberry Pi 2
+
 ```
 root@lenovo:~# iperf3 -c 10.0.3.5 -i 30 -t 900
 Connecting to host 10.0.3.5, port 5201
 [  4] local 10.0.2.5 port 33128 connected to 10.0.3.5 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   322 MBytes  90.1 Mbits/sec  175   1.89 MBytes       
-[  4]  30.00-60.00  sec   321 MBytes  89.8 Mbits/sec  165   1.26 MBytes       
-[  4]  60.00-90.00  sec   320 MBytes  89.4 Mbits/sec   68   1.51 MBytes       
-[  4]  90.00-120.00 sec   320 MBytes  89.4 Mbits/sec  192   1.25 MBytes       
-[  4] 120.00-150.00 sec   320 MBytes  89.4 Mbits/sec   56   1.39 MBytes       
-[  4] 150.00-180.00 sec   320 MBytes  89.4 Mbits/sec  194   1.17 MBytes       
-[  4] 180.00-210.00 sec   321 MBytes  89.8 Mbits/sec   55   1.35 MBytes       
-[  4] 210.00-240.00 sec   320 MBytes  89.4 Mbits/sec  104   1.15 MBytes       
-[  4] 240.00-270.00 sec   320 MBytes  89.4 Mbits/sec   64   1.32 MBytes       
-[  4] 270.00-300.00 sec   320 MBytes  89.5 Mbits/sec  176   1.07 MBytes       
-[  4] 300.00-330.00 sec   320 MBytes  89.4 Mbits/sec   88   1.26 MBytes       
-[  4] 330.00-360.00 sec   319 MBytes  89.1 Mbits/sec  209   1.50 MBytes       
-[  4] 360.00-390.00 sec   320 MBytes  89.5 Mbits/sec  134   1.18 MBytes       
-[  4] 390.00-420.00 sec   320 MBytes  89.5 Mbits/sec  104   1.32 MBytes       
-[  4] 420.00-450.00 sec   319 MBytes  89.1 Mbits/sec  149   1.16 MBytes       
-[  4] 450.00-480.00 sec   320 MBytes  89.5 Mbits/sec   73   1.32 MBytes       
-[  4] 480.00-510.00 sec   316 MBytes  88.4 Mbits/sec  114   2.53 MBytes       
-[  4] 510.00-540.00 sec   316 MBytes  88.4 Mbits/sec  226   1.14 MBytes       
-[  4] 540.00-570.00 sec   318 MBytes  89.0 Mbits/sec  107   1.32 MBytes       
-[  4] 570.00-600.00 sec   320 MBytes  89.4 Mbits/sec  178   1.19 MBytes       
-[  4] 600.00-630.00 sec   321 MBytes  89.8 Mbits/sec   78   1.31 MBytes       
-[  4] 630.00-660.00 sec   319 MBytes  89.1 Mbits/sec  160   1.10 MBytes       
-[  4] 660.00-690.00 sec   321 MBytes  89.8 Mbits/sec  120   1.26 MBytes       
-[  4] 690.00-720.00 sec   317 MBytes  88.7 Mbits/sec  145   1.08 MBytes       
-[  4] 720.00-750.00 sec   320 MBytes  89.5 Mbits/sec   98   1.27 MBytes       
-[  4] 750.00-780.00 sec   320 MBytes  89.4 Mbits/sec   45   2.07 MBytes       
-[  4] 780.00-810.00 sec   318 MBytes  88.8 Mbits/sec  178   1.31 MBytes       
-[  4] 810.00-840.00 sec   320 MBytes  89.5 Mbits/sec   88   2.12 MBytes       
-[  4] 840.00-870.00 sec   320 MBytes  89.5 Mbits/sec  150   1.27 MBytes       
-[  4] 870.00-900.00 sec   319 MBytes  89.1 Mbits/sec   49   1.79 MBytes       
+[  4]   0.00-30.00  sec   322 MBytes  90.1 Mbits/sec  175   1.89 MBytes
+[  4]  30.00-60.00  sec   321 MBytes  89.8 Mbits/sec  165   1.26 MBytes
+[  4]  60.00-90.00  sec   320 MBytes  89.4 Mbits/sec   68   1.51 MBytes
+[  4]  90.00-120.00 sec   320 MBytes  89.4 Mbits/sec  192   1.25 MBytes
+[  4] 120.00-150.00 sec   320 MBytes  89.4 Mbits/sec   56   1.39 MBytes
+[  4] 150.00-180.00 sec   320 MBytes  89.4 Mbits/sec  194   1.17 MBytes
+[  4] 180.00-210.00 sec   321 MBytes  89.8 Mbits/sec   55   1.35 MBytes
+[  4] 210.00-240.00 sec   320 MBytes  89.4 Mbits/sec  104   1.15 MBytes
+[  4] 240.00-270.00 sec   320 MBytes  89.4 Mbits/sec   64   1.32 MBytes
+[  4] 270.00-300.00 sec   320 MBytes  89.5 Mbits/sec  176   1.07 MBytes
+[  4] 300.00-330.00 sec   320 MBytes  89.4 Mbits/sec   88   1.26 MBytes
+[  4] 330.00-360.00 sec   319 MBytes  89.1 Mbits/sec  209   1.50 MBytes
+[  4] 360.00-390.00 sec   320 MBytes  89.5 Mbits/sec  134   1.18 MBytes
+[  4] 390.00-420.00 sec   320 MBytes  89.5 Mbits/sec  104   1.32 MBytes
+[  4] 420.00-450.00 sec   319 MBytes  89.1 Mbits/sec  149   1.16 MBytes
+[  4] 450.00-480.00 sec   320 MBytes  89.5 Mbits/sec   73   1.32 MBytes
+[  4] 480.00-510.00 sec   316 MBytes  88.4 Mbits/sec  114   2.53 MBytes
+[  4] 510.00-540.00 sec   316 MBytes  88.4 Mbits/sec  226   1.14 MBytes
+[  4] 540.00-570.00 sec   318 MBytes  89.0 Mbits/sec  107   1.32 MBytes
+[  4] 570.00-600.00 sec   320 MBytes  89.4 Mbits/sec  178   1.19 MBytes
+[  4] 600.00-630.00 sec   321 MBytes  89.8 Mbits/sec   78   1.31 MBytes
+[  4] 630.00-660.00 sec   319 MBytes  89.1 Mbits/sec  160   1.10 MBytes
+[  4] 660.00-690.00 sec   321 MBytes  89.8 Mbits/sec  120   1.26 MBytes
+[  4] 690.00-720.00 sec   317 MBytes  88.7 Mbits/sec  145   1.08 MBytes
+[  4] 720.00-750.00 sec   320 MBytes  89.5 Mbits/sec   98   1.27 MBytes
+[  4] 750.00-780.00 sec   320 MBytes  89.4 Mbits/sec   45   2.07 MBytes
+[  4] 780.00-810.00 sec   318 MBytes  88.8 Mbits/sec  178   1.31 MBytes
+[  4] 810.00-840.00 sec   320 MBytes  89.5 Mbits/sec   88   2.12 MBytes
+[  4] 840.00-870.00 sec   320 MBytes  89.5 Mbits/sec  150   1.27 MBytes
+[  4] 870.00-900.00 sec   319 MBytes  89.1 Mbits/sec   49   1.79 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  9.36 GBytes  89.3 Mbits/sec  3742             sender
@@ -1220,95 +1309,98 @@ Connecting to host 10.0.3.5, port 5201
 iperf Done.
 root@lenovo:~#
 ```
+
 ```
 root@lenovo:~# iperf3 -c 10.0.3.5 -i 30 -t 900 -R
 Connecting to host 10.0.3.5, port 5201
 Reverse mode, remote host 10.0.3.5 is sending
 [  4] local 10.0.2.5 port 33581 connected to 10.0.3.5 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   280 MBytes  78.2 Mbits/sec                  
-[  4]  30.00-60.00  sec   279 MBytes  77.9 Mbits/sec                  
-[  4]  60.00-90.00  sec   279 MBytes  78.0 Mbits/sec                  
-[  4]  90.00-120.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 120.00-150.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 150.00-180.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 180.00-210.00 sec   278 MBytes  77.9 Mbits/sec                  
-[  4] 210.00-240.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 240.00-270.00 sec   278 MBytes  77.9 Mbits/sec                  
-[  4] 270.00-300.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 300.00-330.00 sec   278 MBytes  77.6 Mbits/sec                  
-[  4] 330.00-360.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 360.00-390.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 390.00-420.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 420.00-450.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 450.00-480.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 480.00-510.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 510.00-540.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 540.00-570.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 570.00-600.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 600.00-630.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 630.00-660.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 660.00-690.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 690.00-720.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 720.00-750.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 750.00-780.00 sec   278 MBytes  77.8 Mbits/sec                  
-[  4] 780.00-810.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 810.00-840.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 840.00-870.00 sec   278 MBytes  77.8 Mbits/sec                  
-[  4] 870.00-900.00 sec   279 MBytes  78.0 Mbits/sec                  
+[  4]   0.00-30.00  sec   280 MBytes  78.2 Mbits/sec
+[  4]  30.00-60.00  sec   279 MBytes  77.9 Mbits/sec
+[  4]  60.00-90.00  sec   279 MBytes  78.0 Mbits/sec
+[  4]  90.00-120.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 120.00-150.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 150.00-180.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 180.00-210.00 sec   278 MBytes  77.9 Mbits/sec
+[  4] 210.00-240.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 240.00-270.00 sec   278 MBytes  77.9 Mbits/sec
+[  4] 270.00-300.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 300.00-330.00 sec   278 MBytes  77.6 Mbits/sec
+[  4] 330.00-360.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 360.00-390.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 390.00-420.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 420.00-450.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 450.00-480.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 480.00-510.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 510.00-540.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 540.00-570.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 570.00-600.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 600.00-630.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 630.00-660.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 660.00-690.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 690.00-720.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 720.00-750.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 750.00-780.00 sec   278 MBytes  77.8 Mbits/sec
+[  4] 780.00-810.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 810.00-840.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 840.00-870.00 sec   278 MBytes  77.8 Mbits/sec
+[  4] 870.00-900.00 sec   279 MBytes  78.0 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  8.17 GBytes  78.0 Mbits/sec   40             sender
 [  4]   0.00-900.00 sec  8.17 GBytes  78.0 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 #### With dstat Monitoring
+
 ##### Raspberry Pi
+
 ```
 root@lenovo:~# iperf3 -c 10.0.1.5 -i 30 -t 900
 Connecting to host 10.0.1.5, port 5201
 [  4] local 10.0.0.5 port 43319 connected to 10.0.1.5 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   235 MBytes  65.7 Mbits/sec  390   1.19 MBytes       
-[  4]  30.00-60.00  sec   234 MBytes  65.4 Mbits/sec  253   1.18 MBytes       
-[  4]  60.00-90.00  sec   233 MBytes  65.3 Mbits/sec  298   1.05 MBytes       
-[  4]  90.00-120.00 sec   232 MBytes  65.0 Mbits/sec   71   1.22 MBytes       
-[  4] 120.00-150.00 sec   234 MBytes  65.3 Mbits/sec  319   1.16 MBytes       
-[  4] 150.00-180.00 sec   235 MBytes  65.6 Mbits/sec  299   1.17 MBytes       
-[  4] 180.00-210.00 sec   235 MBytes  65.6 Mbits/sec  170   1.94 MBytes       
-[  4] 210.00-240.00 sec   235 MBytes  65.7 Mbits/sec  323   1.22 MBytes       
-[  4] 240.00-270.00 sec   235 MBytes  65.7 Mbits/sec  318   1.05 MBytes       
-[  4] 270.00-300.00 sec   231 MBytes  64.7 Mbits/sec  112   1.22 MBytes       
-[  4] 300.00-330.00 sec   231 MBytes  64.7 Mbits/sec  314   1.65 MBytes       
-[  4] 330.00-360.00 sec   234 MBytes  65.4 Mbits/sec  262   1.23 MBytes       
-[  4] 360.00-390.00 sec   231 MBytes  64.6 Mbits/sec  214   1.14 MBytes       
-[  4] 390.00-420.00 sec   232 MBytes  64.9 Mbits/sec  107   1.31 MBytes       
-[  4] 420.00-450.00 sec   234 MBytes  65.4 Mbits/sec  296   1.88 MBytes       
-[  4] 450.00-480.00 sec   234 MBytes  65.3 Mbits/sec  232   1.24 MBytes       
-[  4] 480.00-510.00 sec   235 MBytes  65.7 Mbits/sec  332   1.60 MBytes       
-[  4] 510.00-540.00 sec   235 MBytes  65.7 Mbits/sec  288   1.19 MBytes       
-[  4] 540.00-570.00 sec   233 MBytes  65.1 Mbits/sec  134   1.68 MBytes       
-[  4] 570.00-600.00 sec   231 MBytes  64.7 Mbits/sec  226   1.21 MBytes       
-[  4] 600.00-630.00 sec   235 MBytes  65.7 Mbits/sec  167   2.01 MBytes       
-[  4] 630.00-660.00 sec   231 MBytes  64.7 Mbits/sec  412   1.81 MBytes       
-[  4] 660.00-690.00 sec   235 MBytes  65.7 Mbits/sec  256   1.21 MBytes       
-[  4] 690.00-720.00 sec   233 MBytes  65.0 Mbits/sec  142   1.98 MBytes       
-[  4] 720.00-750.00 sec   234 MBytes  65.4 Mbits/sec  459   1.15 MBytes       
-[  4] 750.00-780.00 sec   232 MBytes  65.0 Mbits/sec  162   1.35 MBytes       
-[  4] 780.00-810.00 sec   231 MBytes  64.7 Mbits/sec  269   1.11 MBytes       
-[  4] 810.00-840.00 sec   234 MBytes  65.4 Mbits/sec  324   1.70 MBytes       
-[  4] 840.00-870.00 sec   231 MBytes  64.7 Mbits/sec  297   1.60 MBytes       
-[  4] 870.00-900.00 sec   231 MBytes  64.6 Mbits/sec  231   1.10 MBytes       
+[  4]   0.00-30.00  sec   235 MBytes  65.7 Mbits/sec  390   1.19 MBytes
+[  4]  30.00-60.00  sec   234 MBytes  65.4 Mbits/sec  253   1.18 MBytes
+[  4]  60.00-90.00  sec   233 MBytes  65.3 Mbits/sec  298   1.05 MBytes
+[  4]  90.00-120.00 sec   232 MBytes  65.0 Mbits/sec   71   1.22 MBytes
+[  4] 120.00-150.00 sec   234 MBytes  65.3 Mbits/sec  319   1.16 MBytes
+[  4] 150.00-180.00 sec   235 MBytes  65.6 Mbits/sec  299   1.17 MBytes
+[  4] 180.00-210.00 sec   235 MBytes  65.6 Mbits/sec  170   1.94 MBytes
+[  4] 210.00-240.00 sec   235 MBytes  65.7 Mbits/sec  323   1.22 MBytes
+[  4] 240.00-270.00 sec   235 MBytes  65.7 Mbits/sec  318   1.05 MBytes
+[  4] 270.00-300.00 sec   231 MBytes  64.7 Mbits/sec  112   1.22 MBytes
+[  4] 300.00-330.00 sec   231 MBytes  64.7 Mbits/sec  314   1.65 MBytes
+[  4] 330.00-360.00 sec   234 MBytes  65.4 Mbits/sec  262   1.23 MBytes
+[  4] 360.00-390.00 sec   231 MBytes  64.6 Mbits/sec  214   1.14 MBytes
+[  4] 390.00-420.00 sec   232 MBytes  64.9 Mbits/sec  107   1.31 MBytes
+[  4] 420.00-450.00 sec   234 MBytes  65.4 Mbits/sec  296   1.88 MBytes
+[  4] 450.00-480.00 sec   234 MBytes  65.3 Mbits/sec  232   1.24 MBytes
+[  4] 480.00-510.00 sec   235 MBytes  65.7 Mbits/sec  332   1.60 MBytes
+[  4] 510.00-540.00 sec   235 MBytes  65.7 Mbits/sec  288   1.19 MBytes
+[  4] 540.00-570.00 sec   233 MBytes  65.1 Mbits/sec  134   1.68 MBytes
+[  4] 570.00-600.00 sec   231 MBytes  64.7 Mbits/sec  226   1.21 MBytes
+[  4] 600.00-630.00 sec   235 MBytes  65.7 Mbits/sec  167   2.01 MBytes
+[  4] 630.00-660.00 sec   231 MBytes  64.7 Mbits/sec  412   1.81 MBytes
+[  4] 660.00-690.00 sec   235 MBytes  65.7 Mbits/sec  256   1.21 MBytes
+[  4] 690.00-720.00 sec   233 MBytes  65.0 Mbits/sec  142   1.98 MBytes
+[  4] 720.00-750.00 sec   234 MBytes  65.4 Mbits/sec  459   1.15 MBytes
+[  4] 750.00-780.00 sec   232 MBytes  65.0 Mbits/sec  162   1.35 MBytes
+[  4] 780.00-810.00 sec   231 MBytes  64.7 Mbits/sec  269   1.11 MBytes
+[  4] 810.00-840.00 sec   234 MBytes  65.4 Mbits/sec  324   1.70 MBytes
+[  4] 840.00-870.00 sec   231 MBytes  64.7 Mbits/sec  297   1.60 MBytes
+[  4] 870.00-900.00 sec   231 MBytes  64.6 Mbits/sec  231   1.10 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  6.83 GBytes  65.2 Mbits/sec  7677             sender
 [  4]   0.00-900.00 sec  6.83 GBytes  65.2 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -1316,7 +1408,7 @@ root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@lace:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-   0 0.01 0.05|  0   0  90   0   0  10|ksoftirqd/0  9.7|   0     0 
+   0 0.01 0.05|  0   0  90   0   0  10|ksoftirqd/0  9.7|   0     0
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:1  0.0|  19B   11B
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:1  0.1|  22B   11B
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:1  0.0|  19B   11B
@@ -1366,52 +1458,53 @@ root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 0.30 0.80 0.65|  0   0 100   0   0   0|kworker/0:1  0.0|  22B   11B
 0.18 0.72 0.63|  0   0 100   0   0   0|kworker/0:1  0.0|  22B   11B
 0.11 0.65 0.61|  0   0 100   0   0   0|kworker/0:1  0.1|  26B   11B
-root@lace:~# 
+root@lace:~#
 ```
 
 ##### Raspberry Pi 2
+
 ```
 root@lenovo:~# iperf3 -c 10.0.3.5 -i 30 -t 900
 Connecting to host 10.0.3.5, port 5201
 [  4] local 10.0.2.5 port 33166 connected to 10.0.3.5 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   321 MBytes  89.9 Mbits/sec  234   1.28 MBytes       
-[  4]  30.00-60.00  sec   321 MBytes  89.8 Mbits/sec   88   1.52 MBytes       
-[  4]  60.00-90.00  sec   320 MBytes  89.5 Mbits/sec  151   1.24 MBytes       
-[  4]  90.00-120.00 sec   321 MBytes  89.7 Mbits/sec   63   1.59 MBytes       
-[  4] 120.00-150.00 sec   320 MBytes  89.5 Mbits/sec  166   1.25 MBytes       
-[  4] 150.00-180.00 sec   320 MBytes  89.5 Mbits/sec   83   1.44 MBytes       
-[  4] 180.00-210.00 sec   320 MBytes  89.4 Mbits/sec  151   1.75 MBytes       
-[  4] 210.00-240.00 sec   320 MBytes  89.4 Mbits/sec  207   1.29 MBytes       
-[  4] 240.00-270.00 sec   319 MBytes  89.1 Mbits/sec   51   1.80 MBytes       
-[  4] 270.00-300.00 sec   320 MBytes  89.4 Mbits/sec  262   1.05 MBytes       
-[  4] 300.00-330.00 sec   320 MBytes  89.5 Mbits/sec   69   1.30 MBytes       
-[  4] 330.00-360.00 sec   319 MBytes  89.1 Mbits/sec  129   1.12 MBytes       
-[  4] 360.00-390.00 sec   320 MBytes  89.5 Mbits/sec   69   1.31 MBytes       
-[  4] 390.00-420.00 sec   319 MBytes  89.1 Mbits/sec  128   1.10 MBytes       
-[  4] 420.00-450.00 sec   320 MBytes  89.4 Mbits/sec   69   1.30 MBytes       
-[  4] 450.00-480.00 sec   319 MBytes  89.1 Mbits/sec  146   1.06 MBytes       
-[  4] 480.00-510.00 sec   321 MBytes  89.8 Mbits/sec   72   1.28 MBytes       
-[  4] 510.00-540.00 sec   319 MBytes  89.1 Mbits/sec  143   1.09 MBytes       
-[  4] 540.00-570.00 sec   320 MBytes  89.5 Mbits/sec  117   1.27 MBytes       
-[  4] 570.00-600.00 sec   319 MBytes  89.1 Mbits/sec   47   1.95 MBytes       
-[  4] 600.00-630.00 sec   320 MBytes  89.4 Mbits/sec  235   1.41 MBytes       
-[  4] 630.00-660.00 sec   320 MBytes  89.5 Mbits/sec  117   1.75 MBytes       
-[  4] 660.00-690.00 sec   320 MBytes  89.4 Mbits/sec  166   1.26 MBytes       
-[  4] 690.00-720.00 sec   319 MBytes  89.1 Mbits/sec   72   1.66 MBytes       
-[  4] 720.00-750.00 sec   317 MBytes  88.8 Mbits/sec  166   1.30 MBytes       
-[  4] 750.00-780.00 sec   320 MBytes  89.5 Mbits/sec  101   1.59 MBytes       
-[  4] 780.00-810.00 sec   320 MBytes  89.5 Mbits/sec  161   1.26 MBytes       
-[  4] 810.00-840.00 sec   320 MBytes  89.5 Mbits/sec   84   1.39 MBytes       
-[  4] 840.00-870.00 sec   317 MBytes  88.7 Mbits/sec  167   1.31 MBytes       
-[  4] 870.00-900.00 sec   317 MBytes  88.6 Mbits/sec   81   1.49 MBytes       
+[  4]   0.00-30.00  sec   321 MBytes  89.9 Mbits/sec  234   1.28 MBytes
+[  4]  30.00-60.00  sec   321 MBytes  89.8 Mbits/sec   88   1.52 MBytes
+[  4]  60.00-90.00  sec   320 MBytes  89.5 Mbits/sec  151   1.24 MBytes
+[  4]  90.00-120.00 sec   321 MBytes  89.7 Mbits/sec   63   1.59 MBytes
+[  4] 120.00-150.00 sec   320 MBytes  89.5 Mbits/sec  166   1.25 MBytes
+[  4] 150.00-180.00 sec   320 MBytes  89.5 Mbits/sec   83   1.44 MBytes
+[  4] 180.00-210.00 sec   320 MBytes  89.4 Mbits/sec  151   1.75 MBytes
+[  4] 210.00-240.00 sec   320 MBytes  89.4 Mbits/sec  207   1.29 MBytes
+[  4] 240.00-270.00 sec   319 MBytes  89.1 Mbits/sec   51   1.80 MBytes
+[  4] 270.00-300.00 sec   320 MBytes  89.4 Mbits/sec  262   1.05 MBytes
+[  4] 300.00-330.00 sec   320 MBytes  89.5 Mbits/sec   69   1.30 MBytes
+[  4] 330.00-360.00 sec   319 MBytes  89.1 Mbits/sec  129   1.12 MBytes
+[  4] 360.00-390.00 sec   320 MBytes  89.5 Mbits/sec   69   1.31 MBytes
+[  4] 390.00-420.00 sec   319 MBytes  89.1 Mbits/sec  128   1.10 MBytes
+[  4] 420.00-450.00 sec   320 MBytes  89.4 Mbits/sec   69   1.30 MBytes
+[  4] 450.00-480.00 sec   319 MBytes  89.1 Mbits/sec  146   1.06 MBytes
+[  4] 480.00-510.00 sec   321 MBytes  89.8 Mbits/sec   72   1.28 MBytes
+[  4] 510.00-540.00 sec   319 MBytes  89.1 Mbits/sec  143   1.09 MBytes
+[  4] 540.00-570.00 sec   320 MBytes  89.5 Mbits/sec  117   1.27 MBytes
+[  4] 570.00-600.00 sec   319 MBytes  89.1 Mbits/sec   47   1.95 MBytes
+[  4] 600.00-630.00 sec   320 MBytes  89.4 Mbits/sec  235   1.41 MBytes
+[  4] 630.00-660.00 sec   320 MBytes  89.5 Mbits/sec  117   1.75 MBytes
+[  4] 660.00-690.00 sec   320 MBytes  89.4 Mbits/sec  166   1.26 MBytes
+[  4] 690.00-720.00 sec   319 MBytes  89.1 Mbits/sec   72   1.66 MBytes
+[  4] 720.00-750.00 sec   317 MBytes  88.8 Mbits/sec  166   1.30 MBytes
+[  4] 750.00-780.00 sec   320 MBytes  89.5 Mbits/sec  101   1.59 MBytes
+[  4] 780.00-810.00 sec   320 MBytes  89.5 Mbits/sec  161   1.26 MBytes
+[  4] 810.00-840.00 sec   320 MBytes  89.5 Mbits/sec   84   1.39 MBytes
+[  4] 840.00-870.00 sec   317 MBytes  88.7 Mbits/sec  167   1.31 MBytes
+[  4] 870.00-900.00 sec   317 MBytes  88.6 Mbits/sec   81   1.49 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  9.36 GBytes  89.3 Mbits/sec  3795             sender
 [  4]   0.00-900.00 sec  9.36 GBytes  89.3 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -1419,7 +1512,7 @@ root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@jessie-rpi:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-   0 0.01 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.8|   0     0 
+   0 0.01 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.8|   0     0
    0 0.01 0.05|  0   0 100   0   0   0|sshd: root@pt0.0|  22B   11B
    0 0.01 0.05|  0   0 100   0   0   0|irqbalance   0.0|  19B   11B
    0 0.01 0.05|  0   0 100   0   0   0|kworker/u8:2 0.0|  22B   11B
@@ -1461,55 +1554,56 @@ root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 0.01 0.04 0.05|  0   0 100   0   0   0|irqbalance   0.0|  21B   11B
 0.01 0.04 0.05|  0   0 100   0   0   0|irqbalance   0.0|  22B   11B
    0 0.04 0.05|  0   0 100   0   0   0|irqbalance   0.0|  20B   11B
-root@jessie-rpi:~# 
+root@jessie-rpi:~#
 ```
 
-
 #### With dstat Monitoring (reverse)
+
 ##### Raspberry Pi
+
 ```
 root@lenovo:~# iperf3 -c 10.0.1.5 -i 30 -t 900 -R
 Connecting to host 10.0.1.5, port 5201
 Reverse mode, remote host 10.0.1.5 is sending
 [  4] local 10.0.0.5 port 43353 connected to 10.0.1.5 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   225 MBytes  63.0 Mbits/sec                  
-[  4]  30.00-60.00  sec   222 MBytes  62.2 Mbits/sec                  
-[  4]  60.00-90.00  sec   227 MBytes  63.4 Mbits/sec                  
-[  4]  90.00-120.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 120.00-150.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 150.00-180.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 180.00-210.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 210.00-240.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 240.00-270.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 270.00-300.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 300.00-330.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 330.00-360.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 360.00-390.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 390.00-420.00 sec   226 MBytes  63.1 Mbits/sec                  
-[  4] 420.00-450.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 450.00-480.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 480.00-510.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 510.00-540.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 540.00-570.00 sec   227 MBytes  63.3 Mbits/sec                  
-[  4] 570.00-600.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 600.00-630.00 sec   225 MBytes  63.0 Mbits/sec                  
-[  4] 630.00-660.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 660.00-690.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 690.00-720.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 720.00-750.00 sec   226 MBytes  63.2 Mbits/sec                  
-[  4] 750.00-780.00 sec   226 MBytes  63.1 Mbits/sec                  
-[  4] 780.00-810.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 810.00-840.00 sec   225 MBytes  63.0 Mbits/sec                  
-[  4] 840.00-870.00 sec   226 MBytes  63.3 Mbits/sec                  
-[  4] 870.00-900.00 sec   226 MBytes  63.1 Mbits/sec                  
+[  4]   0.00-30.00  sec   225 MBytes  63.0 Mbits/sec
+[  4]  30.00-60.00  sec   222 MBytes  62.2 Mbits/sec
+[  4]  60.00-90.00  sec   227 MBytes  63.4 Mbits/sec
+[  4]  90.00-120.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 120.00-150.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 150.00-180.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 180.00-210.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 210.00-240.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 240.00-270.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 270.00-300.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 300.00-330.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 330.00-360.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 360.00-390.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 390.00-420.00 sec   226 MBytes  63.1 Mbits/sec
+[  4] 420.00-450.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 450.00-480.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 480.00-510.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 510.00-540.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 540.00-570.00 sec   227 MBytes  63.3 Mbits/sec
+[  4] 570.00-600.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 600.00-630.00 sec   225 MBytes  63.0 Mbits/sec
+[  4] 630.00-660.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 660.00-690.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 690.00-720.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 720.00-750.00 sec   226 MBytes  63.2 Mbits/sec
+[  4] 750.00-780.00 sec   226 MBytes  63.1 Mbits/sec
+[  4] 780.00-810.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 810.00-840.00 sec   225 MBytes  63.0 Mbits/sec
+[  4] 840.00-870.00 sec   226 MBytes  63.3 Mbits/sec
+[  4] 870.00-900.00 sec   226 MBytes  63.1 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  6.62 GBytes  63.2 Mbits/sec   47             sender
 [  4]   0.00-900.00 sec  6.62 GBytes  63.2 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -1517,7 +1611,7 @@ root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@lace:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-   0 0.01 0.05|  0   0  90   0   0  10|ksoftirqd/0  9.3|   0     0 
+   0 0.01 0.05|  0   0  90   0   0  10|ksoftirqd/0  9.3|   0     0
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:2  0.1|  22B   11B
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:2  0.0|  53B   11B
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:2  0.0|  19B   11B
@@ -1574,60 +1668,62 @@ root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
    0 0.22 0.46|  0   0 100   0   0   0|kworker/0:2  0.1|  19B   11B
    0 0.19 0.45|  0   0 100   0   0   0|kworker/0:2  0.0|  19B   11B
    0 0.18 0.43|  0   0 100   0   0   0|kworker/0:2  0.0|  24B   11B
-root@lace:~# 
+root@lace:~#
 ```
 
 ##### Raspberry Pi 2
+
 ```
 root@lenovo:~# iperf3 -c 10.0.3.5 -i 30 -t 900 -R
 Connecting to host 10.0.3.5, port 5201
 Reverse mode, remote host 10.0.3.5 is sending
 [  4] local 10.0.2.5 port 33208 connected to 10.0.3.5 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   281 MBytes  78.6 Mbits/sec                  
-[  4]  30.00-60.00  sec   279 MBytes  78.0 Mbits/sec                  
-[  4]  60.00-90.00  sec   279 MBytes  78.1 Mbits/sec                  
-[  4]  90.00-120.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 120.00-150.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 150.00-180.00 sec   278 MBytes  77.7 Mbits/sec                  
-[  4] 180.00-210.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 210.00-240.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 240.00-270.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 270.00-300.00 sec   281 MBytes  78.5 Mbits/sec                  
-[  4] 300.00-330.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 330.00-360.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 360.00-390.00 sec   278 MBytes  77.9 Mbits/sec                  
-[  4] 390.00-420.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 420.00-450.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 450.00-480.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 480.00-510.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 510.00-540.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 540.00-570.00 sec   278 MBytes  77.9 Mbits/sec                  
-[  4] 570.00-600.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 600.00-630.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 630.00-660.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 660.00-690.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 690.00-720.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 720.00-750.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 750.00-780.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 780.00-810.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 810.00-840.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 840.00-870.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 870.00-900.00 sec   279 MBytes  78.0 Mbits/sec                  
+[  4]   0.00-30.00  sec   281 MBytes  78.6 Mbits/sec
+[  4]  30.00-60.00  sec   279 MBytes  78.0 Mbits/sec
+[  4]  60.00-90.00  sec   279 MBytes  78.1 Mbits/sec
+[  4]  90.00-120.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 120.00-150.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 150.00-180.00 sec   278 MBytes  77.7 Mbits/sec
+[  4] 180.00-210.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 210.00-240.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 240.00-270.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 270.00-300.00 sec   281 MBytes  78.5 Mbits/sec
+[  4] 300.00-330.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 330.00-360.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 360.00-390.00 sec   278 MBytes  77.9 Mbits/sec
+[  4] 390.00-420.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 420.00-450.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 450.00-480.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 480.00-510.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 510.00-540.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 540.00-570.00 sec   278 MBytes  77.9 Mbits/sec
+[  4] 570.00-600.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 600.00-630.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 630.00-660.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 660.00-690.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 690.00-720.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 720.00-750.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 750.00-780.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 780.00-810.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 810.00-840.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 840.00-870.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 870.00-900.00 sec   279 MBytes  78.0 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  8.18 GBytes  78.1 Mbits/sec   85             sender
 [  4]   0.00-900.00 sec  8.18 GBytes  78.1 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
+
 ```
 root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@jessie-rpi:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-0.08 0.03 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.6|   0     0 
+0.08 0.03 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.6|   0     0
 0.05 0.03 0.05|  0   0 100   0   0   0|kworker/u8:2 0.0|  24B   11B
 0.03 0.03 0.05|  0   0 100   0   0   0|irqbalance   0.0|  36B   11B
 0.02 0.02 0.05|  0   0 100   0   0   0|kworker/1:2  0.0|  52B   11B
@@ -1674,47 +1770,50 @@ root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
    0 0.07 0.11|  0   0 100   0   0   0|irqbalance   0.0|  22B   11B
    0 0.07 0.11|  0   0 100   0   0   0|irqbalance   0.0|  77B   11B
    0 0.06 0.10|  0   0 100   0   0   0|kworker/3:0  0.0|  19B   11B
-root@jessie-rpi:~# 
+root@jessie-rpi:~#
 ```
 
 ### IPv6
+
 #### No Monitoring
+
 ##### Raspberry Pi
+
 ```
 root@lenovo:~# iperf3 -c fd14:9aa4:e604:ec36::1 -i 30 -t 900
 Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35754 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   171 MBytes  47.7 Mbits/sec   83   1.38 MBytes       
-[  4]  30.00-60.00  sec   169 MBytes  47.3 Mbits/sec   84   1.65 MBytes       
-[  4]  60.00-90.00  sec   170 MBytes  47.6 Mbits/sec   68   1.67 MBytes       
-[  4]  90.00-120.00 sec   170 MBytes  47.6 Mbits/sec   74   1.48 MBytes       
-[  4] 120.00-150.00 sec   170 MBytes  47.6 Mbits/sec   12   1.73 MBytes       
-[  4] 150.00-180.00 sec   169 MBytes  47.2 Mbits/sec  253   1.69 MBytes       
-[  4] 180.00-210.00 sec   170 MBytes  47.7 Mbits/sec  104   1.23 MBytes       
-[  4] 210.00-240.00 sec   170 MBytes  47.6 Mbits/sec  337   1.82 MBytes       
-[  4] 240.00-270.00 sec   169 MBytes  47.3 Mbits/sec  250   1.26 MBytes       
-[  4] 270.00-300.00 sec   170 MBytes  47.6 Mbits/sec   82   1.55 MBytes       
-[  4] 300.00-330.00 sec   169 MBytes  47.3 Mbits/sec  483   1.53 MBytes       
-[  4] 330.00-360.00 sec   171 MBytes  47.7 Mbits/sec  177   1000 KBytes       
-[  4] 360.00-390.00 sec   171 MBytes  47.8 Mbits/sec   20   1.22 MBytes       
-[  4] 390.00-420.00 sec   169 MBytes  47.3 Mbits/sec  429   1.94 MBytes       
-[  4] 420.00-450.00 sec   170 MBytes  47.6 Mbits/sec   18   1.23 MBytes       
-[  4] 450.00-480.00 sec   170 MBytes  47.6 Mbits/sec  184   1.79 MBytes       
-[  4] 480.00-510.00 sec   169 MBytes  47.2 Mbits/sec  329   1.31 MBytes       
-[  4] 510.00-540.00 sec   171 MBytes  47.9 Mbits/sec   23   1.24 MBytes       
-[  4] 540.00-570.00 sec   169 MBytes  47.2 Mbits/sec  275   1.49 MBytes       
-[  4] 570.00-600.00 sec   171 MBytes  47.9 Mbits/sec   12   1.33 MBytes       
-[  4] 600.00-630.00 sec   170 MBytes  47.6 Mbits/sec  111   1.33 MBytes       
-[  4] 630.00-660.00 sec   170 MBytes  47.5 Mbits/sec  134   1.49 MBytes       
-[  4] 660.00-690.00 sec   169 MBytes  47.2 Mbits/sec  218   1.52 MBytes       
-[  4] 690.00-720.00 sec   171 MBytes  47.7 Mbits/sec  317   1.39 MBytes       
-[  4] 720.00-750.00 sec   169 MBytes  47.3 Mbits/sec   33   1.75 MBytes       
-[  4] 750.00-780.00 sec   170 MBytes  47.6 Mbits/sec  189   1.65 MBytes       
-[  4] 780.00-810.00 sec   170 MBytes  47.6 Mbits/sec   37   1.07 MBytes       
-[  4] 810.00-840.00 sec   170 MBytes  47.5 Mbits/sec  353   1.19 MBytes       
-[  4] 840.00-870.00 sec   168 MBytes  47.0 Mbits/sec  569   1.61 MBytes       
-[  4] 870.00-900.00 sec   170 MBytes  47.7 Mbits/sec  189   1.77 MBytes       
+[  4]   0.00-30.00  sec   171 MBytes  47.7 Mbits/sec   83   1.38 MBytes
+[  4]  30.00-60.00  sec   169 MBytes  47.3 Mbits/sec   84   1.65 MBytes
+[  4]  60.00-90.00  sec   170 MBytes  47.6 Mbits/sec   68   1.67 MBytes
+[  4]  90.00-120.00 sec   170 MBytes  47.6 Mbits/sec   74   1.48 MBytes
+[  4] 120.00-150.00 sec   170 MBytes  47.6 Mbits/sec   12   1.73 MBytes
+[  4] 150.00-180.00 sec   169 MBytes  47.2 Mbits/sec  253   1.69 MBytes
+[  4] 180.00-210.00 sec   170 MBytes  47.7 Mbits/sec  104   1.23 MBytes
+[  4] 210.00-240.00 sec   170 MBytes  47.6 Mbits/sec  337   1.82 MBytes
+[  4] 240.00-270.00 sec   169 MBytes  47.3 Mbits/sec  250   1.26 MBytes
+[  4] 270.00-300.00 sec   170 MBytes  47.6 Mbits/sec   82   1.55 MBytes
+[  4] 300.00-330.00 sec   169 MBytes  47.3 Mbits/sec  483   1.53 MBytes
+[  4] 330.00-360.00 sec   171 MBytes  47.7 Mbits/sec  177   1000 KBytes
+[  4] 360.00-390.00 sec   171 MBytes  47.8 Mbits/sec   20   1.22 MBytes
+[  4] 390.00-420.00 sec   169 MBytes  47.3 Mbits/sec  429   1.94 MBytes
+[  4] 420.00-450.00 sec   170 MBytes  47.6 Mbits/sec   18   1.23 MBytes
+[  4] 450.00-480.00 sec   170 MBytes  47.6 Mbits/sec  184   1.79 MBytes
+[  4] 480.00-510.00 sec   169 MBytes  47.2 Mbits/sec  329   1.31 MBytes
+[  4] 510.00-540.00 sec   171 MBytes  47.9 Mbits/sec   23   1.24 MBytes
+[  4] 540.00-570.00 sec   169 MBytes  47.2 Mbits/sec  275   1.49 MBytes
+[  4] 570.00-600.00 sec   171 MBytes  47.9 Mbits/sec   12   1.33 MBytes
+[  4] 600.00-630.00 sec   170 MBytes  47.6 Mbits/sec  111   1.33 MBytes
+[  4] 630.00-660.00 sec   170 MBytes  47.5 Mbits/sec  134   1.49 MBytes
+[  4] 660.00-690.00 sec   169 MBytes  47.2 Mbits/sec  218   1.52 MBytes
+[  4] 690.00-720.00 sec   171 MBytes  47.7 Mbits/sec  317   1.39 MBytes
+[  4] 720.00-750.00 sec   169 MBytes  47.3 Mbits/sec   33   1.75 MBytes
+[  4] 750.00-780.00 sec   170 MBytes  47.6 Mbits/sec  189   1.65 MBytes
+[  4] 780.00-810.00 sec   170 MBytes  47.6 Mbits/sec   37   1.07 MBytes
+[  4] 810.00-840.00 sec   170 MBytes  47.5 Mbits/sec  353   1.19 MBytes
+[  4] 840.00-870.00 sec   168 MBytes  47.0 Mbits/sec  569   1.61 MBytes
+[  4] 870.00-900.00 sec   170 MBytes  47.7 Mbits/sec  189   1.77 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  4.98 GBytes  47.5 Mbits/sec  5447             sender
@@ -1723,87 +1822,89 @@ Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 iperf Done.
 root@lenovo:~#
 ```
+
 ```
 root@lenovo:~# iperf3 -c fd14:9aa4:e604:ec36::1 -i 30 -t 900 -R
 Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 Reverse mode, remote host fd14:9aa4:e604:ec36::1 is sending
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35760 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   179 MBytes  50.0 Mbits/sec                  
-[  4]  30.00-60.00  sec   180 MBytes  50.4 Mbits/sec                  
-[  4]  60.00-90.00  sec   180 MBytes  50.4 Mbits/sec                  
-[  4]  90.00-120.00 sec   181 MBytes  50.5 Mbits/sec                  
-[  4] 120.00-150.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 150.00-180.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 180.00-210.00 sec   180 MBytes  50.3 Mbits/sec                  
-[  4] 210.00-240.00 sec   181 MBytes  50.7 Mbits/sec                  
-[  4] 240.00-270.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 270.00-300.00 sec   180 MBytes  50.3 Mbits/sec                  
-[  4] 300.00-330.00 sec   180 MBytes  50.3 Mbits/sec                  
-[  4] 330.00-360.00 sec   181 MBytes  50.5 Mbits/sec                  
-[  4] 360.00-390.00 sec   181 MBytes  50.6 Mbits/sec                  
-[  4] 390.00-420.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 420.00-450.00 sec   181 MBytes  50.7 Mbits/sec                  
-[  4] 450.00-480.00 sec   180 MBytes  50.2 Mbits/sec                  
-[  4] 480.00-510.00 sec   180 MBytes  50.3 Mbits/sec                  
-[  4] 510.00-540.00 sec   180 MBytes  50.3 Mbits/sec                  
-[  4] 540.00-570.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 570.00-600.00 sec   180 MBytes  50.5 Mbits/sec                  
-[  4] 600.00-630.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 630.00-660.00 sec   181 MBytes  50.5 Mbits/sec                  
-[  4] 660.00-690.00 sec   181 MBytes  50.6 Mbits/sec                  
-[  4] 690.00-720.00 sec   180 MBytes  50.3 Mbits/sec                  
-[  4] 720.00-750.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 750.00-780.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 780.00-810.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 810.00-840.00 sec   181 MBytes  50.6 Mbits/sec                  
-[  4] 840.00-870.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 870.00-900.00 sec   181 MBytes  50.6 Mbits/sec                  
+[  4]   0.00-30.00  sec   179 MBytes  50.0 Mbits/sec
+[  4]  30.00-60.00  sec   180 MBytes  50.4 Mbits/sec
+[  4]  60.00-90.00  sec   180 MBytes  50.4 Mbits/sec
+[  4]  90.00-120.00 sec   181 MBytes  50.5 Mbits/sec
+[  4] 120.00-150.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 150.00-180.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 180.00-210.00 sec   180 MBytes  50.3 Mbits/sec
+[  4] 210.00-240.00 sec   181 MBytes  50.7 Mbits/sec
+[  4] 240.00-270.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 270.00-300.00 sec   180 MBytes  50.3 Mbits/sec
+[  4] 300.00-330.00 sec   180 MBytes  50.3 Mbits/sec
+[  4] 330.00-360.00 sec   181 MBytes  50.5 Mbits/sec
+[  4] 360.00-390.00 sec   181 MBytes  50.6 Mbits/sec
+[  4] 390.00-420.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 420.00-450.00 sec   181 MBytes  50.7 Mbits/sec
+[  4] 450.00-480.00 sec   180 MBytes  50.2 Mbits/sec
+[  4] 480.00-510.00 sec   180 MBytes  50.3 Mbits/sec
+[  4] 510.00-540.00 sec   180 MBytes  50.3 Mbits/sec
+[  4] 540.00-570.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 570.00-600.00 sec   180 MBytes  50.5 Mbits/sec
+[  4] 600.00-630.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 630.00-660.00 sec   181 MBytes  50.5 Mbits/sec
+[  4] 660.00-690.00 sec   181 MBytes  50.6 Mbits/sec
+[  4] 690.00-720.00 sec   180 MBytes  50.3 Mbits/sec
+[  4] 720.00-750.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 750.00-780.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 780.00-810.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 810.00-840.00 sec   181 MBytes  50.6 Mbits/sec
+[  4] 840.00-870.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 870.00-900.00 sec   181 MBytes  50.6 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  5.28 GBytes  50.4 Mbits/sec  16915             sender
 [  4]   0.00-900.00 sec  5.28 GBytes  50.4 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ##### Raspberry Pi 2
+
 ```
 root@lenovo:~# iperf3 -c fd45:64bf:295c:5631::1 -i 30 -t 900
 Connecting to host fd45:64bf:295c:5631::1, port 5201
 [  4] local fd57:d1b1:9c79:40af::5 port 43677 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   307 MBytes  85.8 Mbits/sec   21   2.04 MBytes       
-[  4]  30.00-60.00  sec   308 MBytes  86.2 Mbits/sec   18   1.20 MBytes       
-[  4]  60.00-90.00  sec   305 MBytes  85.2 Mbits/sec   18   1.25 MBytes       
-[  4]  90.00-120.00 sec   306 MBytes  85.5 Mbits/sec   20   1.27 MBytes       
-[  4] 120.00-150.00 sec   307 MBytes  85.9 Mbits/sec    8   2.00 MBytes       
-[  4] 150.00-180.00 sec   306 MBytes  85.5 Mbits/sec    8   1.59 MBytes       
-[  4] 180.00-210.00 sec   307 MBytes  85.8 Mbits/sec    4   2.01 MBytes       
-[  4] 210.00-240.00 sec   306 MBytes  85.6 Mbits/sec    6   1.70 MBytes       
-[  4] 240.00-270.00 sec   307 MBytes  85.9 Mbits/sec    6   2.09 MBytes       
-[  4] 270.00-300.00 sec   306 MBytes  85.5 Mbits/sec   21   1.25 MBytes       
-[  4] 300.00-330.00 sec   307 MBytes  85.8 Mbits/sec    9   2.11 MBytes       
-[  4] 330.00-360.00 sec   307 MBytes  85.8 Mbits/sec   11   1.31 MBytes       
-[  4] 360.00-390.00 sec   305 MBytes  85.4 Mbits/sec   15   1.44 MBytes       
-[  4] 390.00-420.00 sec   305 MBytes  85.4 Mbits/sec   43   1.96 MBytes       
-[  4] 420.00-450.00 sec   304 MBytes  85.1 Mbits/sec    8   1.32 MBytes       
-[  4] 450.00-480.00 sec   306 MBytes  85.4 Mbits/sec    7   1.60 MBytes       
-[  4] 480.00-510.00 sec   306 MBytes  85.5 Mbits/sec   16   1.21 MBytes       
-[  4] 510.00-540.00 sec   306 MBytes  85.4 Mbits/sec   18   1.42 MBytes       
-[  4] 540.00-570.00 sec   307 MBytes  85.9 Mbits/sec    3   1.86 MBytes       
-[  4] 570.00-600.00 sec   306 MBytes  85.6 Mbits/sec    6   2.07 MBytes       
-[  4] 600.00-630.00 sec   306 MBytes  85.6 Mbits/sec   20   1.09 MBytes       
-[  4] 630.00-660.00 sec   305 MBytes  85.4 Mbits/sec    3   1.36 MBytes       
-[  4] 660.00-690.00 sec   307 MBytes  85.8 Mbits/sec   10   1.99 MBytes       
-[  4] 690.00-720.00 sec   306 MBytes  85.5 Mbits/sec   24   1.59 MBytes       
-[  4] 720.00-750.00 sec   307 MBytes  85.8 Mbits/sec    7   1.25 MBytes       
-[  4] 750.00-780.00 sec   306 MBytes  85.5 Mbits/sec    6   1.80 MBytes       
-[  4] 780.00-810.00 sec   307 MBytes  85.8 Mbits/sec    7   1.94 MBytes       
-[  4] 810.00-840.00 sec   306 MBytes  85.5 Mbits/sec   25   1.17 MBytes       
-[  4] 840.00-870.00 sec   303 MBytes  84.7 Mbits/sec    5   1.38 MBytes       
-[  4] 870.00-900.00 sec   303 MBytes  84.7 Mbits/sec   30   1.23 MBytes       
+[  4]   0.00-30.00  sec   307 MBytes  85.8 Mbits/sec   21   2.04 MBytes
+[  4]  30.00-60.00  sec   308 MBytes  86.2 Mbits/sec   18   1.20 MBytes
+[  4]  60.00-90.00  sec   305 MBytes  85.2 Mbits/sec   18   1.25 MBytes
+[  4]  90.00-120.00 sec   306 MBytes  85.5 Mbits/sec   20   1.27 MBytes
+[  4] 120.00-150.00 sec   307 MBytes  85.9 Mbits/sec    8   2.00 MBytes
+[  4] 150.00-180.00 sec   306 MBytes  85.5 Mbits/sec    8   1.59 MBytes
+[  4] 180.00-210.00 sec   307 MBytes  85.8 Mbits/sec    4   2.01 MBytes
+[  4] 210.00-240.00 sec   306 MBytes  85.6 Mbits/sec    6   1.70 MBytes
+[  4] 240.00-270.00 sec   307 MBytes  85.9 Mbits/sec    6   2.09 MBytes
+[  4] 270.00-300.00 sec   306 MBytes  85.5 Mbits/sec   21   1.25 MBytes
+[  4] 300.00-330.00 sec   307 MBytes  85.8 Mbits/sec    9   2.11 MBytes
+[  4] 330.00-360.00 sec   307 MBytes  85.8 Mbits/sec   11   1.31 MBytes
+[  4] 360.00-390.00 sec   305 MBytes  85.4 Mbits/sec   15   1.44 MBytes
+[  4] 390.00-420.00 sec   305 MBytes  85.4 Mbits/sec   43   1.96 MBytes
+[  4] 420.00-450.00 sec   304 MBytes  85.1 Mbits/sec    8   1.32 MBytes
+[  4] 450.00-480.00 sec   306 MBytes  85.4 Mbits/sec    7   1.60 MBytes
+[  4] 480.00-510.00 sec   306 MBytes  85.5 Mbits/sec   16   1.21 MBytes
+[  4] 510.00-540.00 sec   306 MBytes  85.4 Mbits/sec   18   1.42 MBytes
+[  4] 540.00-570.00 sec   307 MBytes  85.9 Mbits/sec    3   1.86 MBytes
+[  4] 570.00-600.00 sec   306 MBytes  85.6 Mbits/sec    6   2.07 MBytes
+[  4] 600.00-630.00 sec   306 MBytes  85.6 Mbits/sec   20   1.09 MBytes
+[  4] 630.00-660.00 sec   305 MBytes  85.4 Mbits/sec    3   1.36 MBytes
+[  4] 660.00-690.00 sec   307 MBytes  85.8 Mbits/sec   10   1.99 MBytes
+[  4] 690.00-720.00 sec   306 MBytes  85.5 Mbits/sec   24   1.59 MBytes
+[  4] 720.00-750.00 sec   307 MBytes  85.8 Mbits/sec    7   1.25 MBytes
+[  4] 750.00-780.00 sec   306 MBytes  85.5 Mbits/sec    6   1.80 MBytes
+[  4] 780.00-810.00 sec   307 MBytes  85.8 Mbits/sec    7   1.94 MBytes
+[  4] 810.00-840.00 sec   306 MBytes  85.5 Mbits/sec   25   1.17 MBytes
+[  4] 840.00-870.00 sec   303 MBytes  84.7 Mbits/sec    5   1.38 MBytes
+[  4] 870.00-900.00 sec   303 MBytes  84.7 Mbits/sec   30   1.23 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  8.96 GBytes  85.6 Mbits/sec  403             sender
@@ -1812,146 +1913,151 @@ Connecting to host fd45:64bf:295c:5631::1, port 5201
 iperf Done.
 root@lenovo:~#
 ```
+
 ```
 root@lenovo:~# iperf3 -c fd45:64bf:295c:5631::1 -i 30 -t 900 -R
 Connecting to host fd45:64bf:295c:5631::1, port 5201
 Reverse mode, remote host fd45:64bf:295c:5631::1 is sending
 [  4] local fd57:d1b1:9c79:40af::5 port 43685 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   280 MBytes  78.4 Mbits/sec                  
-[  4]  30.00-60.00  sec   279 MBytes  78.0 Mbits/sec                  
-[  4]  60.00-90.00  sec   278 MBytes  77.8 Mbits/sec                  
-[  4]  90.00-120.00 sec   281 MBytes  78.5 Mbits/sec                  
-[  4] 120.00-150.00 sec   278 MBytes  77.8 Mbits/sec                  
-[  4] 150.00-180.00 sec   278 MBytes  77.8 Mbits/sec                  
-[  4] 180.00-210.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 210.00-240.00 sec   278 MBytes  77.7 Mbits/sec                  
-[  4] 240.00-270.00 sec   281 MBytes  78.6 Mbits/sec                  
-[  4] 270.00-300.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 300.00-330.00 sec   277 MBytes  77.3 Mbits/sec                  
-[  4] 330.00-360.00 sec   281 MBytes  78.7 Mbits/sec                  
-[  4] 360.00-390.00 sec   277 MBytes  77.5 Mbits/sec                  
-[  4] 390.00-420.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 420.00-450.00 sec   278 MBytes  77.8 Mbits/sec                  
-[  4] 450.00-480.00 sec   277 MBytes  77.3 Mbits/sec                  
-[  4] 480.00-510.00 sec   281 MBytes  78.4 Mbits/sec                  
-[  4] 510.00-540.00 sec   278 MBytes  77.9 Mbits/sec                  
-[  4] 540.00-570.00 sec   278 MBytes  77.6 Mbits/sec                  
-[  4] 570.00-600.00 sec   286 MBytes  79.9 Mbits/sec                  
-[  4] 600.00-630.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 630.00-660.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 660.00-690.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 690.00-720.00 sec   282 MBytes  78.9 Mbits/sec                  
-[  4] 720.00-750.00 sec   280 MBytes  78.4 Mbits/sec                  
-[  4] 750.00-780.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 780.00-810.00 sec   282 MBytes  78.8 Mbits/sec                  
-[  4] 810.00-840.00 sec   279 MBytes  77.9 Mbits/sec                  
-[  4] 840.00-870.00 sec   281 MBytes  78.6 Mbits/sec                  
-[  4] 870.00-900.00 sec   282 MBytes  78.9 Mbits/sec                  
+[  4]   0.00-30.00  sec   280 MBytes  78.4 Mbits/sec
+[  4]  30.00-60.00  sec   279 MBytes  78.0 Mbits/sec
+[  4]  60.00-90.00  sec   278 MBytes  77.8 Mbits/sec
+[  4]  90.00-120.00 sec   281 MBytes  78.5 Mbits/sec
+[  4] 120.00-150.00 sec   278 MBytes  77.8 Mbits/sec
+[  4] 150.00-180.00 sec   278 MBytes  77.8 Mbits/sec
+[  4] 180.00-210.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 210.00-240.00 sec   278 MBytes  77.7 Mbits/sec
+[  4] 240.00-270.00 sec   281 MBytes  78.6 Mbits/sec
+[  4] 270.00-300.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 300.00-330.00 sec   277 MBytes  77.3 Mbits/sec
+[  4] 330.00-360.00 sec   281 MBytes  78.7 Mbits/sec
+[  4] 360.00-390.00 sec   277 MBytes  77.5 Mbits/sec
+[  4] 390.00-420.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 420.00-450.00 sec   278 MBytes  77.8 Mbits/sec
+[  4] 450.00-480.00 sec   277 MBytes  77.3 Mbits/sec
+[  4] 480.00-510.00 sec   281 MBytes  78.4 Mbits/sec
+[  4] 510.00-540.00 sec   278 MBytes  77.9 Mbits/sec
+[  4] 540.00-570.00 sec   278 MBytes  77.6 Mbits/sec
+[  4] 570.00-600.00 sec   286 MBytes  79.9 Mbits/sec
+[  4] 600.00-630.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 630.00-660.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 660.00-690.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 690.00-720.00 sec   282 MBytes  78.9 Mbits/sec
+[  4] 720.00-750.00 sec   280 MBytes  78.4 Mbits/sec
+[  4] 750.00-780.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 780.00-810.00 sec   282 MBytes  78.8 Mbits/sec
+[  4] 810.00-840.00 sec   279 MBytes  77.9 Mbits/sec
+[  4] 840.00-870.00 sec   281 MBytes  78.6 Mbits/sec
+[  4] 870.00-900.00 sec   282 MBytes  78.9 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  8.19 GBytes  78.2 Mbits/sec  5357             sender
 [  4]   0.00-900.00 sec  8.19 GBytes  78.2 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 #### With dstat Monitoring
+
 ##### Raspberry Pi
+
 ```
 root@lenovo:~# iperf3 -c fd14:9aa4:e604:ec36::1 -i 30 -t 900
 Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35801 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   170 MBytes  47.6 Mbits/sec   21   1.69 MBytes       
-[  4]  30.00-60.00  sec   167 MBytes  46.7 Mbits/sec  226   1.25 MBytes       
-[  4]  60.00-90.00  sec   170 MBytes  47.6 Mbits/sec  497   1.64 MBytes       
-[  4]  90.00-120.00 sec   169 MBytes  47.3 Mbits/sec  133   1.00 MBytes       
-[  4] 120.00-150.00 sec   169 MBytes  47.3 Mbits/sec  117   1.24 MBytes       
-[  4] 150.00-180.00 sec   170 MBytes  47.6 Mbits/sec  178   1.30 MBytes       
-[  4] 180.00-210.00 sec   169 MBytes  47.2 Mbits/sec  107   1.65 MBytes       
-[  4] 210.00-240.00 sec   169 MBytes  47.3 Mbits/sec   85   1.78 MBytes       
-[  4] 240.00-270.00 sec   169 MBytes  47.2 Mbits/sec  241    974 KBytes       
-[  4] 270.00-300.00 sec   169 MBytes  47.1 Mbits/sec   41   1.25 MBytes       
-[  4] 300.00-330.00 sec   169 MBytes  47.2 Mbits/sec  468   1.50 MBytes       
-[  4] 330.00-360.00 sec   169 MBytes  47.3 Mbits/sec   11   1.35 MBytes       
-[  4] 360.00-390.00 sec   168 MBytes  47.0 Mbits/sec  125   1.69 MBytes       
-[  4] 390.00-420.00 sec   170 MBytes  47.5 Mbits/sec   63   1.42 MBytes       
-[  4] 420.00-450.00 sec   169 MBytes  47.2 Mbits/sec   62   1.74 MBytes       
-[  4] 450.00-480.00 sec   169 MBytes  47.3 Mbits/sec  259   1.48 MBytes       
-[  4] 480.00-510.00 sec   169 MBytes  47.2 Mbits/sec   45   1.21 MBytes       
-[  4] 510.00-540.00 sec   170 MBytes  47.5 Mbits/sec   36   1.49 MBytes       
-[  4] 540.00-570.00 sec   169 MBytes  47.3 Mbits/sec  151   1.13 MBytes       
-[  4] 570.00-600.00 sec   169 MBytes  47.3 Mbits/sec  335   1.19 MBytes       
-[  4] 600.00-630.00 sec   169 MBytes  47.2 Mbits/sec  202   1.53 MBytes       
-[  4] 630.00-660.00 sec   169 MBytes  47.4 Mbits/sec  173   1.55 MBytes       
-[  4] 660.00-690.00 sec   170 MBytes  47.5 Mbits/sec   44   1.02 MBytes       
-[  4] 690.00-720.00 sec   168 MBytes  46.9 Mbits/sec  288   1.83 MBytes       
-[  4] 720.00-750.00 sec   169 MBytes  47.3 Mbits/sec  261   1.17 MBytes       
-[  4] 750.00-780.00 sec   169 MBytes  47.3 Mbits/sec  506   1.65 MBytes       
-[  4] 780.00-810.00 sec   169 MBytes  47.3 Mbits/sec  117   1.21 MBytes       
-[  4] 810.00-840.00 sec   171 MBytes  47.7 Mbits/sec   68   1.25 MBytes       
-[  4] 840.00-870.00 sec   169 MBytes  47.3 Mbits/sec   26   1.64 MBytes       
-[  4] 870.00-900.00 sec   170 MBytes  47.5 Mbits/sec   27   1.46 MBytes       
+[  4]   0.00-30.00  sec   170 MBytes  47.6 Mbits/sec   21   1.69 MBytes
+[  4]  30.00-60.00  sec   167 MBytes  46.7 Mbits/sec  226   1.25 MBytes
+[  4]  60.00-90.00  sec   170 MBytes  47.6 Mbits/sec  497   1.64 MBytes
+[  4]  90.00-120.00 sec   169 MBytes  47.3 Mbits/sec  133   1.00 MBytes
+[  4] 120.00-150.00 sec   169 MBytes  47.3 Mbits/sec  117   1.24 MBytes
+[  4] 150.00-180.00 sec   170 MBytes  47.6 Mbits/sec  178   1.30 MBytes
+[  4] 180.00-210.00 sec   169 MBytes  47.2 Mbits/sec  107   1.65 MBytes
+[  4] 210.00-240.00 sec   169 MBytes  47.3 Mbits/sec   85   1.78 MBytes
+[  4] 240.00-270.00 sec   169 MBytes  47.2 Mbits/sec  241    974 KBytes
+[  4] 270.00-300.00 sec   169 MBytes  47.1 Mbits/sec   41   1.25 MBytes
+[  4] 300.00-330.00 sec   169 MBytes  47.2 Mbits/sec  468   1.50 MBytes
+[  4] 330.00-360.00 sec   169 MBytes  47.3 Mbits/sec   11   1.35 MBytes
+[  4] 360.00-390.00 sec   168 MBytes  47.0 Mbits/sec  125   1.69 MBytes
+[  4] 390.00-420.00 sec   170 MBytes  47.5 Mbits/sec   63   1.42 MBytes
+[  4] 420.00-450.00 sec   169 MBytes  47.2 Mbits/sec   62   1.74 MBytes
+[  4] 450.00-480.00 sec   169 MBytes  47.3 Mbits/sec  259   1.48 MBytes
+[  4] 480.00-510.00 sec   169 MBytes  47.2 Mbits/sec   45   1.21 MBytes
+[  4] 510.00-540.00 sec   170 MBytes  47.5 Mbits/sec   36   1.49 MBytes
+[  4] 540.00-570.00 sec   169 MBytes  47.3 Mbits/sec  151   1.13 MBytes
+[  4] 570.00-600.00 sec   169 MBytes  47.3 Mbits/sec  335   1.19 MBytes
+[  4] 600.00-630.00 sec   169 MBytes  47.2 Mbits/sec  202   1.53 MBytes
+[  4] 630.00-660.00 sec   169 MBytes  47.4 Mbits/sec  173   1.55 MBytes
+[  4] 660.00-690.00 sec   170 MBytes  47.5 Mbits/sec   44   1.02 MBytes
+[  4] 690.00-720.00 sec   168 MBytes  46.9 Mbits/sec  288   1.83 MBytes
+[  4] 720.00-750.00 sec   169 MBytes  47.3 Mbits/sec  261   1.17 MBytes
+[  4] 750.00-780.00 sec   169 MBytes  47.3 Mbits/sec  506   1.65 MBytes
+[  4] 780.00-810.00 sec   169 MBytes  47.3 Mbits/sec  117   1.21 MBytes
+[  4] 810.00-840.00 sec   171 MBytes  47.7 Mbits/sec   68   1.25 MBytes
+[  4] 840.00-870.00 sec   169 MBytes  47.3 Mbits/sec   26   1.64 MBytes
+[  4] 870.00-900.00 sec   170 MBytes  47.5 Mbits/sec   27   1.46 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  4.96 GBytes  47.3 Mbits/sec  4913             sender
 [  4]   0.00-900.00 sec  4.95 GBytes  47.3 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
+
 ```
 root@lenovo:~# iperf3 -c fd14:9aa4:e604:ec36::1 -i 30 -t 900 -R
 Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 Reverse mode, remote host fd14:9aa4:e604:ec36::1 is sending
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35805 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   178 MBytes  49.7 Mbits/sec                  
-[  4]  30.00-60.00  sec   179 MBytes  50.1 Mbits/sec                  
-[  4]  60.00-90.00  sec   179 MBytes  50.1 Mbits/sec                  
-[  4]  90.00-120.00 sec   179 MBytes  50.2 Mbits/sec                  
-[  4] 120.00-150.00 sec   179 MBytes  50.0 Mbits/sec                  
-[  4] 150.00-180.00 sec   181 MBytes  50.5 Mbits/sec                  
-[  4] 180.00-210.00 sec   179 MBytes  50.0 Mbits/sec                  
-[  4] 210.00-240.00 sec   180 MBytes  50.2 Mbits/sec                  
-[  4] 240.00-270.00 sec   179 MBytes  50.2 Mbits/sec                  
-[  4] 270.00-300.00 sec   180 MBytes  50.3 Mbits/sec                  
-[  4] 300.00-330.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 330.00-360.00 sec   178 MBytes  49.8 Mbits/sec                  
-[  4] 360.00-390.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 390.00-420.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 420.00-450.00 sec   179 MBytes  50.2 Mbits/sec                  
-[  4] 450.00-480.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 480.00-510.00 sec   178 MBytes  49.7 Mbits/sec                  
-[  4] 510.00-540.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 540.00-570.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 570.00-600.00 sec   180 MBytes  50.2 Mbits/sec                  
-[  4] 600.00-630.00 sec   180 MBytes  50.2 Mbits/sec                  
-[  4] 630.00-660.00 sec   180 MBytes  50.2 Mbits/sec                  
-[  4] 660.00-690.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 690.00-720.00 sec   179 MBytes  49.9 Mbits/sec                  
-[  4] 720.00-750.00 sec   179 MBytes  50.2 Mbits/sec                  
-[  4] 750.00-780.00 sec   180 MBytes  50.4 Mbits/sec                  
-[  4] 780.00-810.00 sec   179 MBytes  49.9 Mbits/sec                  
-[  4] 810.00-840.00 sec   179 MBytes  50.1 Mbits/sec                  
-[  4] 840.00-870.00 sec   180 MBytes  50.2 Mbits/sec                  
-[  4] 870.00-900.00 sec   179 MBytes  50.1 Mbits/sec                  
+[  4]   0.00-30.00  sec   178 MBytes  49.7 Mbits/sec
+[  4]  30.00-60.00  sec   179 MBytes  50.1 Mbits/sec
+[  4]  60.00-90.00  sec   179 MBytes  50.1 Mbits/sec
+[  4]  90.00-120.00 sec   179 MBytes  50.2 Mbits/sec
+[  4] 120.00-150.00 sec   179 MBytes  50.0 Mbits/sec
+[  4] 150.00-180.00 sec   181 MBytes  50.5 Mbits/sec
+[  4] 180.00-210.00 sec   179 MBytes  50.0 Mbits/sec
+[  4] 210.00-240.00 sec   180 MBytes  50.2 Mbits/sec
+[  4] 240.00-270.00 sec   179 MBytes  50.2 Mbits/sec
+[  4] 270.00-300.00 sec   180 MBytes  50.3 Mbits/sec
+[  4] 300.00-330.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 330.00-360.00 sec   178 MBytes  49.8 Mbits/sec
+[  4] 360.00-390.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 390.00-420.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 420.00-450.00 sec   179 MBytes  50.2 Mbits/sec
+[  4] 450.00-480.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 480.00-510.00 sec   178 MBytes  49.7 Mbits/sec
+[  4] 510.00-540.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 540.00-570.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 570.00-600.00 sec   180 MBytes  50.2 Mbits/sec
+[  4] 600.00-630.00 sec   180 MBytes  50.2 Mbits/sec
+[  4] 630.00-660.00 sec   180 MBytes  50.2 Mbits/sec
+[  4] 660.00-690.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 690.00-720.00 sec   179 MBytes  49.9 Mbits/sec
+[  4] 720.00-750.00 sec   179 MBytes  50.2 Mbits/sec
+[  4] 750.00-780.00 sec   180 MBytes  50.4 Mbits/sec
+[  4] 780.00-810.00 sec   179 MBytes  49.9 Mbits/sec
+[  4] 810.00-840.00 sec   179 MBytes  50.1 Mbits/sec
+[  4] 840.00-870.00 sec   180 MBytes  50.2 Mbits/sec
+[  4] 870.00-900.00 sec   179 MBytes  50.1 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  5.26 GBytes  50.2 Mbits/sec  16654             sender
 [  4]   0.00-900.00 sec  5.25 GBytes  50.1 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
+
 ```
 root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@lace:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-   0 0.01 0.05|  0   0  93   0   0   7|ksoftirqd/0  6.4|   0     0 
+   0 0.01 0.05|  0   0  93   0   0   7|ksoftirqd/0  6.4|   0     0
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:1  0.1|  18B   11B
    0 0.01 0.05|  0   0 100   0   0   0|kworker/0:1  0.0|  48B   11B
    0 0.01 0.05|  0   0 100   0   0   0|sshd: root@pt0.0|  16B   11B
@@ -2046,45 +2152,46 @@ root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 0.13 0.72 0.79|  0   0 100   0   0   0|kworker/0:2  0.0|  16B   11B
 0.08 0.65 0.77|  0   0 100   0   0   0|kworker/0:2  0.1|  17B   11B
 0.05 0.59 0.75|  0   0 100   0   0   0|kworker/0:2  0.0|  16B   11B
-root@lace:~# 
+root@lace:~#
 ```
 
 ##### Raspberry Pi 2
+
 ```
 root@lenovo:~# iperf3 -c fd45:64bf:295c:5631::1 -i 30 -t 900
 Connecting to host fd45:64bf:295c:5631::1, port 5201
 [  4] local fd57:d1b1:9c79:40af::5 port 43707 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   303 MBytes  84.8 Mbits/sec   38   1.18 MBytes       
-[  4]  30.00-60.00  sec   303 MBytes  84.7 Mbits/sec   14   1.37 MBytes       
-[  4]  60.00-90.00  sec   303 MBytes  84.7 Mbits/sec   10   1.59 MBytes       
-[  4]  90.00-120.00 sec   303 MBytes  84.7 Mbits/sec   15   1.07 MBytes       
-[  4] 120.00-150.00 sec   304 MBytes  85.0 Mbits/sec   18   1.35 MBytes       
-[  4] 150.00-180.00 sec   304 MBytes  85.0 Mbits/sec   18   1.29 MBytes       
-[  4] 180.00-210.00 sec   303 MBytes  84.7 Mbits/sec   17   1.81 MBytes       
-[  4] 210.00-240.00 sec   303 MBytes  84.8 Mbits/sec    9   2.07 MBytes       
-[  4] 240.00-270.00 sec   303 MBytes  84.8 Mbits/sec    6   1.73 MBytes       
-[  4] 270.00-300.00 sec   303 MBytes  84.8 Mbits/sec    2   2.14 MBytes       
-[  4] 300.00-330.00 sec   302 MBytes  84.4 Mbits/sec   32   1.24 MBytes       
-[  4] 330.00-360.00 sec   303 MBytes  84.8 Mbits/sec    9   1.47 MBytes       
-[  4] 360.00-390.00 sec   302 MBytes  84.4 Mbits/sec   14   1.86 MBytes       
-[  4] 390.00-420.00 sec   303 MBytes  84.8 Mbits/sec   29   1.33 MBytes       
-[  4] 420.00-450.00 sec   302 MBytes  84.4 Mbits/sec   13   1.95 MBytes       
-[  4] 450.00-480.00 sec   303 MBytes  84.8 Mbits/sec   14   1.25 MBytes       
-[  4] 480.00-510.00 sec   303 MBytes  84.7 Mbits/sec   70   1.43 MBytes       
-[  4] 510.00-540.00 sec   304 MBytes  85.1 Mbits/sec   19   1.28 MBytes       
-[  4] 540.00-570.00 sec   303 MBytes  84.8 Mbits/sec   19   1.76 MBytes       
-[  4] 570.00-600.00 sec   304 MBytes  85.1 Mbits/sec   10   1.84 MBytes       
-[  4] 600.00-630.00 sec   302 MBytes  84.4 Mbits/sec   20   1.45 MBytes       
-[  4] 630.00-660.00 sec   301 MBytes  84.1 Mbits/sec    6   1.31 MBytes       
-[  4] 660.00-690.00 sec   304 MBytes  85.1 Mbits/sec   52   1.20 MBytes       
-[  4] 690.00-720.00 sec   302 MBytes  84.3 Mbits/sec    5   1.30 MBytes       
-[  4] 720.00-750.00 sec   303 MBytes  84.7 Mbits/sec   10   2.06 MBytes       
-[  4] 750.00-780.00 sec   303 MBytes  84.7 Mbits/sec  215   1.76 MBytes       
-[  4] 780.00-810.00 sec   302 MBytes  84.4 Mbits/sec    6   2.09 MBytes       
-[  4] 810.00-840.00 sec   302 MBytes  84.5 Mbits/sec   31   1.24 MBytes       
-[  4] 840.00-870.00 sec   304 MBytes  85.1 Mbits/sec    2   1.46 MBytes       
-[  4] 870.00-900.00 sec   303 MBytes  84.8 Mbits/sec   12   2.01 MBytes       
+[  4]   0.00-30.00  sec   303 MBytes  84.8 Mbits/sec   38   1.18 MBytes
+[  4]  30.00-60.00  sec   303 MBytes  84.7 Mbits/sec   14   1.37 MBytes
+[  4]  60.00-90.00  sec   303 MBytes  84.7 Mbits/sec   10   1.59 MBytes
+[  4]  90.00-120.00 sec   303 MBytes  84.7 Mbits/sec   15   1.07 MBytes
+[  4] 120.00-150.00 sec   304 MBytes  85.0 Mbits/sec   18   1.35 MBytes
+[  4] 150.00-180.00 sec   304 MBytes  85.0 Mbits/sec   18   1.29 MBytes
+[  4] 180.00-210.00 sec   303 MBytes  84.7 Mbits/sec   17   1.81 MBytes
+[  4] 210.00-240.00 sec   303 MBytes  84.8 Mbits/sec    9   2.07 MBytes
+[  4] 240.00-270.00 sec   303 MBytes  84.8 Mbits/sec    6   1.73 MBytes
+[  4] 270.00-300.00 sec   303 MBytes  84.8 Mbits/sec    2   2.14 MBytes
+[  4] 300.00-330.00 sec   302 MBytes  84.4 Mbits/sec   32   1.24 MBytes
+[  4] 330.00-360.00 sec   303 MBytes  84.8 Mbits/sec    9   1.47 MBytes
+[  4] 360.00-390.00 sec   302 MBytes  84.4 Mbits/sec   14   1.86 MBytes
+[  4] 390.00-420.00 sec   303 MBytes  84.8 Mbits/sec   29   1.33 MBytes
+[  4] 420.00-450.00 sec   302 MBytes  84.4 Mbits/sec   13   1.95 MBytes
+[  4] 450.00-480.00 sec   303 MBytes  84.8 Mbits/sec   14   1.25 MBytes
+[  4] 480.00-510.00 sec   303 MBytes  84.7 Mbits/sec   70   1.43 MBytes
+[  4] 510.00-540.00 sec   304 MBytes  85.1 Mbits/sec   19   1.28 MBytes
+[  4] 540.00-570.00 sec   303 MBytes  84.8 Mbits/sec   19   1.76 MBytes
+[  4] 570.00-600.00 sec   304 MBytes  85.1 Mbits/sec   10   1.84 MBytes
+[  4] 600.00-630.00 sec   302 MBytes  84.4 Mbits/sec   20   1.45 MBytes
+[  4] 630.00-660.00 sec   301 MBytes  84.1 Mbits/sec    6   1.31 MBytes
+[  4] 660.00-690.00 sec   304 MBytes  85.1 Mbits/sec   52   1.20 MBytes
+[  4] 690.00-720.00 sec   302 MBytes  84.3 Mbits/sec    5   1.30 MBytes
+[  4] 720.00-750.00 sec   303 MBytes  84.7 Mbits/sec   10   2.06 MBytes
+[  4] 750.00-780.00 sec   303 MBytes  84.7 Mbits/sec  215   1.76 MBytes
+[  4] 780.00-810.00 sec   302 MBytes  84.4 Mbits/sec    6   2.09 MBytes
+[  4] 810.00-840.00 sec   302 MBytes  84.5 Mbits/sec   31   1.24 MBytes
+[  4] 840.00-870.00 sec   304 MBytes  85.1 Mbits/sec    2   1.46 MBytes
+[  4] 870.00-900.00 sec   303 MBytes  84.8 Mbits/sec   12   2.01 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  8.88 GBytes  84.7 Mbits/sec  735             sender
@@ -2100,50 +2207,51 @@ Connecting to host fd45:64bf:295c:5631::1, port 5201
 Reverse mode, remote host fd45:64bf:295c:5631::1 is sending
 [  4] local fd57:d1b1:9c79:40af::5 port 43715 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   278 MBytes  77.8 Mbits/sec                  
-[  4]  30.00-60.00  sec   280 MBytes  78.3 Mbits/sec                  
-[  4]  60.00-90.00  sec   281 MBytes  78.4 Mbits/sec                  
-[  4]  90.00-120.00 sec   282 MBytes  78.7 Mbits/sec                  
-[  4] 120.00-150.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 150.00-180.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 180.00-210.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 210.00-240.00 sec   283 MBytes  79.1 Mbits/sec                  
-[  4] 240.00-270.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 270.00-300.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 300.00-330.00 sec   281 MBytes  78.4 Mbits/sec                  
-[  4] 330.00-360.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 360.00-390.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 390.00-420.00 sec   278 MBytes  77.8 Mbits/sec                  
-[  4] 420.00-450.00 sec   281 MBytes  78.5 Mbits/sec                  
-[  4] 450.00-480.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 480.00-510.00 sec   280 MBytes  78.4 Mbits/sec                  
-[  4] 510.00-540.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 540.00-570.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 570.00-600.00 sec   278 MBytes  77.7 Mbits/sec                  
-[  4] 600.00-630.00 sec   279 MBytes  78.1 Mbits/sec                  
-[  4] 630.00-660.00 sec   278 MBytes  77.8 Mbits/sec                  
-[  4] 660.00-690.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 690.00-720.00 sec   277 MBytes  77.6 Mbits/sec                  
-[  4] 720.00-750.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 750.00-780.00 sec   280 MBytes  78.2 Mbits/sec                  
-[  4] 780.00-810.00 sec   281 MBytes  78.5 Mbits/sec                  
-[  4] 810.00-840.00 sec   280 MBytes  78.3 Mbits/sec                  
-[  4] 840.00-870.00 sec   279 MBytes  78.0 Mbits/sec                  
-[  4] 870.00-900.00 sec   278 MBytes  77.8 Mbits/sec                  
+[  4]   0.00-30.00  sec   278 MBytes  77.8 Mbits/sec
+[  4]  30.00-60.00  sec   280 MBytes  78.3 Mbits/sec
+[  4]  60.00-90.00  sec   281 MBytes  78.4 Mbits/sec
+[  4]  90.00-120.00 sec   282 MBytes  78.7 Mbits/sec
+[  4] 120.00-150.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 150.00-180.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 180.00-210.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 210.00-240.00 sec   283 MBytes  79.1 Mbits/sec
+[  4] 240.00-270.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 270.00-300.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 300.00-330.00 sec   281 MBytes  78.4 Mbits/sec
+[  4] 330.00-360.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 360.00-390.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 390.00-420.00 sec   278 MBytes  77.8 Mbits/sec
+[  4] 420.00-450.00 sec   281 MBytes  78.5 Mbits/sec
+[  4] 450.00-480.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 480.00-510.00 sec   280 MBytes  78.4 Mbits/sec
+[  4] 510.00-540.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 540.00-570.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 570.00-600.00 sec   278 MBytes  77.7 Mbits/sec
+[  4] 600.00-630.00 sec   279 MBytes  78.1 Mbits/sec
+[  4] 630.00-660.00 sec   278 MBytes  77.8 Mbits/sec
+[  4] 660.00-690.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 690.00-720.00 sec   277 MBytes  77.6 Mbits/sec
+[  4] 720.00-750.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 750.00-780.00 sec   280 MBytes  78.2 Mbits/sec
+[  4] 780.00-810.00 sec   281 MBytes  78.5 Mbits/sec
+[  4] 810.00-840.00 sec   280 MBytes  78.3 Mbits/sec
+[  4] 840.00-870.00 sec   279 MBytes  78.0 Mbits/sec
+[  4] 870.00-900.00 sec   278 MBytes  77.8 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  8.19 GBytes  78.2 Mbits/sec  5911             sender
 [  4]   0.00-900.00 sec  8.19 GBytes  78.2 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
+
 ```
 root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@jessie-rpi:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-   0 0.01 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.5|   0     0 
+   0 0.01 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.5|   0     0
    0 0.01 0.05|  0   0 100   0   0   0|irqbalance   0.1|  18B   11B
    0 0.01 0.05|  0   0 100   0   0   0|irqbalance   0.0|  16B   11B
    0 0.01 0.05|  0   0 100   0   0   0|irqbalance   0.1|  48B   11B
@@ -2310,12 +2418,15 @@ root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
    0 0.01 0.05|  0   0 100   0   0   0|irqbalance   0.0|  17B   11B
    0 0.01 0.05|  0   0 100   0   0   0|irqbalance   0.1|  16B   11B
    0 0.01 0.05|  0   0 100   0   0   0|irqbalance   0.0|  18B   11B
-root@jessie-rpi:~# 
+root@jessie-rpi:~#
 ```
 
 ### IPv6 with iptables
+
 #### Setup
+
 ##### ferm.conf
+
 ```
 domain (ip ip6) chain (INPUT OUTPUT FORWARD) policy DROP;
 domain (ip ip6) chain (INPUT OUTPUT FORWARD) {
@@ -2350,6 +2461,7 @@ domain ip6 chain (INPUT OUTPUT FORWARD) REJECT reject-with icmp6-adm-prohibited;
 ```
 
 ##### iptables-save
+
 ```
 # Generated by iptables-save v1.4.21 on Fri Jan  2 03:09:52 1970
 *filter
@@ -2417,50 +2529,53 @@ COMMIT
 COMMIT
 # Completed on Fri Jan  2 04:38:40 1970
 ```
+
 #### No Monitoring
+
 ##### Raspberry Pi
+
 ```
 root@lenovo:~# iperf3 -c fd14:9aa4:e604:ec36::1 -i 30 -t 900
 Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35939 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   118 MBytes  33.1 Mbits/sec  261   1.22 MBytes       
-[  4]  30.00-60.00  sec   117 MBytes  32.6 Mbits/sec   51   1.52 MBytes       
-[  4]  60.00-90.00  sec   118 MBytes  33.0 Mbits/sec   72   1.56 MBytes       
-[  4]  90.00-120.00 sec   119 MBytes  33.3 Mbits/sec  103   1.79 MBytes       
-[  4] 120.00-150.00 sec   118 MBytes  32.9 Mbits/sec   94   1.92 MBytes       
-[  4] 150.00-180.00 sec   118 MBytes  32.9 Mbits/sec  160   1.48 MBytes       
-[  4] 180.00-210.00 sec   118 MBytes  32.9 Mbits/sec  211   1.69 MBytes       
-[  4] 210.00-240.00 sec   118 MBytes  32.9 Mbits/sec  101   1.58 MBytes       
-[  4] 240.00-270.00 sec   117 MBytes  32.8 Mbits/sec  166   1.92 MBytes       
-[  4] 270.00-300.00 sec   118 MBytes  33.0 Mbits/sec  107   1.33 MBytes       
-[  4] 300.00-330.00 sec   118 MBytes  32.9 Mbits/sec  187   1.62 MBytes       
-[  4] 330.00-360.00 sec   117 MBytes  32.8 Mbits/sec   63   2.26 MBytes       
-[  4] 360.00-390.00 sec   117 MBytes  32.7 Mbits/sec  603   1.63 MBytes       
-[  4] 390.00-420.00 sec   119 MBytes  33.1 Mbits/sec  382   1.33 MBytes       
-[  4] 420.00-450.00 sec   119 MBytes  33.2 Mbits/sec   32   1.57 MBytes       
-[  4] 450.00-480.00 sec   118 MBytes  32.9 Mbits/sec  297   1.76 MBytes       
-[  4] 480.00-510.00 sec   117 MBytes  32.8 Mbits/sec  115   1.84 MBytes       
-[  4] 510.00-540.00 sec   118 MBytes  32.9 Mbits/sec  166   1.96 MBytes       
-[  4] 540.00-570.00 sec   118 MBytes  33.1 Mbits/sec  195   1.56 MBytes       
-[  4] 570.00-600.00 sec   118 MBytes  33.0 Mbits/sec  140   1.19 MBytes       
-[  4] 600.00-630.00 sec   118 MBytes  32.9 Mbits/sec  262   1.69 MBytes       
-[  4] 630.00-660.00 sec   118 MBytes  33.0 Mbits/sec  264   1.30 MBytes       
-[  4] 660.00-690.00 sec   118 MBytes  33.1 Mbits/sec  117   1.54 MBytes       
-[  4] 690.00-720.00 sec   118 MBytes  33.1 Mbits/sec   72   1.41 MBytes       
-[  4] 720.00-750.00 sec   117 MBytes  32.6 Mbits/sec  102   1.76 MBytes       
-[  4] 750.00-780.00 sec   118 MBytes  33.0 Mbits/sec  265   1.21 MBytes       
-[  4] 780.00-810.00 sec   118 MBytes  33.1 Mbits/sec   26   1.77 MBytes       
-[  4] 810.00-840.00 sec   118 MBytes  32.9 Mbits/sec  159   1.30 MBytes       
-[  4] 840.00-870.00 sec   117 MBytes  32.8 Mbits/sec  293   1.20 MBytes       
-[  4] 870.00-900.00 sec   118 MBytes  32.9 Mbits/sec   56   1.62 MBytes       
+[  4]   0.00-30.00  sec   118 MBytes  33.1 Mbits/sec  261   1.22 MBytes
+[  4]  30.00-60.00  sec   117 MBytes  32.6 Mbits/sec   51   1.52 MBytes
+[  4]  60.00-90.00  sec   118 MBytes  33.0 Mbits/sec   72   1.56 MBytes
+[  4]  90.00-120.00 sec   119 MBytes  33.3 Mbits/sec  103   1.79 MBytes
+[  4] 120.00-150.00 sec   118 MBytes  32.9 Mbits/sec   94   1.92 MBytes
+[  4] 150.00-180.00 sec   118 MBytes  32.9 Mbits/sec  160   1.48 MBytes
+[  4] 180.00-210.00 sec   118 MBytes  32.9 Mbits/sec  211   1.69 MBytes
+[  4] 210.00-240.00 sec   118 MBytes  32.9 Mbits/sec  101   1.58 MBytes
+[  4] 240.00-270.00 sec   117 MBytes  32.8 Mbits/sec  166   1.92 MBytes
+[  4] 270.00-300.00 sec   118 MBytes  33.0 Mbits/sec  107   1.33 MBytes
+[  4] 300.00-330.00 sec   118 MBytes  32.9 Mbits/sec  187   1.62 MBytes
+[  4] 330.00-360.00 sec   117 MBytes  32.8 Mbits/sec   63   2.26 MBytes
+[  4] 360.00-390.00 sec   117 MBytes  32.7 Mbits/sec  603   1.63 MBytes
+[  4] 390.00-420.00 sec   119 MBytes  33.1 Mbits/sec  382   1.33 MBytes
+[  4] 420.00-450.00 sec   119 MBytes  33.2 Mbits/sec   32   1.57 MBytes
+[  4] 450.00-480.00 sec   118 MBytes  32.9 Mbits/sec  297   1.76 MBytes
+[  4] 480.00-510.00 sec   117 MBytes  32.8 Mbits/sec  115   1.84 MBytes
+[  4] 510.00-540.00 sec   118 MBytes  32.9 Mbits/sec  166   1.96 MBytes
+[  4] 540.00-570.00 sec   118 MBytes  33.1 Mbits/sec  195   1.56 MBytes
+[  4] 570.00-600.00 sec   118 MBytes  33.0 Mbits/sec  140   1.19 MBytes
+[  4] 600.00-630.00 sec   118 MBytes  32.9 Mbits/sec  262   1.69 MBytes
+[  4] 630.00-660.00 sec   118 MBytes  33.0 Mbits/sec  264   1.30 MBytes
+[  4] 660.00-690.00 sec   118 MBytes  33.1 Mbits/sec  117   1.54 MBytes
+[  4] 690.00-720.00 sec   118 MBytes  33.1 Mbits/sec   72   1.41 MBytes
+[  4] 720.00-750.00 sec   117 MBytes  32.6 Mbits/sec  102   1.76 MBytes
+[  4] 750.00-780.00 sec   118 MBytes  33.0 Mbits/sec  265   1.21 MBytes
+[  4] 780.00-810.00 sec   118 MBytes  33.1 Mbits/sec   26   1.77 MBytes
+[  4] 810.00-840.00 sec   118 MBytes  32.9 Mbits/sec  159   1.30 MBytes
+[  4] 840.00-870.00 sec   117 MBytes  32.8 Mbits/sec  293   1.20 MBytes
+[  4] 870.00-900.00 sec   118 MBytes  32.9 Mbits/sec   56   1.62 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  3.45 GBytes  32.9 Mbits/sec  5122             sender
 [  4]   0.00-900.00 sec  3.45 GBytes  32.9 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -2469,81 +2584,82 @@ Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 Reverse mode, remote host fd14:9aa4:e604:ec36::1 is sending
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35963 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   123 MBytes  34.4 Mbits/sec                  
-[  4]  30.00-60.00  sec   125 MBytes  35.0 Mbits/sec                  
-[  4]  60.00-90.02  sec   124 MBytes  34.7 Mbits/sec                  
-[  4]  90.02-120.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 120.00-150.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 150.00-180.00 sec   125 MBytes  35.0 Mbits/sec                  
-[  4] 180.00-210.00 sec   124 MBytes  34.5 Mbits/sec                  
-[  4] 210.00-240.00 sec   123 MBytes  34.5 Mbits/sec                  
-[  4] 240.00-270.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 270.00-300.00 sec   124 MBytes  34.8 Mbits/sec                  
-[  4] 300.00-330.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 330.00-360.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 360.00-390.00 sec   125 MBytes  34.8 Mbits/sec                  
-[  4] 390.00-420.00 sec   125 MBytes  34.8 Mbits/sec                  
-[  4] 420.00-450.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 450.00-480.00 sec   125 MBytes  35.0 Mbits/sec                  
-[  4] 480.00-510.00 sec   125 MBytes  35.0 Mbits/sec                  
-[  4] 510.00-540.00 sec   125 MBytes  34.9 Mbits/sec                  
-[  4] 540.00-570.00 sec   126 MBytes  35.1 Mbits/sec                  
-[  4] 570.00-600.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 600.00-630.00 sec   123 MBytes  34.4 Mbits/sec                  
-[  4] 630.00-660.00 sec   126 MBytes  35.1 Mbits/sec                  
-[  4] 660.00-690.00 sec   125 MBytes  34.9 Mbits/sec                  
-[  4] 690.00-720.00 sec   125 MBytes  35.0 Mbits/sec                  
-[  4] 720.00-750.00 sec   124 MBytes  34.8 Mbits/sec                  
-[  4] 750.00-780.00 sec   125 MBytes  34.9 Mbits/sec                  
-[  4] 780.00-810.00 sec   124 MBytes  34.8 Mbits/sec                  
-[  4] 810.00-840.00 sec   125 MBytes  34.8 Mbits/sec                  
-[  4] 840.00-870.00 sec   124 MBytes  34.8 Mbits/sec                  
-[  4] 870.00-900.00 sec   125 MBytes  35.1 Mbits/sec                  
+[  4]   0.00-30.00  sec   123 MBytes  34.4 Mbits/sec
+[  4]  30.00-60.00  sec   125 MBytes  35.0 Mbits/sec
+[  4]  60.00-90.02  sec   124 MBytes  34.7 Mbits/sec
+[  4]  90.02-120.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 120.00-150.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 150.00-180.00 sec   125 MBytes  35.0 Mbits/sec
+[  4] 180.00-210.00 sec   124 MBytes  34.5 Mbits/sec
+[  4] 210.00-240.00 sec   123 MBytes  34.5 Mbits/sec
+[  4] 240.00-270.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 270.00-300.00 sec   124 MBytes  34.8 Mbits/sec
+[  4] 300.00-330.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 330.00-360.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 360.00-390.00 sec   125 MBytes  34.8 Mbits/sec
+[  4] 390.00-420.00 sec   125 MBytes  34.8 Mbits/sec
+[  4] 420.00-450.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 450.00-480.00 sec   125 MBytes  35.0 Mbits/sec
+[  4] 480.00-510.00 sec   125 MBytes  35.0 Mbits/sec
+[  4] 510.00-540.00 sec   125 MBytes  34.9 Mbits/sec
+[  4] 540.00-570.00 sec   126 MBytes  35.1 Mbits/sec
+[  4] 570.00-600.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 600.00-630.00 sec   123 MBytes  34.4 Mbits/sec
+[  4] 630.00-660.00 sec   126 MBytes  35.1 Mbits/sec
+[  4] 660.00-690.00 sec   125 MBytes  34.9 Mbits/sec
+[  4] 690.00-720.00 sec   125 MBytes  35.0 Mbits/sec
+[  4] 720.00-750.00 sec   124 MBytes  34.8 Mbits/sec
+[  4] 750.00-780.00 sec   125 MBytes  34.9 Mbits/sec
+[  4] 780.00-810.00 sec   124 MBytes  34.8 Mbits/sec
+[  4] 810.00-840.00 sec   125 MBytes  34.8 Mbits/sec
+[  4] 840.00-870.00 sec   124 MBytes  34.8 Mbits/sec
+[  4] 870.00-900.00 sec   125 MBytes  35.1 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  3.65 GBytes  34.8 Mbits/sec  16597             sender
 [  4]   0.00-900.00 sec  3.65 GBytes  34.8 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ##### Raspberry Pi 2
+
 ```
 root@lenovo:~# iperf3 -c fd45:64bf:295c:5631::1 -i 30 -t 900
 Connecting to host fd45:64bf:295c:5631::1, port 5201
 [  4] local fd57:d1b1:9c79:40af::5 port 43866 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   239 MBytes  66.9 Mbits/sec  110    813 KBytes       
-[  4]  30.00-60.00  sec   238 MBytes  66.6 Mbits/sec   23   1.31 MBytes       
-[  4]  60.00-90.00  sec   236 MBytes  66.1 Mbits/sec   18   2.40 MBytes       
-[  4]  90.00-120.00 sec   236 MBytes  66.1 Mbits/sec  289   2.03 MBytes       
-[  4] 120.00-150.00 sec   237 MBytes  66.4 Mbits/sec  177   1.41 MBytes       
-[  4] 150.00-180.00 sec   236 MBytes  66.1 Mbits/sec  116   1.75 MBytes       
-[  4] 180.00-210.00 sec   236 MBytes  66.1 Mbits/sec   63   1.59 MBytes       
-[  4] 210.00-240.00 sec   238 MBytes  66.5 Mbits/sec   88   1.19 MBytes       
-[  4] 240.00-270.00 sec   238 MBytes  66.5 Mbits/sec   41   1.66 MBytes       
-[  4] 270.00-300.00 sec   235 MBytes  65.7 Mbits/sec  197   1.53 MBytes       
-[  4] 300.00-330.00 sec   238 MBytes  66.5 Mbits/sec   45   1.13 MBytes       
-[  4] 330.00-360.00 sec   237 MBytes  66.4 Mbits/sec  324   1.95 MBytes       
-[  4] 360.00-390.00 sec   238 MBytes  66.4 Mbits/sec   62   1.45 MBytes       
-[  4] 390.00-420.00 sec   238 MBytes  66.5 Mbits/sec   21   1.79 MBytes       
-[  4] 420.00-450.00 sec   237 MBytes  66.4 Mbits/sec  181   1.83 MBytes       
-[  4] 450.00-480.00 sec   236 MBytes  66.0 Mbits/sec   80   1.88 MBytes       
-[  4] 480.00-510.00 sec   237 MBytes  66.3 Mbits/sec   32   1.74 MBytes       
-[  4] 510.00-540.00 sec   237 MBytes  66.4 Mbits/sec   82   1.18 MBytes       
-[  4] 540.00-570.00 sec   238 MBytes  66.6 Mbits/sec   55   1.33 MBytes       
-[  4] 570.00-600.00 sec   236 MBytes  66.1 Mbits/sec   69   1.80 MBytes       
-[  4] 600.00-630.00 sec   236 MBytes  66.1 Mbits/sec  387   1.31 MBytes       
-[  4] 630.00-660.00 sec   236 MBytes  65.9 Mbits/sec   16   1.72 MBytes       
-[  4] 660.00-690.00 sec   238 MBytes  66.5 Mbits/sec   85   1.85 MBytes       
-[  4] 690.00-720.00 sec   237 MBytes  66.2 Mbits/sec   44   1.83 MBytes       
-[  4] 720.00-750.00 sec   236 MBytes  66.1 Mbits/sec   57   1.63 MBytes       
-[  4] 750.00-780.00 sec   238 MBytes  66.4 Mbits/sec   79   1.87 MBytes       
-[  4] 780.00-810.00 sec   236 MBytes  65.9 Mbits/sec   28   1.82 MBytes       
-[  4] 810.00-840.00 sec   237 MBytes  66.3 Mbits/sec   83   1.79 MBytes       
-[  4] 840.00-870.00 sec   235 MBytes  65.7 Mbits/sec  209   1.78 MBytes       
-[  4] 870.00-900.00 sec   235 MBytes  65.7 Mbits/sec   14   1.57 MBytes       
+[  4]   0.00-30.00  sec   239 MBytes  66.9 Mbits/sec  110    813 KBytes
+[  4]  30.00-60.00  sec   238 MBytes  66.6 Mbits/sec   23   1.31 MBytes
+[  4]  60.00-90.00  sec   236 MBytes  66.1 Mbits/sec   18   2.40 MBytes
+[  4]  90.00-120.00 sec   236 MBytes  66.1 Mbits/sec  289   2.03 MBytes
+[  4] 120.00-150.00 sec   237 MBytes  66.4 Mbits/sec  177   1.41 MBytes
+[  4] 150.00-180.00 sec   236 MBytes  66.1 Mbits/sec  116   1.75 MBytes
+[  4] 180.00-210.00 sec   236 MBytes  66.1 Mbits/sec   63   1.59 MBytes
+[  4] 210.00-240.00 sec   238 MBytes  66.5 Mbits/sec   88   1.19 MBytes
+[  4] 240.00-270.00 sec   238 MBytes  66.5 Mbits/sec   41   1.66 MBytes
+[  4] 270.00-300.00 sec   235 MBytes  65.7 Mbits/sec  197   1.53 MBytes
+[  4] 300.00-330.00 sec   238 MBytes  66.5 Mbits/sec   45   1.13 MBytes
+[  4] 330.00-360.00 sec   237 MBytes  66.4 Mbits/sec  324   1.95 MBytes
+[  4] 360.00-390.00 sec   238 MBytes  66.4 Mbits/sec   62   1.45 MBytes
+[  4] 390.00-420.00 sec   238 MBytes  66.5 Mbits/sec   21   1.79 MBytes
+[  4] 420.00-450.00 sec   237 MBytes  66.4 Mbits/sec  181   1.83 MBytes
+[  4] 450.00-480.00 sec   236 MBytes  66.0 Mbits/sec   80   1.88 MBytes
+[  4] 480.00-510.00 sec   237 MBytes  66.3 Mbits/sec   32   1.74 MBytes
+[  4] 510.00-540.00 sec   237 MBytes  66.4 Mbits/sec   82   1.18 MBytes
+[  4] 540.00-570.00 sec   238 MBytes  66.6 Mbits/sec   55   1.33 MBytes
+[  4] 570.00-600.00 sec   236 MBytes  66.1 Mbits/sec   69   1.80 MBytes
+[  4] 600.00-630.00 sec   236 MBytes  66.1 Mbits/sec  387   1.31 MBytes
+[  4] 630.00-660.00 sec   236 MBytes  65.9 Mbits/sec   16   1.72 MBytes
+[  4] 660.00-690.00 sec   238 MBytes  66.5 Mbits/sec   85   1.85 MBytes
+[  4] 690.00-720.00 sec   237 MBytes  66.2 Mbits/sec   44   1.83 MBytes
+[  4] 720.00-750.00 sec   236 MBytes  66.1 Mbits/sec   57   1.63 MBytes
+[  4] 750.00-780.00 sec   238 MBytes  66.4 Mbits/sec   79   1.87 MBytes
+[  4] 780.00-810.00 sec   236 MBytes  65.9 Mbits/sec   28   1.82 MBytes
+[  4] 810.00-840.00 sec   237 MBytes  66.3 Mbits/sec   83   1.79 MBytes
+[  4] 840.00-870.00 sec   235 MBytes  65.7 Mbits/sec  209   1.78 MBytes
+[  4] 870.00-900.00 sec   235 MBytes  65.7 Mbits/sec   14   1.57 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  6.94 GBytes  66.2 Mbits/sec  3075             sender
@@ -2552,95 +2668,98 @@ Connecting to host fd45:64bf:295c:5631::1, port 5201
 iperf Done.
 root@lenovo:~#
 ```
+
 ```
 root@lenovo:~# iperf3 -c fd45:64bf:295c:5631::1 -i 30 -t 900 -R
 Connecting to host fd45:64bf:295c:5631::1, port 5201
 Reverse mode, remote host fd45:64bf:295c:5631::1 is sending
 [  4] local fd57:d1b1:9c79:40af::5 port 43870 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   247 MBytes  69.2 Mbits/sec                  
-[  4]  30.00-60.00  sec   249 MBytes  69.7 Mbits/sec                  
-[  4]  60.00-90.00  sec   249 MBytes  69.6 Mbits/sec                  
-[  4]  90.00-120.00 sec   249 MBytes  69.7 Mbits/sec                  
-[  4] 120.00-150.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 150.00-180.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 180.00-210.00 sec   250 MBytes  69.8 Mbits/sec                  
-[  4] 210.00-240.00 sec   248 MBytes  69.3 Mbits/sec                  
-[  4] 240.00-270.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 270.00-300.00 sec   248 MBytes  69.5 Mbits/sec                  
-[  4] 300.00-330.00 sec   250 MBytes  69.8 Mbits/sec                  
-[  4] 330.00-360.00 sec   248 MBytes  69.3 Mbits/sec                  
-[  4] 360.00-390.00 sec   247 MBytes  69.0 Mbits/sec                  
-[  4] 390.00-420.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 420.00-450.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 450.00-480.00 sec   249 MBytes  69.5 Mbits/sec                  
-[  4] 480.00-510.00 sec   247 MBytes  69.0 Mbits/sec                  
-[  4] 510.00-540.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 540.00-570.00 sec   246 MBytes  68.9 Mbits/sec                  
-[  4] 570.00-600.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 600.00-630.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 630.00-660.00 sec   248 MBytes  69.4 Mbits/sec                  
-[  4] 660.00-690.00 sec   243 MBytes  67.9 Mbits/sec                  
-[  4] 690.00-720.00 sec   247 MBytes  69.2 Mbits/sec                  
-[  4] 720.00-750.00 sec   249 MBytes  69.7 Mbits/sec                  
-[  4] 750.00-780.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 780.00-810.00 sec   250 MBytes  69.8 Mbits/sec                  
-[  4] 810.00-840.00 sec   249 MBytes  69.5 Mbits/sec                  
-[  4] 840.00-870.00 sec   249 MBytes  69.7 Mbits/sec                  
-[  4] 870.00-900.00 sec   249 MBytes  69.6 Mbits/sec                  
+[  4]   0.00-30.00  sec   247 MBytes  69.2 Mbits/sec
+[  4]  30.00-60.00  sec   249 MBytes  69.7 Mbits/sec
+[  4]  60.00-90.00  sec   249 MBytes  69.6 Mbits/sec
+[  4]  90.00-120.00 sec   249 MBytes  69.7 Mbits/sec
+[  4] 120.00-150.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 150.00-180.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 180.00-210.00 sec   250 MBytes  69.8 Mbits/sec
+[  4] 210.00-240.00 sec   248 MBytes  69.3 Mbits/sec
+[  4] 240.00-270.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 270.00-300.00 sec   248 MBytes  69.5 Mbits/sec
+[  4] 300.00-330.00 sec   250 MBytes  69.8 Mbits/sec
+[  4] 330.00-360.00 sec   248 MBytes  69.3 Mbits/sec
+[  4] 360.00-390.00 sec   247 MBytes  69.0 Mbits/sec
+[  4] 390.00-420.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 420.00-450.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 450.00-480.00 sec   249 MBytes  69.5 Mbits/sec
+[  4] 480.00-510.00 sec   247 MBytes  69.0 Mbits/sec
+[  4] 510.00-540.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 540.00-570.00 sec   246 MBytes  68.9 Mbits/sec
+[  4] 570.00-600.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 600.00-630.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 630.00-660.00 sec   248 MBytes  69.4 Mbits/sec
+[  4] 660.00-690.00 sec   243 MBytes  67.9 Mbits/sec
+[  4] 690.00-720.00 sec   247 MBytes  69.2 Mbits/sec
+[  4] 720.00-750.00 sec   249 MBytes  69.7 Mbits/sec
+[  4] 750.00-780.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 780.00-810.00 sec   250 MBytes  69.8 Mbits/sec
+[  4] 810.00-840.00 sec   249 MBytes  69.5 Mbits/sec
+[  4] 840.00-870.00 sec   249 MBytes  69.7 Mbits/sec
+[  4] 870.00-900.00 sec   249 MBytes  69.6 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  7.28 GBytes  69.5 Mbits/sec  16734             sender
 [  4]   0.00-900.00 sec  7.28 GBytes  69.5 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 #### With dstat Monitoring
+
 ##### Raspberry Pi
+
 ```
 root@lenovo:~# iperf3 -c fd14:9aa4:e604:ec36::1 -i 30 -t 900
 Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35898 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   118 MBytes  32.9 Mbits/sec   90   1.84 MBytes       
-[  4]  30.00-60.00  sec   116 MBytes  32.6 Mbits/sec  353   1.31 MBytes       
-[  4]  60.00-90.00  sec   117 MBytes  32.8 Mbits/sec  247   1.52 MBytes       
-[  4]  90.00-120.00 sec   118 MBytes  32.9 Mbits/sec   97   1.60 MBytes       
-[  4] 120.00-150.00 sec   117 MBytes  32.8 Mbits/sec   68   1.91 MBytes       
-[  4] 150.00-180.00 sec   116 MBytes  32.5 Mbits/sec  359   1.58 MBytes       
-[  4] 180.00-210.00 sec   118 MBytes  32.9 Mbits/sec   94   1.72 MBytes       
-[  4] 210.00-240.00 sec   117 MBytes  32.7 Mbits/sec  309   1.12 MBytes       
-[  4] 240.00-270.00 sec   118 MBytes  32.9 Mbits/sec  119   1.53 MBytes       
-[  4] 270.00-300.00 sec   118 MBytes  33.0 Mbits/sec    1   2.00 MBytes       
-[  4] 300.00-330.00 sec   117 MBytes  32.6 Mbits/sec  151   1.20 MBytes       
-[  4] 330.00-360.00 sec   118 MBytes  33.0 Mbits/sec   28   1.47 MBytes       
-[  4] 360.00-390.00 sec   117 MBytes  32.8 Mbits/sec  121   1.39 MBytes       
-[  4] 390.00-420.00 sec   118 MBytes  33.0 Mbits/sec   59   1.54 MBytes       
-[  4] 420.00-450.00 sec   118 MBytes  33.0 Mbits/sec   63   1.57 MBytes       
-[  4] 450.00-480.00 sec   118 MBytes  32.9 Mbits/sec   38   1.70 MBytes       
-[  4] 480.00-510.00 sec   117 MBytes  32.7 Mbits/sec   24   1.55 MBytes       
-[  4] 510.00-540.00 sec   117 MBytes  32.8 Mbits/sec   61   1.19 MBytes       
-[  4] 540.00-570.00 sec   117 MBytes  32.8 Mbits/sec   77   1.67 MBytes       
-[  4] 570.00-600.00 sec   117 MBytes  32.8 Mbits/sec  128   1.55 MBytes       
-[  4] 600.00-630.00 sec   117 MBytes  32.7 Mbits/sec  111   1.37 MBytes       
-[  4] 630.00-660.00 sec   118 MBytes  33.0 Mbits/sec   18   1.84 MBytes       
-[  4] 660.00-690.00 sec   117 MBytes  32.6 Mbits/sec  147   1.79 MBytes       
-[  4] 690.00-720.00 sec   118 MBytes  32.9 Mbits/sec  147   1.16 MBytes       
-[  4] 720.00-750.00 sec   117 MBytes  32.6 Mbits/sec  176   1.46 MBytes       
-[  4] 750.00-780.00 sec   118 MBytes  33.0 Mbits/sec  120   1.93 MBytes       
-[  4] 780.00-810.00 sec   117 MBytes  32.8 Mbits/sec  310   1.53 MBytes       
-[  4] 810.00-840.00 sec   118 MBytes  32.9 Mbits/sec   23   1.51 MBytes       
-[  4] 840.00-870.00 sec   117 MBytes  32.6 Mbits/sec  140   1.81 MBytes       
-[  4] 870.00-900.00 sec   117 MBytes  32.8 Mbits/sec   99   1.34 MBytes       
+[  4]   0.00-30.00  sec   118 MBytes  32.9 Mbits/sec   90   1.84 MBytes
+[  4]  30.00-60.00  sec   116 MBytes  32.6 Mbits/sec  353   1.31 MBytes
+[  4]  60.00-90.00  sec   117 MBytes  32.8 Mbits/sec  247   1.52 MBytes
+[  4]  90.00-120.00 sec   118 MBytes  32.9 Mbits/sec   97   1.60 MBytes
+[  4] 120.00-150.00 sec   117 MBytes  32.8 Mbits/sec   68   1.91 MBytes
+[  4] 150.00-180.00 sec   116 MBytes  32.5 Mbits/sec  359   1.58 MBytes
+[  4] 180.00-210.00 sec   118 MBytes  32.9 Mbits/sec   94   1.72 MBytes
+[  4] 210.00-240.00 sec   117 MBytes  32.7 Mbits/sec  309   1.12 MBytes
+[  4] 240.00-270.00 sec   118 MBytes  32.9 Mbits/sec  119   1.53 MBytes
+[  4] 270.00-300.00 sec   118 MBytes  33.0 Mbits/sec    1   2.00 MBytes
+[  4] 300.00-330.00 sec   117 MBytes  32.6 Mbits/sec  151   1.20 MBytes
+[  4] 330.00-360.00 sec   118 MBytes  33.0 Mbits/sec   28   1.47 MBytes
+[  4] 360.00-390.00 sec   117 MBytes  32.8 Mbits/sec  121   1.39 MBytes
+[  4] 390.00-420.00 sec   118 MBytes  33.0 Mbits/sec   59   1.54 MBytes
+[  4] 420.00-450.00 sec   118 MBytes  33.0 Mbits/sec   63   1.57 MBytes
+[  4] 450.00-480.00 sec   118 MBytes  32.9 Mbits/sec   38   1.70 MBytes
+[  4] 480.00-510.00 sec   117 MBytes  32.7 Mbits/sec   24   1.55 MBytes
+[  4] 510.00-540.00 sec   117 MBytes  32.8 Mbits/sec   61   1.19 MBytes
+[  4] 540.00-570.00 sec   117 MBytes  32.8 Mbits/sec   77   1.67 MBytes
+[  4] 570.00-600.00 sec   117 MBytes  32.8 Mbits/sec  128   1.55 MBytes
+[  4] 600.00-630.00 sec   117 MBytes  32.7 Mbits/sec  111   1.37 MBytes
+[  4] 630.00-660.00 sec   118 MBytes  33.0 Mbits/sec   18   1.84 MBytes
+[  4] 660.00-690.00 sec   117 MBytes  32.6 Mbits/sec  147   1.79 MBytes
+[  4] 690.00-720.00 sec   118 MBytes  32.9 Mbits/sec  147   1.16 MBytes
+[  4] 720.00-750.00 sec   117 MBytes  32.6 Mbits/sec  176   1.46 MBytes
+[  4] 750.00-780.00 sec   118 MBytes  33.0 Mbits/sec  120   1.93 MBytes
+[  4] 780.00-810.00 sec   117 MBytes  32.8 Mbits/sec  310   1.53 MBytes
+[  4] 810.00-840.00 sec   118 MBytes  32.9 Mbits/sec   23   1.51 MBytes
+[  4] 840.00-870.00 sec   117 MBytes  32.6 Mbits/sec  140   1.81 MBytes
+[  4] 870.00-900.00 sec   117 MBytes  32.8 Mbits/sec   99   1.34 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  3.44 GBytes  32.8 Mbits/sec  3778             sender
 [  4]   0.00-900.00 sec  3.44 GBytes  32.8 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -2649,43 +2768,43 @@ Connecting to host fd14:9aa4:e604:ec36::1, port 5201
 Reverse mode, remote host fd14:9aa4:e604:ec36::1 is sending
 [  4] local fd2b:656a:6fdb:a3a8::5 port 35904 connected to fd14:9aa4:e604:ec36::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   122 MBytes  34.2 Mbits/sec                  
-[  4]  30.00-60.00  sec   124 MBytes  34.7 Mbits/sec                  
-[  4]  60.00-90.00  sec   125 MBytes  34.9 Mbits/sec                  
-[  4]  90.00-120.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 120.00-150.00 sec   125 MBytes  35.0 Mbits/sec                  
-[  4] 150.00-180.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 180.00-210.00 sec   124 MBytes  34.5 Mbits/sec                  
-[  4] 210.00-240.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 240.00-270.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 270.00-300.00 sec   125 MBytes  34.9 Mbits/sec                  
-[  4] 300.00-330.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 330.00-360.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 360.00-390.00 sec   124 MBytes  34.8 Mbits/sec                  
-[  4] 390.00-420.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 420.00-450.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 450.00-480.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 480.00-510.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 510.00-540.00 sec   122 MBytes  34.1 Mbits/sec                  
-[  4] 540.00-570.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 570.00-600.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 600.00-630.00 sec   123 MBytes  34.5 Mbits/sec                  
-[  4] 630.00-660.00 sec   125 MBytes  34.9 Mbits/sec                  
-[  4] 660.00-690.00 sec   123 MBytes  34.3 Mbits/sec                  
-[  4] 690.00-720.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 720.00-750.00 sec   125 MBytes  34.9 Mbits/sec                  
-[  4] 750.00-780.00 sec   123 MBytes  34.3 Mbits/sec                  
-[  4] 780.00-810.00 sec   124 MBytes  34.7 Mbits/sec                  
-[  4] 810.00-840.00 sec   125 MBytes  34.9 Mbits/sec                  
-[  4] 840.00-870.00 sec   124 MBytes  34.6 Mbits/sec                  
-[  4] 870.00-900.00 sec   122 MBytes  34.1 Mbits/sec                  
+[  4]   0.00-30.00  sec   122 MBytes  34.2 Mbits/sec
+[  4]  30.00-60.00  sec   124 MBytes  34.7 Mbits/sec
+[  4]  60.00-90.00  sec   125 MBytes  34.9 Mbits/sec
+[  4]  90.00-120.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 120.00-150.00 sec   125 MBytes  35.0 Mbits/sec
+[  4] 150.00-180.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 180.00-210.00 sec   124 MBytes  34.5 Mbits/sec
+[  4] 210.00-240.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 240.00-270.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 270.00-300.00 sec   125 MBytes  34.9 Mbits/sec
+[  4] 300.00-330.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 330.00-360.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 360.00-390.00 sec   124 MBytes  34.8 Mbits/sec
+[  4] 390.00-420.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 420.00-450.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 450.00-480.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 480.00-510.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 510.00-540.00 sec   122 MBytes  34.1 Mbits/sec
+[  4] 540.00-570.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 570.00-600.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 600.00-630.00 sec   123 MBytes  34.5 Mbits/sec
+[  4] 630.00-660.00 sec   125 MBytes  34.9 Mbits/sec
+[  4] 660.00-690.00 sec   123 MBytes  34.3 Mbits/sec
+[  4] 690.00-720.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 720.00-750.00 sec   125 MBytes  34.9 Mbits/sec
+[  4] 750.00-780.00 sec   123 MBytes  34.3 Mbits/sec
+[  4] 780.00-810.00 sec   124 MBytes  34.7 Mbits/sec
+[  4] 810.00-840.00 sec   125 MBytes  34.9 Mbits/sec
+[  4] 840.00-870.00 sec   124 MBytes  34.6 Mbits/sec
+[  4] 870.00-900.00 sec   122 MBytes  34.1 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  3.63 GBytes  34.6 Mbits/sec  16597             sender
 [  4]   0.00-900.00 sec  3.63 GBytes  34.6 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -2693,7 +2812,7 @@ root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@lace:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-   0 0.01 0.05|  0   0  91   0   0   9|ksoftirqd/0  8.3|   0     0 
+   0 0.01 0.05|  0   0  91   0   0   9|ksoftirqd/0  8.3|   0     0
 0.08 0.03 0.05|  0   0  73   0   0  27|ksoftirqd/0   25|1231k 2364k
 0.55 0.15 0.09|  0   0   0   0   0  99|ksoftirqd/0   90|4407k 8560k
 0.73 0.23 0.12|  0   0   0   0   0 100|ksoftirqd/0   92|4503k 8751k
@@ -2762,45 +2881,46 @@ root@lace:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 0.32 0.90 0.91|  0   0  99   0   0   0|kworker/0:2  0.0|  48B   11B
 0.20 0.81 0.88|  0   0  99   0   0   0|kworker/0:2  0.1|  24B   11B
 0.12 0.73 0.85|  0   0 100   0   0   0|kworker/0:2  0.0|  18B   11B
-root@lace:~# 
+root@lace:~#
 ```
 
 ##### Raspberry Pi 2
+
 ```
 root@lenovo:~# iperf3 -c fd45:64bf:295c:5631::1 -i 30 -t 900
 Connecting to host fd45:64bf:295c:5631::1, port 5201
 [  4] local fd57:d1b1:9c79:40af::5 port 43781 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-30.00  sec   238 MBytes  66.7 Mbits/sec  128   1.18 MBytes       
-[  4]  30.00-60.00  sec   239 MBytes  66.8 Mbits/sec   35   1.42 MBytes       
-[  4]  60.00-90.00  sec   238 MBytes  66.4 Mbits/sec  424   1.26 MBytes       
-[  4]  90.00-120.00 sec   238 MBytes  66.5 Mbits/sec   45   1.45 MBytes       
-[  4] 120.00-150.00 sec   237 MBytes  66.1 Mbits/sec   38   1.58 MBytes       
-[  4] 150.00-180.00 sec   238 MBytes  66.7 Mbits/sec   93   1.29 MBytes       
-[  4] 180.00-210.00 sec   238 MBytes  66.6 Mbits/sec  258   1.82 MBytes       
-[  4] 210.00-240.00 sec   236 MBytes  66.0 Mbits/sec  103   1.61 MBytes       
-[  4] 240.00-270.00 sec   237 MBytes  66.3 Mbits/sec  118   1.47 MBytes       
-[  4] 270.00-300.00 sec   236 MBytes  66.1 Mbits/sec  162   1.76 MBytes       
-[  4] 300.00-330.00 sec   237 MBytes  66.3 Mbits/sec  120   1.59 MBytes       
-[  4] 330.00-360.00 sec   237 MBytes  66.4 Mbits/sec   57   1.23 MBytes       
-[  4] 360.00-390.00 sec   238 MBytes  66.5 Mbits/sec  170   1.51 MBytes       
-[  4] 390.00-420.00 sec   237 MBytes  66.2 Mbits/sec  167   1.80 MBytes       
-[  4] 420.00-450.00 sec   239 MBytes  66.8 Mbits/sec   97   1.25 MBytes       
-[  4] 450.00-480.00 sec   238 MBytes  66.5 Mbits/sec   55   1.82 MBytes       
-[  4] 480.00-510.00 sec   237 MBytes  66.4 Mbits/sec  183   1.15 MBytes       
-[  4] 510.00-540.00 sec   237 MBytes  66.2 Mbits/sec   19   1.47 MBytes       
-[  4] 540.00-570.00 sec   238 MBytes  66.5 Mbits/sec   39   1.59 MBytes       
-[  4] 570.00-600.00 sec   236 MBytes  65.9 Mbits/sec  110   1.87 MBytes       
-[  4] 600.00-630.00 sec   234 MBytes  65.6 Mbits/sec  121   1.17 MBytes       
-[  4] 630.00-660.00 sec   238 MBytes  66.5 Mbits/sec   92   1.46 MBytes       
-[  4] 660.00-690.00 sec   234 MBytes  65.5 Mbits/sec   51   1.77 MBytes       
-[  4] 690.00-720.00 sec   231 MBytes  64.5 Mbits/sec   39   1.82 MBytes       
-[  4] 720.00-750.00 sec   236 MBytes  66.1 Mbits/sec   64   1.76 MBytes       
-[  4] 750.00-780.00 sec   236 MBytes  65.9 Mbits/sec   63   1.33 MBytes       
-[  4] 780.00-810.00 sec   237 MBytes  66.2 Mbits/sec   50   1.76 MBytes       
-[  4] 810.00-840.00 sec   239 MBytes  66.8 Mbits/sec   28   1.82 MBytes       
-[  4] 840.00-870.00 sec   238 MBytes  66.6 Mbits/sec   20   1.81 MBytes       
-[  4] 870.00-900.00 sec   236 MBytes  66.0 Mbits/sec   82   1.91 MBytes       
+[  4]   0.00-30.00  sec   238 MBytes  66.7 Mbits/sec  128   1.18 MBytes
+[  4]  30.00-60.00  sec   239 MBytes  66.8 Mbits/sec   35   1.42 MBytes
+[  4]  60.00-90.00  sec   238 MBytes  66.4 Mbits/sec  424   1.26 MBytes
+[  4]  90.00-120.00 sec   238 MBytes  66.5 Mbits/sec   45   1.45 MBytes
+[  4] 120.00-150.00 sec   237 MBytes  66.1 Mbits/sec   38   1.58 MBytes
+[  4] 150.00-180.00 sec   238 MBytes  66.7 Mbits/sec   93   1.29 MBytes
+[  4] 180.00-210.00 sec   238 MBytes  66.6 Mbits/sec  258   1.82 MBytes
+[  4] 210.00-240.00 sec   236 MBytes  66.0 Mbits/sec  103   1.61 MBytes
+[  4] 240.00-270.00 sec   237 MBytes  66.3 Mbits/sec  118   1.47 MBytes
+[  4] 270.00-300.00 sec   236 MBytes  66.1 Mbits/sec  162   1.76 MBytes
+[  4] 300.00-330.00 sec   237 MBytes  66.3 Mbits/sec  120   1.59 MBytes
+[  4] 330.00-360.00 sec   237 MBytes  66.4 Mbits/sec   57   1.23 MBytes
+[  4] 360.00-390.00 sec   238 MBytes  66.5 Mbits/sec  170   1.51 MBytes
+[  4] 390.00-420.00 sec   237 MBytes  66.2 Mbits/sec  167   1.80 MBytes
+[  4] 420.00-450.00 sec   239 MBytes  66.8 Mbits/sec   97   1.25 MBytes
+[  4] 450.00-480.00 sec   238 MBytes  66.5 Mbits/sec   55   1.82 MBytes
+[  4] 480.00-510.00 sec   237 MBytes  66.4 Mbits/sec  183   1.15 MBytes
+[  4] 510.00-540.00 sec   237 MBytes  66.2 Mbits/sec   19   1.47 MBytes
+[  4] 540.00-570.00 sec   238 MBytes  66.5 Mbits/sec   39   1.59 MBytes
+[  4] 570.00-600.00 sec   236 MBytes  65.9 Mbits/sec  110   1.87 MBytes
+[  4] 600.00-630.00 sec   234 MBytes  65.6 Mbits/sec  121   1.17 MBytes
+[  4] 630.00-660.00 sec   238 MBytes  66.5 Mbits/sec   92   1.46 MBytes
+[  4] 660.00-690.00 sec   234 MBytes  65.5 Mbits/sec   51   1.77 MBytes
+[  4] 690.00-720.00 sec   231 MBytes  64.5 Mbits/sec   39   1.82 MBytes
+[  4] 720.00-750.00 sec   236 MBytes  66.1 Mbits/sec   64   1.76 MBytes
+[  4] 750.00-780.00 sec   236 MBytes  65.9 Mbits/sec   63   1.33 MBytes
+[  4] 780.00-810.00 sec   237 MBytes  66.2 Mbits/sec   50   1.76 MBytes
+[  4] 810.00-840.00 sec   239 MBytes  66.8 Mbits/sec   28   1.82 MBytes
+[  4] 840.00-870.00 sec   238 MBytes  66.6 Mbits/sec   20   1.81 MBytes
+[  4] 870.00-900.00 sec   236 MBytes  66.0 Mbits/sec   82   1.91 MBytes
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  6.94 GBytes  66.2 Mbits/sec  3031             sender
@@ -2816,43 +2936,43 @@ Connecting to host fd45:64bf:295c:5631::1, port 5201
 Reverse mode, remote host fd45:64bf:295c:5631::1 is sending
 [  4] local fd57:d1b1:9c79:40af::5 port 43787 connected to fd45:64bf:295c:5631::1 port 5201
 [ ID] Interval           Transfer     Bandwidth
-[  4]   0.00-30.00  sec   248 MBytes  69.4 Mbits/sec                  
-[  4]  30.00-60.00  sec   247 MBytes  69.1 Mbits/sec                  
-[  4]  60.00-90.00  sec   239 MBytes  66.8 Mbits/sec                  
-[  4]  90.00-120.00 sec   249 MBytes  69.5 Mbits/sec                  
-[  4] 120.00-150.00 sec   249 MBytes  69.5 Mbits/sec                  
-[  4] 150.00-180.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 180.00-210.00 sec   247 MBytes  69.2 Mbits/sec                  
-[  4] 210.00-240.00 sec   248 MBytes  69.3 Mbits/sec                  
-[  4] 240.00-270.00 sec   247 MBytes  69.2 Mbits/sec                  
-[  4] 270.00-300.00 sec   249 MBytes  69.5 Mbits/sec                  
-[  4] 300.00-330.00 sec   250 MBytes  69.9 Mbits/sec                  
-[  4] 330.00-360.00 sec   248 MBytes  69.4 Mbits/sec                  
-[  4] 360.00-390.00 sec   250 MBytes  69.8 Mbits/sec                  
-[  4] 390.00-420.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 420.00-450.00 sec   249 MBytes  69.5 Mbits/sec                  
-[  4] 450.00-480.00 sec   246 MBytes  68.8 Mbits/sec                  
-[  4] 480.00-510.00 sec   250 MBytes  69.9 Mbits/sec                  
-[  4] 510.00-540.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 540.00-570.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 570.00-600.00 sec   248 MBytes  69.5 Mbits/sec                  
-[  4] 600.00-630.00 sec   249 MBytes  69.5 Mbits/sec                  
-[  4] 630.00-660.00 sec   248 MBytes  69.3 Mbits/sec                  
-[  4] 660.00-690.00 sec   250 MBytes  69.9 Mbits/sec                  
-[  4] 690.00-720.00 sec   247 MBytes  69.1 Mbits/sec                  
-[  4] 720.00-750.00 sec   250 MBytes  70.0 Mbits/sec                  
-[  4] 750.00-780.00 sec   249 MBytes  69.6 Mbits/sec                  
-[  4] 780.00-810.00 sec   250 MBytes  69.9 Mbits/sec                  
-[  4] 810.00-840.00 sec   248 MBytes  69.5 Mbits/sec                  
-[  4] 840.00-870.00 sec   248 MBytes  69.4 Mbits/sec                  
-[  4] 870.00-900.00 sec   248 MBytes  69.4 Mbits/sec                  
+[  4]   0.00-30.00  sec   248 MBytes  69.4 Mbits/sec
+[  4]  30.00-60.00  sec   247 MBytes  69.1 Mbits/sec
+[  4]  60.00-90.00  sec   239 MBytes  66.8 Mbits/sec
+[  4]  90.00-120.00 sec   249 MBytes  69.5 Mbits/sec
+[  4] 120.00-150.00 sec   249 MBytes  69.5 Mbits/sec
+[  4] 150.00-180.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 180.00-210.00 sec   247 MBytes  69.2 Mbits/sec
+[  4] 210.00-240.00 sec   248 MBytes  69.3 Mbits/sec
+[  4] 240.00-270.00 sec   247 MBytes  69.2 Mbits/sec
+[  4] 270.00-300.00 sec   249 MBytes  69.5 Mbits/sec
+[  4] 300.00-330.00 sec   250 MBytes  69.9 Mbits/sec
+[  4] 330.00-360.00 sec   248 MBytes  69.4 Mbits/sec
+[  4] 360.00-390.00 sec   250 MBytes  69.8 Mbits/sec
+[  4] 390.00-420.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 420.00-450.00 sec   249 MBytes  69.5 Mbits/sec
+[  4] 450.00-480.00 sec   246 MBytes  68.8 Mbits/sec
+[  4] 480.00-510.00 sec   250 MBytes  69.9 Mbits/sec
+[  4] 510.00-540.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 540.00-570.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 570.00-600.00 sec   248 MBytes  69.5 Mbits/sec
+[  4] 600.00-630.00 sec   249 MBytes  69.5 Mbits/sec
+[  4] 630.00-660.00 sec   248 MBytes  69.3 Mbits/sec
+[  4] 660.00-690.00 sec   250 MBytes  69.9 Mbits/sec
+[  4] 690.00-720.00 sec   247 MBytes  69.1 Mbits/sec
+[  4] 720.00-750.00 sec   250 MBytes  70.0 Mbits/sec
+[  4] 750.00-780.00 sec   249 MBytes  69.6 Mbits/sec
+[  4] 780.00-810.00 sec   250 MBytes  69.9 Mbits/sec
+[  4] 810.00-840.00 sec   248 MBytes  69.5 Mbits/sec
+[  4] 840.00-870.00 sec   248 MBytes  69.4 Mbits/sec
+[  4] 870.00-900.00 sec   248 MBytes  69.4 Mbits/sec
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
 [  4]   0.00-900.00 sec  7.27 GBytes  69.4 Mbits/sec  17251             sender
 [  4]   0.00-900.00 sec  7.27 GBytes  69.4 Mbits/sec                  receiver
 
 iperf Done.
-root@lenovo:~# 
+root@lenovo:~#
 ```
 
 ```
@@ -2860,7 +2980,7 @@ root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 ^Croot@jessie-rpi:~# cat res
 ---load-avg--- ----total-cpu-usage---- -most-expensive- -net/total-
  1m   5m  15m |usr sys idl wai hiq siq|  cpu process   | recv  send
-   0 0.01 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.7|   0     0 
+   0 0.01 0.05|  0   0  99   0   0   1|ksoftirqd/0  0.7|   0     0
 0.05 0.03 0.05|  0   0 100   0   0   0|irqbalance   0.0|  28B   17B
 0.03 0.03 0.05|  0   0 100   0   0   0|irqbalance   0.1|  17B   11B
 0.02 0.02 0.05|  0   0 100   0   0   0|irqbalance   0.0|  16B   11B
@@ -2936,14 +3056,13 @@ root@jessie-rpi:~# dstat --nocolor  -l -c --top-cpu -n 30 > res
 0.24 0.71 0.73|  0   0 100   0   0   0|irqbalance   0.0|  25B   11B
 0.14 0.65 0.71|  0   0 100   0   0   0|irqbalance   0.1|  16B   11B
 0.09 0.58 0.69|  0   0 100   0   0   0|irqbalance   0.0|  16B   11B
-root@jessie-rpi:~# 
+root@jessie-rpi:~#
 ```
 
 ## Results
 
 | ---  | Forward<br>Mbit/s | Forward<br>Mbit/s<br>(%cpu) | Reverse<br>Mbit/s | Reverse<br>Mbit/s<br>(%cpu) | Forward<br>Mbit/s | Forward<br>Mbit/s<br>(cpu%) | Reverse<br>Mbit/s | Reverse<br>Mbit/s<br>(%cpu) | Forward<br>Mbit/s | Forward<br>Mbit/s<br>(%cpu) | Reverse<br>Mbit/s  | Reverse<br>Mbit/s<br>(%cpu) |
-| ---  | ---               | ---                         | ---               | ---                         | ---               | ---                         | ---               | ---                         | ---               | ---                         | ---                | ---                         |
-| ---  | IPv4              | ---                         | ---               | ---                         | IPv6              | ---                         | ---               | ---                         | ---               | ---                         | IPv6 with iptables | ---                         |                                                                                                                   |
+| ---- | ----------------- | --------------------------- | ----------------- | --------------------------- | ----------------- | --------------------------- | ----------------- | --------------------------- | ----------------- | --------------------------- | ------------------ | --------------------------- | --- |
+| ---  | IPv4              | ---                         | ---               | ---                         | IPv6              | ---                         | ---               | ---                         | ---               | ---                         | IPv6 with iptables | ---                         |     |
 | RPi  | 65.6              | 65.2<br>(100%)              | 62.9              | 63.2<br>(100%)              | 47.5              | 47.3<br>(100%)              | 50.4              | 50.2<br>(100%)              | 32.9              | 32.8<br>(100%)              | 34.8               | 34.6<br>(100%)              |
 | RPi2 | 89.3              | 89.3<br>(3%)                | 78.0              | 78.1<br>(5%)                | 85.6              | 84.7<br>(20%)               | 78.2              | 78.2<br>(8%)                | 66.2              | 66.2<br>(23%)               | 69.5               | 69.4<br>(25%)               |
-

@@ -7,45 +7,84 @@ categories: []
 date: 2015-05-27
 aliases: [/tomsweb/Kdump/]
 ---
-I recently had to use kdump to do some investigation into why my Lenovo W540 started crashing with recent Linux kernels. I all started when I upgraded from Linux 3.14 to 3.16 and I started having random crashes soon after booting. Being lazy I just ignored it and continued to use the old kernel expecting the issue to go away. However try as I might the issue persisted in 3.17, 3.18, 3.19 and 4.0.
 
-I tried and failed to find the issue with a git bisect, however that method led me down a dead end as I think the issue can happen after an hour of uptime. I think the git bisect started bisecting down the wrong side because I marked the wrong things good and bad. I then got bored and left the issue for another few months.
+I recently had to use kdump to do some investigation into why my Lenovo W540
+started crashing with recent Linux kernels. I all started when I upgraded from
+Linux 3.14 to 3.16 and I started having random crashes soon after booting. Being
+lazy I just ignored it and continued to use the old kernel expecting the issue
+to go away. However try as I might the issue persisted in 3.17, 3.18, 3.19 and
+4.0.
 
-I then decided to do something about it. So I methodically compiled each kernel by hand and ran each and recorded what worked and what didn't. I found that 3.14 was solid, 3.15 had issues with resolution but was ok, 3.16 was ok ish and 3.17 to 4.0 were not. Sometimes booting and getting to gdm, sometimes not booting and sometimes running for a few minutes after logging in. This confirmed what I'd been experiencing in the past.
+I tried and failed to find the issue with a git bisect, however that method led
+me down a dead end as I think the issue can happen after an hour of uptime. I
+think the git bisect started bisecting down the wrong side because I marked the
+wrong things good and bad. I then got bored and left the issue for another few
+months.
 
-I decided to give kdump a try in order to capture that must be some sort of kernel issue as the system seemed to lock up when X was running and I was getting no output or logs.
+I then decided to do something about it. So I methodically compiled each kernel
+by hand and ran each and recorded what worked and what didn't. I found that 3.14
+was solid, 3.15 had issues with resolution but was ok, 3.16 was ok ish and 3.17
+to 4.0 were not. Sometimes booting and getting to gdm, sometimes not booting and
+sometimes running for a few minutes after logging in. This confirmed what I'd
+been experiencing in the past.
 
-This doubles a quick setup guide for kdump on Debian and to document process I went thought to workaround my issue.
+I decided to give kdump a try in order to capture that must be some sort of
+kernel issue as the system seemed to lock up when X was running and I was
+getting no output or logs.
 
-So, what is kexec? A very hand wavy explanation of kdump is that if the kernel has issues, it kexecs from its current running position to a fixed area of memory that happens to have an entire copy of Linux that's not running. With any luck this copy of Linux runs and takes a copy of memory and saves it to disk so that later you can look at it and see what happened. This is why I wanted it!
+This doubles a quick setup guide for kdump on Debian and to document process I
+went thought to workaround my issue.
 
-Arch Linux seems to have taken the spot for random Linux documentation from Google and it's [guide](https://wiki.archlinux.org/index.php/Kdump) gives a nice overview to complement the [official documentation](https://www.kernel.org/doc/Documentation/kdump/kdump.txt).
+So, what is kexec? A very hand wavy explanation of kdump is that if the kernel
+has issues, it kexecs from its current running position to a fixed area of
+memory that happens to have an entire copy of Linux that's not running. With any
+luck this copy of Linux runs and takes a copy of memory and saves it to disk so
+that later you can look at it and see what happened. This is why I wanted it!
 
-Step one is to install the right packages, you need to install kdump-tools and crash. These provide the kdump functionality and the tools to read the kernel dumps. You also need to "-dbg" (linux-image-$(uname -r)-dbg) version of linux-image that contains all the various debugging symbols, eg linux-image-4.0.0-1-amd64-dbg.
+Arch Linux seems to have taken the spot for random Linux documentation from
+Google and it's [guide](https://wiki.archlinux.org/index.php/Kdump) gives a nice
+overview to complement the
+[official documentation](https://www.kernel.org/doc/Documentation/kdump/kdump.txt).
 
-Step two is to enable it. It needs some kernal parameters, so edit /etc/default/grub and run update-grub afterwards, somethings like this works for me:
+Step one is to install the right packages, you need to install kdump-tools and
+crash. These provide the kdump functionality and the tools to read the kernel
+dumps. You also need to "-dbg" (linux-image-$(uname -r)-dbg) version of
+linux-image that contains all the various debugging symbols, eg
+linux-image-4.0.0-1-amd64-dbg.
+
+Step two is to enable it. It needs some kernal parameters, so edit
+/etc/default/grub and run update-grub afterwards, somethings like this works for
+me:
+
 ```
 $ grep GRUB_CMDLINE_LINUX /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash crashkernel=256M nmi_watchdog=1"
 thomas@NBENG0008:~$
 ```
 
-Then enabled the kdump tools by editing /etc/default/kdump-tools, without comments I have:
+Then enabled the kdump tools by editing /etc/default/kdump-tools, without
+comments I have:
+
 ```
-$ egrep -v "^$|^#" /etc/default/kdump-tools 
+$ egrep -v "^$|^#" /etc/default/kdump-tools
 USE_KDUMP=1
 KDUMP_COREDIR="/var/crash"
 $
 ```
 
 I also enabled sysreq by creating /etc/sysctl.d/sysrq.conf:
+
 ```
-$ cat /etc/sysctl.d/sysrq.conf 
+$ cat /etc/sysctl.d/sysrq.conf
 kernel.sysrq = 1
 $
 ```
 
-Step three is to reboot to a known working kernel, check its setup ok and force a panic to make sure it all works. So /proc/sys/kernel/sysrq and /sys/kernel/kexec_crash_loaded should both have 1, if not then something is not quite right.
+Step three is to reboot to a known working kernel, check its setup ok and force
+a panic to make sure it all works. So /proc/sys/kernel/sysrq and
+/sys/kernel/kexec_crash_loaded should both have 1, if not then something is not
+quite right.
+
 ```
 $ grep . /proc/sys/kernel/sysrq /sys/kernel/kexec_crash_loaded
 /proc/sys/kernel/sysrq:1
@@ -54,22 +93,29 @@ $
 ```
 
 You can trigger a panic by writing c to /proc/sysrq-trigger:
+
 ```
 # echo c > /proc/sysrq-trigger
 ```
 
-With any luck this will trigger panic and the system will save the Linux dump and reboot. After the reboot you should find a new directory in /var/crash and inside a dmesg and dump file, one is the dmesg at the panic and is the dumpfile (eg /var/crash/201505221009/dmesg.201505221009 and /var/crash/201505221009/dump.201505221009). Sure enough the dmesg has a panic at the bottom:
+With any luck this will trigger panic and the system will save the Linux dump
+and reboot. After the reboot you should find a new directory in /var/crash and
+inside a dmesg and dump file, one is the dmesg at the panic and is the dumpfile
+(eg /var/crash/201505221009/dmesg.201505221009 and
+/var/crash/201505221009/dump.201505221009). Sure enough the dmesg has a panic at
+the bottom:
 
 ```
 $ sudo egrep "SysRq|BUG" /var/crash/201505221009/dmesg.201505221009
 [  142.135864] SysRq : Trigger a crash
 [  142.137034] BUG: unable to handle kernel NULL pointer dereference at           (null)
-$ 
+$
 ```
 
 The dump file can be viewed with the crash tool:
+
 ```
-$ sudo crash /usr/lib/debug/boot/vmlinux-3.14-2-amd64 /var/crash/201505221009/dump.201505221009 
+$ sudo crash /usr/lib/debug/boot/vmlinux-3.14-2-amd64 /var/crash/201505221009/dump.201505221009
 
 crash 7.0.8
 Copyright (C) 2002-2014  Red Hat, Inc.
@@ -84,7 +130,7 @@ This program is free software, covered by the GNU General Public License,
 and you are welcome to change it and/or distribute copies of it under
 certain conditions.  Enter "help copying" to see the conditions.
 This program has absolutely no warranty.  Enter "help warranty" for details.
- 
+
 GNU gdb (GDB) 7.6
 Copyright (C) 2013 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -112,14 +158,21 @@ LOAD AVERAGE: 0.45, 0.36, 0.14
          CPU: 1
        STATE: TASK_RUNNING (PANIC)
 
-crash> 
+crash>
 ```
 
-I then rebooted to my unreliable kernel to get a dump of my issue. Sure enought the system crashed and I got a dump! (Please note that the crash tool can be funny about the version of Linux running, you may need to update it if it's old and looking at a new kernel with a greater major version that it's aware of, see Debian bug [699367](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699367#51). I got a dump!
+I then rebooted to my unreliable kernel to get a dump of my issue. Sure enought
+the system crashed and I got a dump! (Please note that the crash tool can be
+funny about the version of Linux running, you may need to update it if it's old
+and looking at a new kernel with a greater major version that it's aware of, see
+Debian bug
+[699367](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=699367#51). I got a
+dump!
 
 It seems to be the PANIC and COMMAND lines that are interesting:
+
 ```
-$ sudo crash /usr/lib/debug/boot/vmlinux-4.0.0-1-amd64 /var/crash/201505221035/dump.201505221035 
+$ sudo crash /usr/lib/debug/boot/vmlinux-4.0.0-1-amd64 /var/crash/201505221035/dump.201505221035
 
 crash 7.1.0
 Copyright (C) 2002-2014  Red Hat, Inc.
@@ -134,7 +187,7 @@ This program is free software, covered by the GNU General Public License,
 and you are welcome to change it and/or distribute copies of it under
 certain conditions.  Enter "help copying" to see the conditions.
 This program has absolutely no warranty.  Enter "help warranty" for details.
- 
+
 GNU gdb (GDB) 7.6
 Copyright (C) 2013 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -162,15 +215,21 @@ LOAD AVERAGE: 2.44, 0.75, 0.26
          CPU: 0
        STATE: TASK_RUNNING (PANIC)
 
-crash> 
+crash>
 ```
 
-Next I did a little reading to try to understand what to do next! These seemed interesting:
- * http://people.redhat.com/~anderson/crash_whitepaper/
- * http://www.makelinux.net/ldd3/chp-4-sect-5
- * http://www.dedoimedo.com/computers/crash-analyze.html
+Next I did a little reading to try to understand what to do next! These seemed
+interesting:
 
-Running a backtrace with the bt seemed interesting. It seems like the evo_wait function inside the nouveau module dereferenced some memory causing the kernel paging request failure (Notice that the big numbers are not just cpu registers, some have meaning described in the above links, eg CS):
+- http://people.redhat.com/~anderson/crash_whitepaper/
+- http://www.makelinux.net/ldd3/chp-4-sect-5
+- http://www.dedoimedo.com/computers/crash-analyze.html
+
+Running a backtrace with the bt seemed interesting. It seems like the evo_wait
+function inside the nouveau module dereferenced some memory causing the kernel
+paging request failure (Notice that the big numbers are not just cpu registers,
+some have meaning described in the above links, eg CS):
+
 ```
 crash> bt
 PID: 40     TASK: ffff88046bb26310  CPU: 0   COMMAND: "kworker/0:1"
@@ -201,15 +260,18 @@ PID: 40     TASK: ffff88046bb26310  CPU: 0   COMMAND: "kworker/0:1"
 #16 [ffff88046b52be60] worker_thread at ffffffff81085ab3
 #17 [ffff88046b52bed0] kthread at ffffffff8108aa41
 #18 [ffff88046b52bf50] ret_from_fork at ffffffff815640d8
-crash> 
+crash>
 ```
 
-After a good more more playing I found out that you could load the module symbols with the mod command and then show the disassembly with the c code line numbers with the dis command:
+After a good more more playing I found out that you could load the module
+symbols with the mod command and then show the disassembly with the c code line
+numbers with the dis command:
+
 ```
 crash> mod -s nouveau
      MODULE       NAME                          SIZE  OBJECT FILE
-ffffffffa048d1c0  nouveau                    1298432  /lib/modules/4.0.0-1-amd64/kernel/drivers/gpu/drm/nouveau/nouveau.ko 
-crash> 
+ffffffffa048d1c0  nouveau                    1298432  /lib/modules/4.0.0-1-amd64/kernel/drivers/gpu/drm/nouveau/nouveau.ko
+crash>
 crash> dis -l evo_wait
 /build/linux-Xbe5gu/linux-4.0.2/drivers/gpu/drm/nouveau/nv50_display.c: 414
 0xffffffffa0406ba0 <evo_wait>:  nopl   0x0(%rax,%rax,1) [FTRACE NOP]
@@ -292,7 +354,7 @@ crash> dis -l evo_wait
 0xffffffffa0406c88 <evo_wait+232>:      pop    %rbp
 0xffffffffa0406c89 <evo_wait+233>:      pop    %r12
 0xffffffffa0406c8b <evo_wait+235>:      pop    %r13
-0xffffffffa0406c8d <evo_wait+237>:      retq   
+0xffffffffa0406c8d <evo_wait+237>:      retq
 0xffffffffa0406c8e <evo_wait+238>:      xchg   %ax,%ax
 /build/linux-Xbe5gu/linux-4.0.2/drivers/gpu/drm/nouveau/nv50_display.c: 422
 0xffffffffa0406c90 <evo_wait+240>:      xor    %ecx,%ecx
@@ -308,24 +370,31 @@ crash> dis -l evo_wait
 0xffffffffa0406cb2 <evo_wait+274>:      callq  0xffffffffa0368180 <nvif_object_rd>
 0xffffffffa0406cb7 <evo_wait+279>:      jmpq   0xffffffffa0406bcb <evo_wait+43>
 0xffffffffa0406cbc <evo_wait+284>:      nopl   0x0(%rax)
-crash> 
+crash>
 ```
 
 Do it seems this is the point that it dies:
+
 ```
 /build/linux-Xbe5gu/linux-4.0.2/drivers/gpu/drm/nouveau/nv50_display.c: 420
 0xffffffffa0406bef <evo_wait+79>:       mov    0x58(%rbp),%rax
 0xffffffffa0406bf3 <evo_wait+83>:       movl   $0x20000000,(%rax,%rbx,4)
 ```
 
-Looking at [nv50_display.c](http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/nouveau/nv50_display.c?id=v4.0#n420) it seems that it's this assignment that fails:
+Looking at
+[nv50_display.c](http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/nouveau/nv50_display.c?id=v4.0#n420)
+it seems that it's this assignment that fails:
+
 ```
 dmac->ptr[put] = 0x20000000;
 ```
 
-dmac is actually a pointer thats passed into the evo_wait function, this is where I stood back.
+dmac is actually a pointer thats passed into the evo_wait function, this is
+where I stood back.
 
-I also had a look at /var/crash/201505221035/dmesg.201505221035 and noticed that just before the panic a nouveau error is kprintf'ed (about 60 microseconds)!
+I also had a look at /var/crash/201505221035/dmesg.201505221035 and noticed that
+just before the panic a nouveau error is kprintf'ed (about 60 microseconds)!
+
 ```
 [   62.297649] usb 1-7: reset full-speed USB device number 2 using xhci_hcd
 [   76.792370] nouveau E[     DRM] failed to idle channel 0xcccc0001 [DRM]
@@ -333,6 +402,9 @@ I also had a look at /var/crash/201505221035/dmesg.201505221035 and noticed that
 [   76.792455] IP: [<ffffffffa0406bf3>] evo_wait+0x53/0x120 [nouveau]
 ```
 
-I then did some googling for "failed to idle channel" and found freedesktop.org bug [69488](https://bugs.freedesktop.org/show_bug.cgi?id=69488). So I added "nouveau.runpm=0" to my boot parameters and rebooted and it's stable now!
+I then did some googling for "failed to idle channel" and found freedesktop.org
+bug [69488](https://bugs.freedesktop.org/show_bug.cgi?id=69488). So I added
+"nouveau.runpm=0" to my boot parameters and rebooted and it's stable now!
 
-I also filed a bug at https://bugs.freedesktop.org [90682](https://bugs.freedesktop.org/show_bug.cgi?id=90682).
+I also filed a bug at https://bugs.freedesktop.org
+[90682](https://bugs.freedesktop.org/show_bug.cgi?id=90682).

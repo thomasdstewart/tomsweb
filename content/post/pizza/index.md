@@ -6,30 +6,59 @@ tags: ["pizza", "baking"]
 categories: []
 date: 2021-05-13 17:10:00
 ---
+
 ## Sourdough Starter
-A sourdough starter is a way of making Sourdough. You can make it yourself by mixing flour and water and leaving it in a warm place over a number of days. Depending on the environment this take up to a few weeks. Alternatively just get a few spoons of starter from a friend to kickstart your own! Just keep it in a pint glass with a cloth cover or beeswax cover.
+
+A sourdough starter is a way of making Sourdough. You can make it yourself by
+mixing flour and water and leaving it in a warm place over a number of days.
+Depending on the environment this take up to a few weeks. Alternatively just get
+a few spoons of starter from a friend to kickstart your own! Just keep it in a
+pint glass with a cloth cover or beeswax cover.
 
 ## Feeding Starter
-Once healthy if kept at room temperature it will need feeding every day. Just throw a bit away and add in 50g of water and 50g of flour, mix and leave. After feeding it should grow over the course of a few hours and then slowly settle back down. Initially once the cover comes off it will smell of the CO2 given off, much like carbonated water. It should smell nice with a slight vinegar smell.
 
-When healthy you can save flower you can pause a starter in a fridge. Take it out of the fridge and feed about 4-6 hours before using, eg First thing Friday morning for Saturday night Pizza.
+Once healthy if kept at room temperature it will need feeding every day. Just
+throw a bit away and add in 50g of water and 50g of flour, mix and leave. After
+feeding it should grow over the course of a few hours and then slowly settle
+back down. Initially once the cover comes off it will smell of the CO2 given
+off, much like carbonated water. It should smell nice with a slight vinegar
+smell.
+
+When healthy you can save flower you can pause a starter in a fridge. Take it
+out of the fridge and feed about 4-6 hours before using, eg First thing Friday
+morning for Saturday night Pizza.
 
 ## Naming your starter
+
 Aparently you can name your started after 2 weeks, we called ours Moby.
 
 ## Pizza Dough
+
 1. Feed starter before 9am.
-2. Make the dough around lunch time, mix 450g flour and 4g of salt afterwards then mix 280ml water together and let it sit for a bit (10-30min).
+2. Make the dough around lunch time, mix 450g flour and 4g of salt afterwards
+   then mix 280ml water together and let it sit for a bit (10-30min).
 3. Mix in 100g of starter to the mix and mix together until combined.
-4. If starter seems healthy return to fridge, else feed again and return to fridge later.
-5. Perform three "stretch and folds" at 30min intervals or when you remember. For each pull an edge of dough up and fold it back over itself, rotate the bowl 90 degrees and repeat round 6-10 times.
-6. Before going to bed lay out a tea towel sprinkle with flour and put the dough on it. Then perform an "Envelope Fold", pull a corner down and over the middle, then repeat on the opposite side side after perform the same for the two other side. Thus ending with a ball of dough covered in flour. Lift it up by the towel and place in a basket then place in the fridge.
-7. Remove from fridge the following evening before Pizza time. If lunch pizza is required just try to perform everything a few hours earlier as best you can without stressing too much.
+4. If starter seems healthy return to fridge, else feed again and return to
+   fridge later.
+5. Perform three "stretch and folds" at 30min intervals or when you remember.
+   For each pull an edge of dough up and fold it back over itself, rotate the
+   bowl 90 degrees and repeat round 6-10 times.
+6. Before going to bed lay out a tea towel sprinkle with flour and put the dough
+   on it. Then perform an "Envelope Fold", pull a corner down and over the
+   middle, then repeat on the opposite side side after perform the same for the
+   two other side. Thus ending with a ball of dough covered in flour. Lift it up
+   by the towel and place in a basket then place in the fridge.
+7. Remove from fridge the following evening before Pizza time. If lunch pizza is
+   required just try to perform everything a few hours earlier as best you can
+   without stressing too much.
 
 ## Pizza Making
+
 1. Preheat fan oven to around 220C.
-2. Remove Pizza Dough from above. The above quantity is good for two large pizzas, use a scissors to cut the dough in half.
-3. Take one half and join up the freshly cut part to in essence turn a semicircle into a circle.
+2. Remove Pizza Dough from above. The above quantity is good for two large
+   pizzas, use a scissors to cut the dough in half.
+3. Take one half and join up the freshly cut part to in essence turn a
+   semicircle into a circle.
 4. Work the dough into a pizza shape and place on a oiled pizza tray.
 5. Spread chopped tomatoes around in an even layer from the middle.
 6. Sprinkle oregano over.
@@ -39,56 +68,38 @@ Aparently you can name your started after 2 weeks, we called ours Moby.
 
 ## Pictures
 
-Moby straight from fridge
-{{< figure src="20210514_100959.jpg">}}
+Moby straight from fridge {{< figure src="20210514_100959.jpg">}}
 
-Moby after feeding
-{{< figure src="20210514_101337.jpg">}}
+Moby after feeding {{< figure src="20210514_101337.jpg">}}
 
-Moby covered
-{{< figure src="20210514_101402.jpg">}}
+Moby covered {{< figure src="20210514_101402.jpg">}}
 
-Moby on the router
-{{< figure src="20210514_101439.jpg">}}
+Moby on the router {{< figure src="20210514_101439.jpg">}}
 
-Moby on the router before growth
-{{< figure src="20210514_101450.jpg">}}
+Moby on the router before growth {{< figure src="20210514_101450.jpg">}}
 
-Moby on the router after growth
-{{< figure src="20210514_134527.jpg">}}
+Moby on the router after growth {{< figure src="20210514_134527.jpg">}}
 
-Flour salt and water
-{{< figure src="20210514_135004.jpg">}}
+Flour salt and water {{< figure src="20210514_135004.jpg">}}
 
-Flour salt and water mixed
-{{< figure src="20210514_135400.jpg">}}
+Flour salt and water mixed {{< figure src="20210514_135400.jpg">}}
 
-Flour salt and water fullymixed
-{{< figure src="20210514_135634.jpg">}}
+Flour salt and water fullymixed {{< figure src="20210514_135634.jpg">}}
 
-Adding Moby
-{{< figure src="20210514_135713.jpg">}}
+Adding Moby {{< figure src="20210514_135713.jpg">}}
 
-Moby added
-{{< figure src="20210514_135727.jpg">}}
+Moby added {{< figure src="20210514_135727.jpg">}}
 
-Mixing Moby in
-{{< figure src="20210514_135950.jpg">}}
+Mixing Moby in {{< figure src="20210514_135950.jpg">}}
 
-Mixed
-{{< figure src="20210514_140208.jpg">}}
+Mixed {{< figure src="20210514_140208.jpg">}}
 
-Proving
-{{< figure src="20210514_144318.jpg">}}
+Proving {{< figure src="20210514_144318.jpg">}}
 
-Starting to rise
-{{< figure src="20210514_192319.jpg">}}
+Starting to rise {{< figure src="20210514_192319.jpg">}}
 
-Finished rise
-{{< figure src="20210514_220151.jpg">}}
+Finished rise {{< figure src="20210514_220151.jpg">}}
 
-Envelope fold
-{{< figure src="20210514_220434.jpg">}}
+Envelope fold {{< figure src="20210514_220434.jpg">}}
 
-Ready for the fridge
-{{< figure src="20210514_220450.jpg">}}
+Ready for the fridge {{< figure src="20210514_220450.jpg">}}

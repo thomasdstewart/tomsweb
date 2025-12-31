@@ -7,5 +7,5 @@ categories: []
 date: 2015-06-23
 aliases: [/tomsweb/Stuff/Gnome3BlackTitles/]
 ---
-Black titles in Gnome3!
-![blacktitles](blacktitles.png)
+
+Black titles in Gnome3! ![blacktitles](blacktitles.png)

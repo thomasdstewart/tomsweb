@@ -7,16 +7,25 @@ categories: []
 date: 2018-07-06
 aliases: [/tomsweb/RaspberryPITemperatureMonitor/]
 ---
+
 {{% toc %}}
+
 ## Introduction
-I recently needed to temperature monitor, log and alert on over temperatures. I had a look in my parts bin and I found a Raspberry PI a 1-Wire HBA, a 1-Wire temperature IC and a 3G dongle.
+
+I recently needed to temperature monitor, log and alert on over temperatures. I
+had a look in my parts bin and I found a Raspberry PI a 1-Wire HBA, a 1-Wire
+temperature IC and a 3G dongle.
 
 ## Solution
-I needed a quick way to create anImage I could throw on the Pi. I didn't want to have to maintain it, and if the pops I want to be able to generate a replacement image easily.
+
+I needed a quick way to create anImage I could throw on the Pi. I didn't want to
+have to maintain it, and if the pops I want to be able to generate a replacement
+image easily.
 
 In the end I created the below script. It's not particually nice, but it works.
 
 ## Method
+
 ```
 #!/bin/bash -x
 umount /dev/loop0
@@ -98,7 +107,7 @@ ln -s /lib/systemd/system/prometheus-node-exporter.service "\${ETC_DIR}/systemd/
 EOF
 
 cat <<EOF > files/ferm.conf
-domain (ip ip6) chain (INPUT OUTPUT FORWARD) policy DROP; 
+domain (ip ip6) chain (INPUT OUTPUT FORWARD) policy DROP;
 domain (ip ip6) chain (INPUT OUTPUT) {
         mod conntrack ctstate INVALID DROP;
         mod conntrack ctstate (ESTABLISHED RELATED) ACCEPT;
@@ -122,7 +131,7 @@ domain (ip ip6) chain OUTPUT {
 domain (ip ip6) chain INPUT NFLOG nflog-prefix 'INPUT';
 domain (ip ip6) chain FORWARD NFLOG nflog-prefix 'FORWARD';
 domain (ip ip6) chain OUTPUT NFLOG nflog-prefix 'OUTPUT';
-        
+
 domain ip chain (INPUT FORWARD OUTPUT) REJECT reject-with icmp-admin-prohibited;
 domain ip6 chain (INPUT FORDWARD OUTPUT) REJECT reject-with icmp6-adm-prohibited;
 EOF
@@ -178,8 +187,8 @@ fi
 
 q=$'
     SELECT "w1retap_temp_celsius{id=""" || value || """,type=""" || abbrv1 || """,name=""" || name1 || """} " || value
-    FROM readings 
-    INNER JOIN w1sensors 
+    FROM readings
+    INNER JOIN w1sensors
         ON readings.name = w1sensors.name1
     WHERE date > strftime(\'%s\', \'now\') - 60
     GROUP BY type,abbrv1,name1,value
@@ -309,7 +318,7 @@ EOF
 # in service:
 #       vars.notification_interval = 43200
 
-#root@logger:~# cat /etc/cron.d/check 
+#root@logger:~# cat /etc/cron.d/check
 #* * * * * root /root/check.sh
 #root@logger:~# grep . /root/check.sh
 ##!/bin/bash
@@ -324,7 +333,7 @@ EOF
 #		sed -i 's/temp/TEMP/' $file
 #	fi
 #done
-#root@logger:~# 
+#root@logger:~#
 
 #INFO
 #send test txt: echo -en "To: 447987654321\n\ntest\n" > /var/spool/sms/outgoing/test
@@ -374,4 +383,3 @@ CONFIG_TEMPLATE=logger ./rpi23-gen-image.sh
 exit
 #sudo bmaptool copy /home/thomas/rpi23-gen-image/images/stretch/*.img /dev/mmcblk0
 ```
-

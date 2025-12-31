@@ -7,54 +7,91 @@ categories: []
 date: 2015-10-17
 aliases: [/tomsweb/WDShareSpaceDebootstrap/]
 ---
+
 {{% toc %}}
+
 ## Intro
-So I have an old Western Digital Sharespace NAS box that I used to use as my main home NAS. I've long since switched it off, support for it has more or less finished, there have been no updates in ages and the new WD support site does not list it anymore. That said it seems a shame to skip it so I tried a few times to re-purpose it. I did get root when I first got it, but was never able to do anything more as it had all my files on. After I stopped using it for a while I forgot about it. Sometime later I found a few posts on the debian-arm mailing list from David Hicks, he had managed to get Debian installed at working! Yay I thought so I emailed him and he very helpfully gave me some instructions and some patches to get me started. Unfortunately I fell at the first hurdle and could not get the console working. Embarrassingly I had not turned the flow control to off within the minicom settings. After 18 months while working on a serial console for a RaspberryPi it dawned on me that it was my mistake. So I got out the box and console cable and decided to have another go.
 
-A big thinks to David Hicks for giving me the right kernel patch and sending me in the right direction. To Western Digitals credit they did release a GPL.zip type zip that appeared to contain a build system, gcc, kernel etc. However actually unpicking all the .config.old, .config.old2 files would have taken an age. Plus given that the Sharespace board is very much like the arm orion5x, the patch to get it working is not that big, so does not need the mountain of changes that Western Digital applied. I have attached the patch to this page.
+So I have an old Western Digital Sharespace NAS box that I used to use as my
+main home NAS. I've long since switched it off, support for it has more or less
+finished, there have been no updates in ages and the new WD support site does
+not list it anymore. That said it seems a shame to skip it so I tried a few
+times to re-purpose it. I did get root when I first got it, but was never able
+to do anything more as it had all my files on. After I stopped using it for a
+while I forgot about it. Sometime later I found a few posts on the debian-arm
+mailing list from David Hicks, he had managed to get Debian installed at
+working! Yay I thought so I emailed him and he very helpfully gave me some
+instructions and some patches to get me started. Unfortunately I fell at the
+first hurdle and could not get the console working. Embarrassingly I had not
+turned the flow control to off within the minicom settings. After 18 months
+while working on a serial console for a RaspberryPi it dawned on me that it was
+my mistake. So I got out the box and console cable and decided to have another
+go.
 
-I have basically documented the entire process, rather than a list of commands to type, it's more or a command log. That way if anyone does want to repeat, they can at least understand what they expect to see. Given this it's rather longer than I expected. The original running Linux is too old to chroot into a new Linux and I did not try to get perl working in order to run debootstrap natively. So the process in colved cross compiling a kernel and booting that in order to debootstrap a new system install.
+A big thinks to David Hicks for giving me the right kernel patch and sending me
+in the right direction. To Western Digitals credit they did release a GPL.zip
+type zip that appeared to contain a build system, gcc, kernel etc. However
+actually unpicking all the .config.old, .config.old2 files would have taken an
+age. Plus given that the Sharespace board is very much like the arm orion5x, the
+patch to get it working is not that big, so does not need the mountain of
+changes that Western Digital applied. I have attached the patch to this page.
+
+I have basically documented the entire process, rather than a list of commands
+to type, it's more or a command log. That way if anyone does want to repeat,
+they can at least understand what they expect to see. Given this it's rather
+longer than I expected. The original running Linux is too old to chroot into a
+new Linux and I did not try to get perl working in order to run debootstrap
+natively. So the process in colved cross compiling a kernel and booting that in
+order to debootstrap a new system install.
 
 The process:
- 1. create some chroots
- 2. compile kernel
- 3. create initrd
- 4. boot new kernel
- 5. extract debootstrap and finish to temp partition which can act as rescue incase of later errors
- 6. create actual system on raid1 and copy to there
- 7. reboot
- 8. do some clean up, backup mtd, setup uboot to boot automatticaly
+
+1.  create some chroots
+2.  compile kernel
+3.  create initrd
+4.  boot new kernel
+5.  extract debootstrap and finish to temp partition which can act as rescue
+    incase of later errors
+6.  create actual system on raid1 and copy to there
+7.  reboot
+8.  do some clean up, backup mtd, setup uboot to boot automatticaly
 
 Some links:
- * http://www.arm.linux.org.uk/developer/machines/
- * http://www.arm.linux.org.uk/developer/machines/list.php?id=3140
- * http://westerndigital.nas-central.org/wiki/Category:ShareSpace
- * http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/tools/mach-types
+
+- http://www.arm.linux.org.uk/developer/machines/
+- http://www.arm.linux.org.uk/developer/machines/list.php?id=3140
+- http://westerndigital.nas-central.org/wiki/Category:ShareSpace
+- http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/tools/mach-types
 
 Patch:
- * [v3.10-sharespace.patch](v3.10-sharespace.patch)
+
+- [v3.10-sharespace.patch](v3.10-sharespace.patch)
 
 ## Setup Environment
+
 Create a work area:
+
 ```#!bash
 thomas@diamond ~ $ mkdir /srv/store/sharespace
 thomas@diamond ~ $ cd /srv/store/sharespace
-thomas@diamond ~ $ 
+thomas@diamond ~ $
 ```
 
-Older kernels don't know how to use gcc5, so create a jessie chroot to do some compilin:
+Older kernels don't know how to use gcc5, so create a jessie chroot to do some
+compilin:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo debootstrap --include=devio,u-boot-tools,build-essential,kernel-package,locales,curl,telnet,sudo jessie /srv/store/sharespace/jessie-x86_64/ http://httpredir.debian.org/debian/
-I: Retrieving Release 
-I: Retrieving Release.gpg 
+I: Retrieving Release
+I: Retrieving Release.gpg
 I: Checking Release signature
 I: Valid Release signature (key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1)
-I: Retrieving Packages 
-I: Validating Packages 
+I: Retrieving Packages
+I: Validating Packages
 I: Resolving dependencies of required packages...
 I: Resolving dependencies of base packages...
-I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev 
-I: Found additional base dependencies: bc binutils bzip2 cpp cpp-4.9 docbook-xml docbook-xsl dpkg-dev file g++ g++-3.9 gcc gcc-4.9 gettext gettext-base intltool-debian libasan1 libasprintf0c2 libatomic1 libc-dev-bin libc6-dev libcilkrts5 libcloog-isl4 libcroco3 libcurl3 libdns-export100 libdpkg-perl libffi6 libgcc-4.9-dev libglib2.0-0 libgmp10 libgnutls-deb0-28 libgnutls-openssl27 libgomp1 libgssapi-krb5-2 libhogweed2 libicu52 libidn11 libirs-export91 libisc-export95 libisccfg-export90 libisl10 libitm1 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0 libldap-2.4-2 liblsan0 libmagic1 libmnl0 libmpc3 libmpfr4 libnetfilter-acct1 libnettle4 libnfnetlink0 libp11-kit0 libpsl0 libquadmath0 librtmp1 libsasl2-2 libsasl2-modules-db libssh2-1 libstdc++-4.9-dev libtasn1-6 libtimedate-perl libtsan0 libubsan0 libunistring0 libxml2 libxml2-utils libxslt1.1 linux-libc-dev lzma make patch perl perl-modules po-debconf sgml-base sgml-data xml-core xmlto xsltproc xz-utils 
+I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev
+I: Found additional base dependencies: bc binutils bzip2 cpp cpp-4.9 docbook-xml docbook-xsl dpkg-dev file g++ g++-3.9 gcc gcc-4.9 gettext gettext-base intltool-debian libasan1 libasprintf0c2 libatomic1 libc-dev-bin libc6-dev libcilkrts5 libcloog-isl4 libcroco3 libcurl3 libdns-export100 libdpkg-perl libffi6 libgcc-4.9-dev libglib2.0-0 libgmp10 libgnutls-deb0-28 libgnutls-openssl27 libgomp1 libgssapi-krb5-2 libhogweed2 libicu52 libidn11 libirs-export91 libisc-export95 libisccfg-export90 libisl10 libitm1 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0 libldap-2.4-2 liblsan0 libmagic1 libmnl0 libmpc3 libmpfr4 libnetfilter-acct1 libnettle4 libnfnetlink0 libp11-kit0 libpsl0 libquadmath0 librtmp1 libsasl2-2 libsasl2-modules-db libssh2-1 libstdc++-4.9-dev libtasn1-6 libtimedate-perl libtsan0 libubsan0 libunistring0 libxml2 libxml2-utils libxslt1.1 linux-libc-dev lzma make patch perl perl-modules po-debconf sgml-base sgml-data xml-core xmlto xsltproc xz-utils
 I: Checking component main on http://httpredir.debian.org/debian...
 I: Retrieving acl 2.2.52-2
 I: Validating acl 2.2.52-2
@@ -1114,17 +1151,19 @@ thomas@diamond /srv/store/sharespace $
 ```
 
 Do some basic setup inside the chroot:
+
 ```#!bash
-thomas@diamond /srv/store/sharespace $ grep thomas /etc/passwd | sudo tee -a /srv/store/sharespace/jessie-x86_64/etc/passwd 
-[sudo] password for thomas: 
+thomas@diamond /srv/store/sharespace $ grep thomas /etc/passwd | sudo tee -a /srv/store/sharespace/jessie-x86_64/etc/passwd
+[sudo] password for thomas:
 thomas:x:1000:1000:Thomas Stewart,,,:/home/thomas:/bin/bash
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 thomas@diamond /srv/store/sharespace $ grep ^thomas /etc/passwd | sudo tee -a /srv/store/sharespace/jessie-x86_64/etc/group
 thomas:x:1000:1000:Thomas Stewart,,,:/home/thomas:/bin/bash
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 ```
 
 Add a repo which has the arm cross compilers:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ echo "deb http://emdebian.org/tools/debian jessie main" | sudo tee -a /srv/store/sharespace/jessie-x86_64/etc/apt/sources.list
 deb http://emdebian.org/tools/debian jessie main
@@ -1135,38 +1174,42 @@ thomas@diamond /srv/store/sharespace $ curl http://emdebian.org/tools/debian/emd
                                  Dload  Upload   Total   Spent    Left  Speed
 100  2398  100  2398    0     0   1551      0  0:00:01  0:00:01 --:--:--  1552
 OK
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 ```
 
 Add the armel architecture to the chroot:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo chroot /srv/store/sharespace/jessie-x86_64 dpkg --add-architecture armel
 thomas@diamond /srv/store/sharespace $ sudo chroot /srv/store/sharespace/jessie-x86_64 dpkg --print-architecture
 amd64
 thomas@diamond /srv/store/sharespace $ sudo chroot /srv/store/sharespace/jessie-x86_64 dpkg --print-foreign-architectures
 armel
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 ```
 
 Update the packages:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo chroot /srv/store/sharespace/jessie-x86_64 apt-get update
 Hit http://emdebian.org jessie InRelease
-Hit http://emdebian.org jessie/main amd64 Packages              
-Get:1 http://emdebian.org jessie/main armel Packages [7606 B]                
-Ign http://emdebian.org jessie/main Translation-en                                    
-Ign http://httpredir.debian.org jessie InRelease               
+Hit http://emdebian.org jessie/main amd64 Packages
+Get:1 http://emdebian.org jessie/main armel Packages [7606 B]
+Ign http://emdebian.org jessie/main Translation-en
+Ign http://httpredir.debian.org jessie InRelease
 Hit http://httpredir.debian.org jessie Release.gpg
 Hit http://httpredir.debian.org jessie Release
 Hit http://httpredir.debian.org jessie/main amd64 Packages
 Get:2 http://httpredir.debian.org jessie/main armel Packages [6622 kB]
-Hit http://httpredir.debian.org jessie/main Translation-en 
-Fetched 6629 kB in 10s (617 kB/s) 
+Hit http://httpredir.debian.org jessie/main Translation-en
+Fetched 6629 kB in 10s (617 kB/s)
 Reading package lists... Done
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 ```
 
-Install the cross compiler and a statically linked armel busybox for use with the initramfs later:
+Install the cross compiler and a statically linked armel busybox for use with
+the initramfs later:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo chroot /srv/store/sharespace/jessie-x86_64 apt-get install cross-gcc-dev crossbuild-essential-armel binutils-arm-linux-gnueabi busybox-static:armel
 Reading package lists... Done
@@ -1204,12 +1247,12 @@ The following NEW packages will be installed:
 0 upgraded, 69 newly installed, 0 to remove and 1 not upgraded.
 Need to get 33.0 MB of archives.
 After this operation, 124 MB of additional disk space will be used.
-Do you want to continue? [Y/n] 
+Do you want to continue? [Y/n]
 Get:1 http://emdebian.org/tools/debian/ jessie/main cpp-4.9-arm-linux-gnueabi amd64 4.9.2-10 [5196 kB]
-Get:2 http://httpredir.debian.org/debian/ jessie/main gcc-4.9-base armel 4.9.2-10 [160 kB]                   
-Get:3 http://emdebian.org/tools/debian/ jessie/main gcc-4.9-arm-linux-gnueabi amd64 4.9.2-10 [5213 kB]              
-Get:4 http://httpredir.debian.org/debian/ jessie/main libgcc1 armel 1:4.9.2-10 [41.4 kB]       
-Get:5 http://httpredir.debian.org/debian/ jessie/main libc6 armel 2.19-18+deb8u1 [4126 kB]                   
+Get:2 http://httpredir.debian.org/debian/ jessie/main gcc-4.9-base armel 4.9.2-10 [160 kB]
+Get:3 http://emdebian.org/tools/debian/ jessie/main gcc-4.9-arm-linux-gnueabi amd64 4.9.2-10 [5213 kB]
+Get:4 http://httpredir.debian.org/debian/ jessie/main libgcc1 armel 1:4.9.2-10 [41.4 kB]
+Get:5 http://httpredir.debian.org/debian/ jessie/main libc6 armel 2.19-18+deb8u1 [4126 kB]
 Get:6 http://emdebian.org/tools/debian/ jessie/main gcc-arm-linux-gnueabi all 4.9.2-10.1 [2776 B]
 Get:7 http://emdebian.org/tools/debian/ jessie/main g++-4.9-arm-linux-gnueabi amd64 4.9.2-10 [5473 kB]
 Get:8 http://emdebian.org/tools/debian/ jessie/main g++-arm-linux-gnueabi all 4.9.2-10.1 [2680 B]
@@ -1225,56 +1268,56 @@ Get:17 http://httpredir.debian.org/debian/ jessie/main libubsan0 armel 4.9.2-10 
 Get:18 http://httpredir.debian.org/debian/ jessie/main ucf all 3.0030 [69.7 kB]
 Get:19 http://httpredir.debian.org/debian/ jessie/main openssl amd64 1.0.1k-3+deb8u1 [677 kB]
 Get:20 http://httpredir.debian.org/debian/ jessie/main ca-certificates all 20141019 [200 kB]
-Get:21 http://httpredir.debian.org/debian/ jessie/main linux-libc-dev armel 3.16.7-ckt11-1+deb8u3 [976 kB]                       
-Get:22 http://httpredir.debian.org/debian/ jessie/main libc6-dev armel 2.19-18+deb8u1 [1781 kB]                                  
-Get:23 http://httpredir.debian.org/debian/ jessie/main binutils-arm-linux-gnueabi amd64 2.25-5 [3721 kB]                         
-Get:24 http://httpredir.debian.org/debian/ jessie/main libgcc-4.9-dev armel 4.9.2-10 [361 kB]                                    
-Get:25 http://httpredir.debian.org/debian/ jessie/main libstdc++-4.9-dev armel 4.9.2-10 [1140 kB]                                
-Get:26 http://httpredir.debian.org/debian/ jessie/main liblist-moreutils-perl amd64 0.33-2+b1 [44.4 kB]                          
-Get:27 http://httpredir.debian.org/debian/ jessie/main libconfig-inifiles-perl all 2.83-3 [54.0 kB]                              
-Get:28 http://httpredir.debian.org/debian/ jessie/main libio-string-perl all 1.08-3 [12.3 kB]                                    
-Get:29 http://httpredir.debian.org/debian/ jessie/main libxml-namespacesupport-perl all 1.11-1 [14.8 kB]                         
-Get:30 http://httpredir.debian.org/debian/ jessie/main libxml-sax-base-perl all 1.07-1 [23.1 kB]                                 
-Get:31 http://httpredir.debian.org/debian/ jessie/main libxml-sax-perl all 0.99+dfsg-2 [68.3 kB]                                 
-Get:32 http://httpredir.debian.org/debian/ jessie/main liburi-perl all 1.64-1 [95.5 kB]                                          
-Get:33 http://httpredir.debian.org/debian/ jessie/main libencode-locale-perl all 1.03-1 [13.6 kB]                                
-Get:34 http://httpredir.debian.org/debian/ jessie/main libhttp-date-perl all 6.02-1 [10.7 kB]                                    
-Get:35 http://httpredir.debian.org/debian/ jessie/main libfile-listing-perl all 6.04-1 [10.3 kB]                                 
-Get:36 http://httpredir.debian.org/debian/ jessie/main libhtml-tagset-perl all 3.20-2 [13.5 kB]                                  
-Get:37 http://httpredir.debian.org/debian/ jessie/main libhtml-parser-perl amd64 3.71-1+b3 [109 kB]                              
-Get:38 http://httpredir.debian.org/debian/ jessie/main libhtml-tree-perl all 5.03-1 [210 kB]                                     
-Get:39 http://httpredir.debian.org/debian/ jessie/main libio-html-perl all 1.001-1 [17.6 kB]                                     
-Get:40 http://httpredir.debian.org/debian/ jessie/main liblwp-mediatypes-perl all 6.02-1 [22.1 kB]                               
-Get:41 http://httpredir.debian.org/debian/ jessie/main libhttp-message-perl all 6.06-1 [80.1 kB]                                 
-Get:42 http://httpredir.debian.org/debian/ jessie/main libhttp-cookies-perl all 6.01-1 [17.4 kB]                                 
-Get:43 http://httpredir.debian.org/debian/ jessie/main libhttp-negotiate-perl all 6.00-2 [13.6 kB]                               
-Get:44 http://httpredir.debian.org/debian/ jessie/main libnet-ssleay-perl amd64 1.65-1+b1 [277 kB]                               
-Get:45 http://httpredir.debian.org/debian/ jessie/main libio-socket-ssl-perl all 2.002-2+deb8u1 [172 kB]                         
-Get:46 http://httpredir.debian.org/debian/ jessie/main libnet-http-perl all 6.07-1 [24.8 kB]                                     
-Get:47 http://httpredir.debian.org/debian/ jessie/main liblwp-protocol-https-perl all 6.06-2 [9582 B]                            
-Get:48 http://httpredir.debian.org/debian/ jessie/main libwww-robotrules-perl all 6.01-1 [14.3 kB]                               
-Get:49 http://httpredir.debian.org/debian/ jessie/main libwww-perl all 6.08-1 [194 kB]                                           
-Get:50 http://httpredir.debian.org/debian/ jessie/main libxml-parser-perl amd64 2.41-3 [215 kB]                                  
-Get:51 http://httpredir.debian.org/debian/ jessie/main libxml-sax-expat-perl all 0.40-2 [12.9 kB]                                
-Get:52 http://httpredir.debian.org/debian/ jessie/main libxml-simple-perl all 2.20-1 [74.7 kB]                                   
-Get:53 http://httpredir.debian.org/debian/ jessie/main libyaml-perl all 1.13-1 [69.7 kB]                                         
-Get:54 http://httpredir.debian.org/debian/ jessie/main libconfig-auto-perl all 0.44-1 [19.5 kB]                                  
-Get:55 http://httpredir.debian.org/debian/ jessie/main libfile-which-perl all 1.09-1 [13.1 kB]                                   
-Get:56 http://httpredir.debian.org/debian/ jessie/main libfile-homedir-perl all 1.00-1 [48.9 kB]                                 
-Get:57 http://httpredir.debian.org/debian/ jessie/main libfakeroot amd64 1.20.2-1 [44.7 kB]                                      
-Get:58 http://httpredir.debian.org/debian/ jessie/main fakeroot amd64 1.20.2-1 [84.7 kB]                                         
-Get:59 http://httpredir.debian.org/debian/ jessie/main libauthen-sasl-perl all 2.1600-1 [50.8 kB]                                
-Get:60 http://httpredir.debian.org/debian/ jessie/main libfont-afm-perl all 1.20-1 [14.4 kB]                                     
-Get:61 http://httpredir.debian.org/debian/ jessie/main libhtml-form-perl all 6.03-1 [23.9 kB]                                    
-Get:62 http://httpredir.debian.org/debian/ jessie/main libhtml-format-perl all 2.11-1 [43.1 kB]                                  
-Get:63 http://httpredir.debian.org/debian/ jessie/main libhttp-daemon-perl all 6.01-1 [17.3 kB]                                  
-Get:64 http://httpredir.debian.org/debian/ jessie/main libnet-smtp-ssl-perl all 1.01-3 [5996 B]                                  
-Get:65 http://httpredir.debian.org/debian/ jessie/main libmailtools-perl all 2.13-1 [96.6 kB]                                    
-Get:66 http://httpredir.debian.org/debian/ jessie/main libyaml-libyaml-perl amd64 0.41-6 [67.0 kB]                               
-Get:67 http://httpredir.debian.org/debian/ jessie/main realpath all 8.23-4 [18.0 kB]                                             
-Get:68 http://httpredir.debian.org/debian/ jessie/main busybox-static armel 1:1.22.0-9+deb8u1 [717 kB]                           
-Get:69 http://httpredir.debian.org/debian/ jessie/main cross-gcc-dev all 14+deb8u1 [17.3 kB]                                     
-Fetched 33.0 MB in 26s (1243 kB/s)                                                                                               
+Get:21 http://httpredir.debian.org/debian/ jessie/main linux-libc-dev armel 3.16.7-ckt11-1+deb8u3 [976 kB]
+Get:22 http://httpredir.debian.org/debian/ jessie/main libc6-dev armel 2.19-18+deb8u1 [1781 kB]
+Get:23 http://httpredir.debian.org/debian/ jessie/main binutils-arm-linux-gnueabi amd64 2.25-5 [3721 kB]
+Get:24 http://httpredir.debian.org/debian/ jessie/main libgcc-4.9-dev armel 4.9.2-10 [361 kB]
+Get:25 http://httpredir.debian.org/debian/ jessie/main libstdc++-4.9-dev armel 4.9.2-10 [1140 kB]
+Get:26 http://httpredir.debian.org/debian/ jessie/main liblist-moreutils-perl amd64 0.33-2+b1 [44.4 kB]
+Get:27 http://httpredir.debian.org/debian/ jessie/main libconfig-inifiles-perl all 2.83-3 [54.0 kB]
+Get:28 http://httpredir.debian.org/debian/ jessie/main libio-string-perl all 1.08-3 [12.3 kB]
+Get:29 http://httpredir.debian.org/debian/ jessie/main libxml-namespacesupport-perl all 1.11-1 [14.8 kB]
+Get:30 http://httpredir.debian.org/debian/ jessie/main libxml-sax-base-perl all 1.07-1 [23.1 kB]
+Get:31 http://httpredir.debian.org/debian/ jessie/main libxml-sax-perl all 0.99+dfsg-2 [68.3 kB]
+Get:32 http://httpredir.debian.org/debian/ jessie/main liburi-perl all 1.64-1 [95.5 kB]
+Get:33 http://httpredir.debian.org/debian/ jessie/main libencode-locale-perl all 1.03-1 [13.6 kB]
+Get:34 http://httpredir.debian.org/debian/ jessie/main libhttp-date-perl all 6.02-1 [10.7 kB]
+Get:35 http://httpredir.debian.org/debian/ jessie/main libfile-listing-perl all 6.04-1 [10.3 kB]
+Get:36 http://httpredir.debian.org/debian/ jessie/main libhtml-tagset-perl all 3.20-2 [13.5 kB]
+Get:37 http://httpredir.debian.org/debian/ jessie/main libhtml-parser-perl amd64 3.71-1+b3 [109 kB]
+Get:38 http://httpredir.debian.org/debian/ jessie/main libhtml-tree-perl all 5.03-1 [210 kB]
+Get:39 http://httpredir.debian.org/debian/ jessie/main libio-html-perl all 1.001-1 [17.6 kB]
+Get:40 http://httpredir.debian.org/debian/ jessie/main liblwp-mediatypes-perl all 6.02-1 [22.1 kB]
+Get:41 http://httpredir.debian.org/debian/ jessie/main libhttp-message-perl all 6.06-1 [80.1 kB]
+Get:42 http://httpredir.debian.org/debian/ jessie/main libhttp-cookies-perl all 6.01-1 [17.4 kB]
+Get:43 http://httpredir.debian.org/debian/ jessie/main libhttp-negotiate-perl all 6.00-2 [13.6 kB]
+Get:44 http://httpredir.debian.org/debian/ jessie/main libnet-ssleay-perl amd64 1.65-1+b1 [277 kB]
+Get:45 http://httpredir.debian.org/debian/ jessie/main libio-socket-ssl-perl all 2.002-2+deb8u1 [172 kB]
+Get:46 http://httpredir.debian.org/debian/ jessie/main libnet-http-perl all 6.07-1 [24.8 kB]
+Get:47 http://httpredir.debian.org/debian/ jessie/main liblwp-protocol-https-perl all 6.06-2 [9582 B]
+Get:48 http://httpredir.debian.org/debian/ jessie/main libwww-robotrules-perl all 6.01-1 [14.3 kB]
+Get:49 http://httpredir.debian.org/debian/ jessie/main libwww-perl all 6.08-1 [194 kB]
+Get:50 http://httpredir.debian.org/debian/ jessie/main libxml-parser-perl amd64 2.41-3 [215 kB]
+Get:51 http://httpredir.debian.org/debian/ jessie/main libxml-sax-expat-perl all 0.40-2 [12.9 kB]
+Get:52 http://httpredir.debian.org/debian/ jessie/main libxml-simple-perl all 2.20-1 [74.7 kB]
+Get:53 http://httpredir.debian.org/debian/ jessie/main libyaml-perl all 1.13-1 [69.7 kB]
+Get:54 http://httpredir.debian.org/debian/ jessie/main libconfig-auto-perl all 0.44-1 [19.5 kB]
+Get:55 http://httpredir.debian.org/debian/ jessie/main libfile-which-perl all 1.09-1 [13.1 kB]
+Get:56 http://httpredir.debian.org/debian/ jessie/main libfile-homedir-perl all 1.00-1 [48.9 kB]
+Get:57 http://httpredir.debian.org/debian/ jessie/main libfakeroot amd64 1.20.2-1 [44.7 kB]
+Get:58 http://httpredir.debian.org/debian/ jessie/main fakeroot amd64 1.20.2-1 [84.7 kB]
+Get:59 http://httpredir.debian.org/debian/ jessie/main libauthen-sasl-perl all 2.1600-1 [50.8 kB]
+Get:60 http://httpredir.debian.org/debian/ jessie/main libfont-afm-perl all 1.20-1 [14.4 kB]
+Get:61 http://httpredir.debian.org/debian/ jessie/main libhtml-form-perl all 6.03-1 [23.9 kB]
+Get:62 http://httpredir.debian.org/debian/ jessie/main libhtml-format-perl all 2.11-1 [43.1 kB]
+Get:63 http://httpredir.debian.org/debian/ jessie/main libhttp-daemon-perl all 6.01-1 [17.3 kB]
+Get:64 http://httpredir.debian.org/debian/ jessie/main libnet-smtp-ssl-perl all 1.01-3 [5996 B]
+Get:65 http://httpredir.debian.org/debian/ jessie/main libmailtools-perl all 2.13-1 [96.6 kB]
+Get:66 http://httpredir.debian.org/debian/ jessie/main libyaml-libyaml-perl amd64 0.41-6 [67.0 kB]
+Get:67 http://httpredir.debian.org/debian/ jessie/main realpath all 8.23-4 [18.0 kB]
+Get:68 http://httpredir.debian.org/debian/ jessie/main busybox-static armel 1:1.22.0-9+deb8u1 [717 kB]
+Get:69 http://httpredir.debian.org/debian/ jessie/main cross-gcc-dev all 14+deb8u1 [17.3 kB]
+Fetched 33.0 MB in 26s (1243 kB/s)
 perl: warning: Setting locale failed.
 perl: warning: Please check that your locale settings:
 	LANGUAGE = "en_GB:en",
@@ -1601,10 +1644,11 @@ Processing triggers for libc-bin (2.19-18+deb8u1) ...
 Processing triggers for ca-certificates (20141019) ...
 Updating certificates in /etc/ssl/certs... 173 added, 0 removed; done.
 Running hooks in /etc/ca-certificates/update.d....done.
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 ```
 
 Configure locates so stop the annoying locale warnings:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo chroot /srv/store/sharespace/jessie-x86_64 dpkg-reconfigure locales
 perl: warning: Setting locale failed.
@@ -1623,14 +1667,15 @@ locale: Cannot set LC_ALL to default locale: No such file or directory
 Generating locales (this might take a while)...
   en_GB.UTF-8... done
 Generation complete.
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 ```
 
 Install git:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo chroot /srv/store/sharespace/jessie-x86_64 apt-get install git
 Reading package lists... Done
-Building dependency tree       
+Building dependency tree
 Reading state information... Done
 The following extra packages will be installed:
   git-man libbsd0 libcurl3-gnutls libedit2 liberror-perl libx11-6 libx11-data libxau6 libxcb1 libxdmcp6 libxext6 libxmuu1
@@ -1646,7 +1691,7 @@ The following NEW packages will be installed:
 0 upgraded, 16 newly installed, 0 to remove and 1 not upgraded.
 Need to get 7,456 kB of archives.
 After this operation, 32.6 MB of additional disk space will be used.
-Do you want to continue? [Y/n] 
+Do you want to continue? [Y/n]
 Get:1 http://httpredir.debian.org/debian/ jessie/main libbsd0 amd64 0.7.0-2 [67.9 kB]
 Get:2 http://httpredir.debian.org/debian/ jessie/main libedit2 amd64 3.1-20140620-2 [85.1 kB]
 Get:3 http://httpredir.debian.org/debian/ jessie/main libcurl3-gnutls amd64 7.38.0-4+deb8u2 [251 kB]
@@ -1660,10 +1705,10 @@ Get:10 http://httpredir.debian.org/debian/ jessie/main libxmuu1 amd64 2:1.1.2-1 
 Get:11 http://httpredir.debian.org/debian/ jessie/main openssh-client amd64 1:6.7p1-5 [691 kB]
 Get:12 http://httpredir.debian.org/debian/ jessie/main liberror-perl all 0.17-1.1 [22.4 kB]
 Get:13 http://httpredir.debian.org/debian/ jessie/main git-man all 1:2.1.4-2.1 [1,266 kB]
-Get:14 http://httpredir.debian.org/debian/ jessie/main git amd64 1:2.1.4-2.1 [3,624 kB]                                          
-Get:15 http://httpredir.debian.org/debian/ jessie/main rsync amd64 3.1.1-3 [390 kB]                                              
-Get:16 http://httpredir.debian.org/debian/ jessie/main xauth amd64 1:1.0.9-1 [38.2 kB]                                           
-Fetched 7,456 kB in 8s (859 kB/s)                                                                                                
+Get:14 http://httpredir.debian.org/debian/ jessie/main git amd64 1:2.1.4-2.1 [3,624 kB]
+Get:15 http://httpredir.debian.org/debian/ jessie/main rsync amd64 3.1.1-3 [390 kB]
+Get:16 http://httpredir.debian.org/debian/ jessie/main xauth amd64 1:1.0.9-1 [38.2 kB]
+Fetched 7,456 kB in 8s (859 kB/s)
 E: Can not write log (Is /dev/pts mounted?) - posix_openpt (2: No such file or directory)
 Selecting previously unselected package libbsd0:amd64.
 (Reading database ... 19184 files and directories currently installed.)
@@ -1735,10 +1780,12 @@ Failed to read /proc/cmdline. Ignoring: No such file or directory
 Setting up xauth (1:1.0.9-1) ...
 Processing triggers for libc-bin (2.19-18+deb8u1) ...
 Processing triggers for systemd (215-17+deb8u2) ...
-thomas@diamond /srv/store/sharespace $ 
+thomas@diamond /srv/store/sharespace $
 ```
 
-Create a home directory to do work inside the chroot, copy the sharespace kernel patch, create a link so that "arm-linux-gnueabiobjcopy" works:
+Create a home directory to do work inside the chroot, copy the sharespace kernel
+patch, create a link so that "arm-linux-gnueabiobjcopy" works:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo mkdir jessie-x86_64/home/thomas
 thomas@diamond /srv/store/sharespace $ sudo chown thomas:thomas jessie-x86_64/home/thomas
@@ -1748,11 +1795,12 @@ thomas@diamond /srv/store/sharespace $
 ```
 
 Mount proc and sys. Then chroot in as thomas:
+
 ```#!bash
 thomas@diamond /srv/store/sharespace $ cd jessie-x86_64/
 thomas@diamond /srv/store/sharespace/jessie-x86_64 $ sudo mount -t proc proc proc
 thomas@diamond /srv/store/sharespace/jessie-x86_64 $ sudo mount -t sysfs sysfs sys
-thomas@diamond /srv/store/sharespace/jessie-x86_64 $ 
+thomas@diamond /srv/store/sharespace/jessie-x86_64 $
 thomas@diamond /srv/store/sharespace/jessie-x86_64 $ sudo chroot /srv/store/sharespace/jessie-x86_64 su - thomas
 su: Authentication failure
 (Ignored)
@@ -1760,7 +1808,9 @@ thomas@diamond:~$
 ```
 
 ## Get Compilin
+
 Get the latest linux source from git:
+
 ```#!bash
 thomas@diamond:~$ git clone https://github.com/torvalds/linux.git
 Cloning into 'linux'...
@@ -1774,6 +1824,7 @@ thomas@diamond:~$
 ```
 
 Checkout v3.10, create a new branch called v3.10-sharespace and apply the patch:
+
 ```#!bash
 thomas@diamond:~$ cd linux/
 thomas@diamond:~/linux$ git checkout -b v3.10-sharespace v3.10
@@ -1785,10 +1836,11 @@ patching file arch/arm/mach-orion5x/Kconfig
 patching file arch/arm/mach-orion5x/Makefile
 patching file arch/arm/mach-orion5x/sharespace-setup.c
 patching file arch/arm/tools/mach-types
-thomas@diamond:~/linux$ 
+thomas@diamond:~/linux$
 ```
 
 Set some environment variables and compile the kernel:
+
 ```#!bash
 thomas@diamond:~/linux$ export CC=/usr/bin/arm-linux-gnueabi-gcc
 thomas@diamond:~/linux$ export KPKG_ARCH=armel
@@ -1803,7 +1855,8 @@ This is kernel package version 13.014+nmu1.
 test -d debian             || mkdir debian
 ```
 
-SNIP some verbose output, press enter a few times for kernel default config values and wait.
+SNIP some verbose output, press enter a few times for kernel default config
+values and wait.
 
 ```#!bash
 make[1]: Entering directory '/home/thomas/linux'
@@ -1828,11 +1881,14 @@ dpkg --build                   /home/thomas/linux/debian/linux-image-3.10.0+-ori
 dpkg-deb: building package `linux-image-3.10.0+-orion5x' in `../linux-image-3.10.0+-orion5x_1.sharespace_armel.deb'.
 make[2]: Leaving directory '/home/thomas/linux'
 make[1]: Leaving directory '/home/thomas/linux'
-thomas@diamond:~/linux$ 
+thomas@diamond:~/linux$
 thomas@diamond:~/linux$ exit
 ```
 
-Exit the chroot and install the newly created deb inside. This means /boot has armel code, but we are never booting this chroot so it just makes it easier to get the linux image and modules:
+Exit the chroot and install the newly created deb inside. This means /boot has
+armel code, but we are never booting this chroot so it just makes it easier to
+get the linux image and modules:
+
 ```#!bash
 thomas@diamond ~ $ sudo chroot /srv/store/sharespace/jessie-x86_64 dpkg -i /home/thomas/linux-image-3.10.0+-orion5x_1.sharespace_armel.deb
 Selecting previously unselected package linux-image-3.10.0+-orion5x.
@@ -1844,23 +1900,28 @@ Setting up linux-image-3.10.0+-orion5x (1.sharespace) ...
 Running depmod.
 Examining /etc/kernel/postinst.d.
 run-parts: executing /etc/kernel/postinst.d/apt-auto-removal 3.10.0+ /boot/vmlinuz-3.10.0+
-thomas@diamond ~ $ 
+thomas@diamond ~ $
 ```
 
 ## Setup armel chroot
-Create another chroot, but this time a foreign armel one. We need some bins and libs to construct an initrd and this will serve as the chroot to be installed as it's much easier to make a foreign one on x86_64 than try to get debootstrap working with next to no other tools:
+
+Create another chroot, but this time a foreign armel one. We need some bins and
+libs to construct an initrd and this will serve as the chroot to be installed as
+it's much easier to make a foreign one on x86_64 than try to get debootstrap
+working with next to no other tools:
+
 ```
 thomas@diamond ~ $ sudo debootstrap --verbose --foreign --arch=armel --include=initramfs-tools,ssh,file,mdadm,pv,file jessie /srv/store/sharespace/jessie-armel http://httpredir.debian.org/debian/
-I: Retrieving Release 
-I: Retrieving Release.gpg 
+I: Retrieving Release
+I: Retrieving Release.gpg
 I: Checking Release signature
 I: Valid Release signature (key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1)
-I: Retrieving Packages 
-I: Validating Packages 
+I: Retrieving Packages
+I: Validating Packages
 I: Resolving dependencies of required packages...
 I: Resolving dependencies of base packages...
-I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev 
-I: Found additional base dependencies: klibc-utils libbsd0 libdns-export100 libedit2 libffi6 libgmp10 libgnutls-deb0-28 libgnutls-openssl27 libgssapi-krb5-2 libhogweed2 libicu52 libidn11 libirs-export91 libisc-export95 libisccfg-export90 libk5crypto3 libkeyutils1 libklibc libkrb5-3 libkrb5support0 libmagic1 libmnl0 libnetfilter-acct1 libnettle4 libnfnetlink0 libp11-kit0 libpsl0 libtasn1-6 libwrap0 openssh-client openssh-server openssh-sftp-server 
+I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev
+I: Found additional base dependencies: klibc-utils libbsd0 libdns-export100 libedit2 libffi6 libgmp10 libgnutls-deb0-28 libgnutls-openssl27 libgssapi-krb5-2 libhogweed2 libicu52 libidn11 libirs-export91 libisc-export95 libisccfg-export90 libk5crypto3 libkeyutils1 libklibc libkrb5-3 libkrb5support0 libmagic1 libmnl0 libnetfilter-acct1 libnettle4 libnfnetlink0 libp11-kit0 libpsl0 libtasn1-6 libwrap0 openssh-client openssh-server openssh-sftp-server
 I: Checking component main on http://httpredir.debian.org/debian...
 I: Retrieving acl 2.2.52-2
 I: Validating acl 2.2.52-2
@@ -2320,19 +2381,26 @@ I: Extracting zlib1g...
 thomas@diamond ~ $
 ```
 
-Create a tar of the entire chroot, at 176M we could almost tftp the lot on newer larger ram'ed machines:
+Create a tar of the entire chroot, at 176M we could almost tftp the lot on newer
+larger ram'ed machines:
+
 ```#!bash
-thomas@diamond ~ $ sudo tar cf /srv/store/sharespace/jessie-armel.tar -C /srv/store/sharespace jessie-armel 
-thomas@diamond ~ $ 
+thomas@diamond ~ $ sudo tar cf /srv/store/sharespace/jessie-armel.tar -C /srv/store/sharespace jessie-armel
+thomas@diamond ~ $
 thomas@diamond ~ $ ls -lah /srv/store/sharespace/jessie-armel.tar
 -rw-r--r-- 1 root root 176M Oct 14 21:07 /srv/store/sharespace/jessie-armel.tar
 thomas@diamond ~ $
 ```
 
 ## Build images
-Chroot back in as root to create the kernel. First we create some magic bytes to prepend to the image, something related to the hardware (Thanks again David Hicks). Then we use the mkimage tool to create a Linux image that u-boot will load:
+
+Chroot back in as root to create the kernel. First we create some magic bytes to
+prepend to the image, something related to the hardware (Thanks again David
+Hicks). Then we use the mkimage tool to create a Linux image that u-boot will
+load:
+
 ```#!bash
-thomas@diamond ~ $ sudo chroot /srv/store/sharespace/jessie-x86_64 
+thomas@diamond ~ $ sudo chroot /srv/store/sharespace/jessie-x86_64
 root@diamond:/# devio 'wl 0xe3a01c0c,4' 'wl 0xe3811044,4' > /boot/vmlinuz.magic
 root@diamond:/#
 root@diamond:/# cat /boot/vmlinuz.magic /boot/vmlinuz-3.10.0+ > /boot/vmlinuz-3.10.0+.withmagic
@@ -2344,10 +2412,12 @@ Image Type:   ARM Linux Kernel Image (uncompressed)
 Data Size:    1499600 Bytes = 1464.45 kB = 1.43 MB
 Load Address: 00008000
 Entry Point:  00008000
-root@diamond:/# 
+root@diamond:/#
 ```
 
-Create an initial ram disk structure. Thanks Gentoo! https://wiki.gentoo.org/wiki/Custom_Initramfs
+Create an initial ram disk structure. Thanks Gentoo!
+https://wiki.gentoo.org/wiki/Custom_Initramfs
+
 ```#!bash
 root@diamond:/# mkdir -p /boot/initramfs/{bin,dev,etc,lib/arm-linux-gnueabi,lib/modules,mnt/root,proc,sbin,sys}
 root@diamond:/# cp -a /dev/{null,console,tty} /boot/initramfs/dev/
@@ -2371,7 +2441,7 @@ root@diamond:/# mknod /boot/initramfs/dev/sdd1 b 8 49
 root@diamond:/# mknod /boot/initramfs/dev/sdd2 b 8 50
 root@diamond:/# mknod /boot/initramfs/dev/sdd3 b 8 51
 root@diamond:/# mknod /boot/initramfs/dev/sdd4 b 8 52
-root@diamond:/# 
+root@diamond:/#
 root@diamond:/# cp /bin/busybox /boot/initramfs/bin
 root@diamond:/# cd /boot/initramfs/bin
 root@diamond:/boot/initramfs/bin# ln -s busybox mount
@@ -2382,7 +2452,9 @@ root@diamond:/# cp -a /lib/modules/3.10.0+ /boot/initramfs/lib/modules
 root@diamond:/# echo "/lib/arm-linux-gnueabi"> /boot/initramfs/etc/ld.so.conf
 ```
 
-Create a very basic /init script, note it will not switch_root or pivot_root. We land with some networking and the ability to see disks if we are lucky:
+Create a very basic /init script, note it will not switch_root or pivot_root. We
+land with some networking and the ability to see disks if we are lucky:
+
 ```#!bash
 root@diamond:/# cat << EOF > /boot/initramfs/init
 > #!/bin/busybox sh
@@ -2405,20 +2477,24 @@ root@diamond:/# cat << EOF > /boot/initramfs/init
 > exec sh
 > EOF
 root@diamond:/# chmod +x /boot/initramfs/init
-root@diamond:/# 
+root@diamond:/#
 root@diamond:~# exit
 exit
 thomas@diamond ~ $
 ```
 
-Exit the chroot and copy some useful bits (like a system linker!) from the armel chroot into the ramdisk:
+Exit the chroot and copy some useful bits (like a system linker!) from the armel
+chroot into the ramdisk:
+
 ```#!bash
 thomas@diamond ~ $ sudo cp -a /srv/store/sharespace/jessie-armel/lib/ld-linux.so.3 /srv/store/sharespace/jessie-x86_64/boot/initramfs/lib
 thomas@diamond ~ $ sudo cp -a /srv/store/sharespace/jessie-armel/lib/arm-linux-gnueabi/l* /srv/store/sharespace/jessie-x86_64/boot/initramfs/lib/arm-linux-gnueabi/
 thomas@diamond ~ $ sudo cp -a /srv/store/sharespace/jessie-armel/sbin/switch_root /srv/store/sharespace/jessie-armel/sbin/fdisk /srv/store/sharespace/jessie-armel/sbin/mk* /srv/store/sharespace/jessie-x86_64/boot/initramfs/sbin/
 ```
 
-Back into the chroot as root and create the cpio.gz file that will be the initrd. Again the mkimage tool needs to bless the image:
+Back into the chroot as root and create the cpio.gz file that will be the
+initrd. Again the mkimage tool needs to bless the image:
+
 ```#!bash
 thomas@diamond ~ $ sudo chroot /srv/store/sharespace/jessie-x86_64
 root@diamond:/# cd /boot/initramfs
@@ -2431,43 +2507,54 @@ Image Type:   ARM Linux RAMDisk Image (gzip compressed)
 Data Size:    26486373 Bytes = 25865.60 kB = 25.26 MB
 Load Address: 00000000
 Entry Point:  00000000
-root@diamond:/boot/initramfs# 
+root@diamond:/boot/initramfs#
 ```
 
 ## Copy Images
+
 Copy images to tftp server:
+
 ```
 thomas@diamond ~ $ scp /srv/store/sharespace/jessie-x86_64/boot/u* jasper:/srv/tftp
-uImage                                                    100% 1465KB   1.4MB/s   00:00    
-uInitrd                                                   100%   25MB  12.6MB/s   00:02    
-thomas@diamond ~ $ 
+uImage                                                    100% 1465KB   1.4MB/s   00:00
+uInitrd                                                   100%   25MB  12.6MB/s   00:02
+thomas@diamond ~ $
 ```
 
 ## Serial
-It's 3v line level, so there both worked for me: http://www.ftdichip.com/Products/Cables/USBTTLSerial.htm and http://www.ftdichip.com/Products/Cables/RPi.htm
 
-See here for the pinout: http://westerndigital.nas-central.org/wiki/Category:ShareSpace#Serial_Access
+It's 3v line level, so there both worked for me:
+http://www.ftdichip.com/Products/Cables/USBTTLSerial.htm and
+http://www.ftdichip.com/Products/Cables/RPi.htm
+
+See here for the pinout:
+http://westerndigital.nas-central.org/wiki/Category:ShareSpace#Serial_Access
 
 Setup minicom:
+
 ```
-thomas@diamond ~ $ cat /etc/minicom/minirc.wd 
+thomas@diamond ~ $ cat /etc/minicom/minirc.wd
 # Machine-generated file - use "minicom -s" to change parameters.
 pu port             /dev/ttyUSB0
 pu baudrate         115200
 pu bits             8
 pu parity           N
 pu stopbits         1
-pu rtscts           No 
-thomas@diamond ~ $ 
+pu rtscts           No
+thomas@diamond ~ $
 ```
 
 Run minicom:
+
 ```
 thomas@diamond ~ $ mincom wd
 ```
 
 ## Booting
-Switch on the Sharespace an interrupt the boot my pressing any key to get to the Marvell uboot prompt:
+
+Switch on the Sharespace an interrupt the boot my pressing any key to get to the
+Marvell uboot prompt:
+
 ```
          __  __                      _ _
         |  \/  | __ _ _ ____   _____| | |
@@ -2475,45 +2562,47 @@ Switch on the Sharespace an interrupt the boot my pressing any key to get to the
         | |  | | (_| | |   \ V /  __/ | |
         |_|  |_|\__,_|_|    \_/ \___|_|_|
  _   _     ____              _
-| | | |   | __ )  ___   ___ | |_ 
-| | | |___|  _ \ / _ \ / _ \| __| 
-| |_| |___| |_) | (_) | (_) | |_ 
+| | | |   | __ )  ___   ___ | |_
+| | | |___|  _ \ / _ \ / _ \| __|
+| |_| |___| |_) | (_) | (_) | |_
  \___/    |____/ \___/ \___/ \__|  ** Forcing LOADER mode only **
- ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE 
+ ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE
 
 U-Boot 1.1.4 (Aug  4 2008 - 09:35:54) Marvell version: 2.3.23
 
 U-Boot code: 00200000 -> 0026FFF0  BSS: -> 0027AD18
 
 Soc: 88F5281 D0 (DDR2)
-CPU running @ 500Mhz 
-SysClock = 166Mhz , TClock = 166Mhz 
+CPU running @ 500Mhz
+SysClock = 166Mhz , TClock = 166Mhz
 
-DRAM CS[0] base 0x00000000   size 128MB 
+DRAM CS[0] base 0x00000000   size 128MB
 DRAM Total size 128MB  32bit width
 [16384kB@ff000000] Flash: 16 MB
 Addresses 4M - 0M are saved for the U-Boot usage.
 Mem malloc Initialization (4M - 3M): Done
 
 CPU : ARM926 (Rev 0)
-Streaming disabled 
+Streaming disabled
 VFP initialized to Run Fast Mode.
 USB 0: host mode
 PCI 0: PCI Express Root Complex Interface
 CPU: Write allocate enabled
 Net:   egiga0 [PRIME]
-Hit any key to stop autoboot:  0 
-Marvell>> 
+Hit any key to stop autoboot:  0
+Marvell>>
 ```
 
-Setup env for booting manually, set server ip, reset the ide, copy images to ram, set some paramaters for the kernel:
+Setup env for booting manually, set server ip, reset the ide, copy images to
+ram, set some paramaters for the kernel:
+
 ```
 Marvell>> setenv serverip 192.168.1.252
-Marvell>> setenv bootargs console=ttyS0,115200  
-Marvell>> 
+Marvell>> setenv bootargs console=ttyS0,115200
+Marvell>>
 Marvell>> ide reset
 
-Reset IDE: 
+Reset IDE:
 Marvell Serial ATA Adapter
 Found adapter at bus 0, device 1 ... Scanning channels
   Device 0: OK
@@ -2636,10 +2725,11 @@ Loading: #################################################################
          #######################################
 done
 Bytes transferred = 26486437 (19426a5 hex)
-Marvell>> 
+Marvell>>
 ```
 
 Boot from memory:
+
 ```
 Marvell>> bootm 0x800000 0x01100000
 ## Booting image at 00800000 ...
@@ -2852,11 +2942,13 @@ Enter 'help' for a list of built-in commands.
 
 sh: can't access tty; job control turned off
 / # [   21.494807] mv643xx_eth_port mv643xx_eth_port.0 eth0: link up, 1000 Mb/s, full duplex, flow control disabled
-/ # 
+/ #
 ```
 
 ## Install system
+
 Partition temporary root filesystem:
+
 ```
 / # mknod /dev/zero c 1 5
 / # dd if=/dev/zero of=/dev/sdd bs=1M count=10
@@ -2890,7 +2982,7 @@ Command action
    p   primary partition (1-4)
 p
 Partition number (1-4): 1
-First cylinder (1-19452, default 1): 
+First cylinder (1-19452, default 1):
 Using default value 1
 Last cylinder or +size or +sizeM or +sizeK (1-19452, default 19452): +1024M
 
@@ -2899,21 +2991,22 @@ The partition table has been altered.
 Calling ioctl() to re-read partition table
 
 [  131.952808]  sdd: sdd1
-/ # 
+/ #
 ```
 
 Make and mount temp root filesystem:
+
 ```
 / # mkfs.ext4 /dev/sdd1
 mke2fs 1.42.12 (29-Aug-2014)
 ext2fs_check_if_mount: Can't check if filesystem is mounted due to missing mtab file while determining.
 Creating filesystem with 251007 4k blocks and 62848 inodes
 Filesystem UUID: 5dd4f9a8-7376-11e5-9202-0090a95e3699
-Superblock backups stored on blocks: 
+Superblock backups stored on blocks:
         32768, 98304, 163840, 229376
 
-Allocating group tables: done                            
-Writing inode tables: done                            
+Allocating group tables: done
+Writing inode tables: done
 Creating journal (4096 blocks): done
 Writing superblocks and filesystem accounting information: done
 
@@ -2924,6 +3017,7 @@ Writing superblocks and filesystem accounting information: done
 ```
 
 Copy armel chroot tar from build pc to sharespace via netcat:
+
 ```
 / # cd /mnt/root
 /mnt/root # ip -4 a show dev eth0
@@ -2934,31 +3028,36 @@ Copy armel chroot tar from build pc to sharespace via netcat:
 ```
 
 Meanwhile on the host computer:
+
 ```
 thomas@diamond ~ $ pv /srv/store/sharespace/jessie-armel.tar | nc 192.168.1.10 9999
- 175MiB 0:00:25 [ 6.8MiB/s] [=======================================================>] 100%            
-thomas@diamond ~ $ 
+ 175MiB 0:00:25 [ 6.8MiB/s] [=======================================================>] 100%
+thomas@diamond ~ $
 ```
 
 After which the sharespace returns with:
+
 ```
 /mnt/root #
 ```
 
 Copy kernel dev fom build pc to sharespace via netcat:
+
 ```
-/mnt/root # nc -l -p 9999 > linux-image-3.10.0+-orion5x_1.sharespace_armel.deb 
-/mnt/root # 
+/mnt/root # nc -l -p 9999 > linux-image-3.10.0+-orion5x_1.sharespace_armel.deb
+/mnt/root #
 ```
 
 Meanwhile on the host computer:
+
 ```
 thomas@diamond ~ $ pv /srv/store/sharespace/jessie-x86_64/home/thomas/linux-image-3.10.0+-orion5x_1.sharespace_armel.deb | nc 192.168.1.10 9999
-15.2MiB 0:00:01 [12.9MiB/s] [=======================================================>] 100%            
-thomas@diamond ~ $ 
+15.2MiB 0:00:01 [12.9MiB/s] [=======================================================>] 100%
+thomas@diamond ~ $
 ```
 
 Move the files to the root dir:
+
 ```
 /mnt/root # mv jessie-armel/* .
 /mnt/root # rmdir jessie-armel
@@ -2967,10 +3066,11 @@ Move the files to the root dir:
 bin          dev          lib          root         sys          var
 boot         etc          lost+found   run          tmp
 debootstrap  home         proc         sbin         usr
-/mnt/root # 
+/mnt/root #
 ```
 
 Finish the debootstrap:
+
 ```
 /mnt/root # mount -t proc proc proc
 /mnt/root # mount -t sysfs sysfs sys
@@ -3351,15 +3451,17 @@ I: Configuring libc-bin...
 I: Configuring systemd...
 I: Configuring initramfs-tools...
 I: Base system installed successfully.
-# 
+#
 ```
 
-Do some basic setup inside the new system, password, new user, hostname, fstab, networking, install the kernel:
+Do some basic setup inside the new system, password, new user, hostname, fstab,
+networking, install the kernel:
+
 ```
 # stty erase ^H
 # passwd
-Enter new UNIX password: 
-Retype new UNIX password: 
+Enter new UNIX password:
+Retype new UNIX password:
 passwd: password updated successfully
 # adduser thomas
 Adding user `thomas' ...
@@ -3367,29 +3469,29 @@ Adding new group `thomas' (1000) ...
 Adding new user `thomas' (1000) with group `thomas' ...
 Creating home directory `/home/thomas' ...
 Copying files from `/etc/skel' ...
-Enter new UNIX password: 
-Retype new UNIX password: 
+Enter new UNIX password:
+Retype new UNIX password:
 passwd: password updated successfully
 Changing the user information for thomas
 Enter the new value, or press ENTER for the default
         Full Name []: Thomas Stewart
-        Room Number []: 
-        Work Phone []: 
-        Home Phone []: 
-        Other []: 
-Is the information correct? [Y/n] 
-# 
+        Room Number []:
+        Work Phone []:
+        Home Phone []:
+        Other []:
+Is the information correct? [Y/n]
+#
 # echo "sharespace" > /etc/hostname
 # echo "/dev/sdd1 / ext3 defaults,noatime,errors=remount-ro 0 1" > /etc/fstab
 # cat << EOF > /etc/network/interfaces
 > auto lo
 > iface lo inet loopback
-> 
+>
 > auto eth0
 > iface eth0 inet dhcp
 > EOF
-# 
-# dpkg -i linux-image-3.10.0+-orion5x_1.sharespace_armel.deb 
+#
+# dpkg -i linux-image-3.10.0+-orion5x_1.sharespace_armel.deb
 Selecting previously unselected package linux-image-3.10.0+-orion5x.
 (Reading database ... 10083 files and directories currently installed.)
 Preparing to unpack linux-image-3.10.0+-orion5x_1.sharespace_armel.deb ...
@@ -3416,10 +3518,11 @@ W: mkconf: MD subsystem is not loaded, thus I cannot scan for arrays.
 W: mdadm: failed to auto-generate temporary mdadm.conf file.
 W: mdadm: no configuration file available.
 I: mdadm: letting initramfs assemble auto-detected arrays.
-# 
+#
 ```
 
 Erase sda, sdb and sdc:
+
 ```
 # dd if=/dev/zero bs=1M count=10 of=/dev/sda
 10+0 records in
@@ -3433,10 +3536,11 @@ Erase sda, sdb and sdc:
 10+0 records in
 10+0 records out
 10485760 bytes (10 MB) copied, 0.319021 s, 32.9 MB/s
-# 
-``` 
+#
+```
 
 Partition the actual disks for the new root filesystem:
+
 ```
 # fdisk /dev/sda
 
@@ -3452,8 +3556,8 @@ Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (1-4, default 1): 
-First sector (2048-312499999, default 2048): 
+Partition number (1-4, default 1):
+First sector (2048-312499999, default 2048):
 Last sector, +sectors or +size{K,M,G,T,P} (2048-312499999, default 312499999): +10G
 
 Created a new partition 1 of type 'Linux' and of size 10 GiB.
@@ -3463,9 +3567,9 @@ Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (2-4, default 2): 
-First sector (20973568-312499999, default 20973568): 
-Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999): 
+Partition number (2-4, default 2):
+First sector (20973568-312499999, default 20973568):
+Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999):
 
 Created a new partition 2 of type 'Linux' and of size 139 GiB.
 
@@ -3514,8 +3618,8 @@ Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (1-4, default 1): 
-First sector (2048-312499999, default 2048): 
+Partition number (1-4, default 1):
+First sector (2048-312499999, default 2048):
 Last sector, +sectors or +size{K,M,G,T,P} (2048-312499999, default 312499999): +10G
 
 Created a new partition 1 of type 'Linux' and of size 10 GiB.
@@ -3525,9 +3629,9 @@ Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (2-4, default 2): 
-First sector (20973568-312499999, default 20973568): 
-Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999): 
+Partition number (2-4, default 2):
+First sector (20973568-312499999, default 20973568):
+Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999):
 
 Created a new partition 2 of type 'Linux' and of size 139 GiB.
 
@@ -3576,8 +3680,8 @@ Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (1-4, default 1): 
-First sector (2048-312499999, default 2048): 
+Partition number (1-4, default 1):
+First sector (2048-312499999, default 2048):
 Last sector, +sectors or +size{K,M,G,T,P} (2048-312499999, default 312499999): +10G
 
 Created a new partition 1 of type 'Linux' and of size 10 GiB.
@@ -3587,9 +3691,9 @@ Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (2-4, default 2): 
-First sector (20973568-312499999, default 20973568): 
-Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999): 
+Partition number (2-4, default 2):
+First sector (20973568-312499999, default 20973568):
+Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999):
 
 Created a new partition 2 of type 'Linux' and of size 139 GiB.
 
@@ -3624,14 +3728,16 @@ Calling ioctl() to re-read partition table.
 [ 2233.149041]  sdc: sdc1 sdc2
 Syncing disks.
 
-# 
+#
 ```
 
-Create a raid1 mirror of sda1, sdb1, sdc1 and missing. The disk sdd1 it still used for the temp root and can be added to the mirror later:
+Create a raid1 mirror of sda1, sdb1, sdc1 and missing. The disk sdd1 it still
+used for the temp root and can be added to the mirror later:
+
 ```
 # modprobe raid1
 [  360.935350] md: raid1 personality registered for level 1
-# 
+#
 # mdadm -C /dev/md0 -l 1 -n 4 /dev/sd[abc]1 missing
 mdadm: Note: this array has metadata at the start and
     may not be suitable as a boot device.  If you plan to
@@ -3652,10 +3758,11 @@ mdadm: array /dev/md0 started.
 [  372.123143] md: minimum _guaranteed_  speed: 1000 KB/sec/disk.
 [  372.128962] md: using maximum available idle IO bandwidth (but not more than 200000 KB/sec) for res.
 [  372.138348] md: using 128k window, over a total of 10477568k.
-# 
+#
 ```
 
 Make filesystem:
+
 ```
 # mkfs -t ext4 /dev/md0
 mke2fs 1.42.12 (29-Aug-2014)
@@ -3663,33 +3770,35 @@ mke2fs 1.42.12 (29-Aug-2014)
 ext2fs_check_if_mount: Can't check if filesystem is mounted due to missing mtab file while determining.
 Creating filesystem with 2619392 4k blocks and 655360 inodes
 Filesystem UUID: 3e5881c6-b5f8-4b1e-a953-31d5f5c76588
-Superblock backups stored on blocks: 
+Superblock backups stored on blocks:
         32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632
 
-Allocating group tables: done                            
-Writing inode tables: done                            
+Allocating group tables: done
+Writing inode tables: done
 Creating journal (32768 blocks): done
-Writing superblocks and filesystem accounting information: done 
+Writing superblocks and filesystem accounting information: done
 
-# 
+#
 # exit
 / #
 ```
 
 After a little time the raid resync completes:
+
 ```
 [  628.443261] md: md0: resync done.
 Then:
-/ # cat /proc/mdstat 
-Personalities : [raid1] 
+/ # cat /proc/mdstat
+Personalities : [raid1]
 md0 : active raid1 sdc1[2] sdb1[1] sda1[0]
       10477568 blocks super 1.2 [4/3] [UUU_]
-      
+
 unused devices: <none>
-/ # 
+/ #
 ```
 
 Umount the pseudo file systems and copy the temp root to the new root:
+
 ```
 / # umount /mnt/root/proc
 / # umount /mnt/root/sys
@@ -3698,12 +3807,13 @@ Umount the pseudo file systems and copy the temp root to the new root:
 [  485.376000] EXT4-fs (md0): mounted filesystem with ordered data mode. Opts: (null)
 / # cp -a /mnt/root/* /mnt/rootnew/
 / # umount /mnt/root
-/ # 
+/ #
 / # umount /sys
 / # umount /proc
 ```
 
 Switch root to the new root and we get a running Debian system:
+
 ```
 / # exec /sbin/switch_root /mnt/rootnew /sbin/init
 switch_root: failed to mount moving /dev to /mnt/rootnew/dev: Invalid argument
@@ -3925,15 +4035,16 @@ Welcome to Debian GNU/Linux 8 (jessie)!
 
 Debian GNU/Linux 8 sharespace ttyS0
 
-sharespace login: 
+sharespace login:
 ```
 
 We can login:
+
 ```
 Debian GNU/Linux 8 sharespace ttyS0
 
 sharespace login: root
-Password: 
+Password:
 Linux sharespace 3.10.0+ #2 Tue Oct 13 14:50:33 UTC 2015 armv5tel
 
 The programs included with the Debian GNU/Linux system are free software;
@@ -3942,11 +4053,11 @@ individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
-
 Update the fstab and the initrd image:
+
 ```
 root@sharespace:~# echo "/dev/md0 / ext4 defaults,noatime,errors=remount-ro 0 1" > /etc/fstab
 root@sharespace:~# update-initramfs -u -k all
@@ -3966,7 +4077,7 @@ The following NEW packages will be installed:
 Need to get 71.6 kB of archives.
 After this operation, 207 kB of additional disk space will be used.
 Get:1 http://httpredir.debian.org/debian/ jessie/main u-boot-tools armel 2014.10+dfsg1-5 [71.6 kB]
-Fetched 71.6 kB in 1s (54.8 kB/s) 
+Fetched 71.6 kB in 1s (54.8 kB/s)
 Selecting previously unselected package u-boot-tools.
 (Reading database ... 12693 files and directories currently installed.)
 Preparing to unpack .../u-boot-tools_2014.10+dfsg1-5_armel.deb ...
@@ -3981,23 +4092,26 @@ Image Type:   ARM Linux RAMDisk Image (gzip compressed)
 Data Size:    8892065 Bytes = 8683.66 kB = 8.48 MB
 Load Address: 00000000
 Entry Point:  00000000
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Copy the initrd to the tftp server and reboot:
+
 ```
-root@sharespace:~# scp /boot/uInitrd thomas@jasper:/srv/tftp/uInitrd2                                  
+root@sharespace:~# scp /boot/uInitrd thomas@jasper:/srv/tftp/uInitrd2
 The authenticity of host 'jasper (192.168.1.252)' can't be established.
 ECDSA key fingerprint is 1d:b2:69:5e:17:17:41:fe:6f:a7:ad:29:f9:f2:01:ac.
 Are you sure you want to continue connecting (yes/no)? yes
 Warning: Permanently added 'jasper,192.168.1.252' (ECDSA) to the list of known hosts.
-thomas@jasper's password: 
-uInitrd                                       100% 8684KB   4.2MB/s   00:02    
-root@sharespace:~# 
+thomas@jasper's password:
+uInitrd                                       100% 8684KB   4.2MB/s   00:02
+root@sharespace:~#
 root@sharespace:~# reboot
 ```
 
-Interrupt uboot again and manually boot like before, but this time use the updated initrd:
+Interrupt uboot again and manually boot like before, but this time use the
+updated initrd:
+
 ```
          __  __                      _ _
         |  \/  | __ _ _ ____   _____| | |
@@ -4005,39 +4119,39 @@ Interrupt uboot again and manually boot like before, but this time use the updat
         | |  | | (_| | |   \ V /  __/ | |
         |_|  |_|\__,_|_|    \_/ \___|_|_|
  _   _     ____              _
-| | | |   | __ )  ___   ___ | |_ 
-| | | |___|  _ \ / _ \ / _ \| __| 
-| |_| |___| |_) | (_) | (_) | |_ 
+| | | |   | __ )  ___   ___ | |_
+| | | |___|  _ \ / _ \ / _ \| __|
+| |_| |___| |_) | (_) | (_) | |_
  \___/    |____/ \___/ \___/ \__|  ** Forcing LOADER mode only **
- ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE 
+ ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE
 
 U-Boot 1.1.4 (Aug  4 2008 - 09:35:54) Marvell version: 2.3.23
 
 U-Boot code: 00200000 -> 0026FFF0  BSS: -> 0027AD18
 
 Soc: 88F5281 D0 (DDR2)
-CPU running @ 500Mhz 
-SysClock = 166Mhz , TClock = 166Mhz 
+CPU running @ 500Mhz
+SysClock = 166Mhz , TClock = 166Mhz
 
-DRAM CS[0] base 0x00000000   size 128MB 
+DRAM CS[0] base 0x00000000   size 128MB
 DRAM Total size 128MB  32bit width
 [16384kB@ff000000] Flash: 16 MB
 Addresses 4M - 0M are saved for the U-Boot usage.
 Mem malloc Initialization (4M - 3M): Done
 
 CPU : ARM926 (Rev 0)
-Streaming disabled 
+Streaming disabled
 VFP initialized to Run Fast Mode.
 USB 0: host mode
 PCI 0: PCI Express Root Complex Interface
 CPU: Write allocate enabled
 Net:   egiga0 [PRIME]
-Hit any key to stop autoboot:  0 
+Hit any key to stop autoboot:  0
 Marvell>> setenv serverip 192.168.1.252
 Marvell>> setenv bootargs console=ttyS0,115200 root=/dev/md0
 Marvell>> ide reset
 
-Reset IDE: 
+Reset IDE:
 Marvell Serial ATA Adapter
 Found adapter at bus 0, device 1 ... Scanning channels
   Device 0: OK
@@ -4111,6 +4225,7 @@ Marvell>>
 ```
 
 Boot the system:
+
 ```
 Marvell>> bootm 0x800000 0x01100000
 ## Booting image at 00800000 ...
@@ -4535,7 +4650,7 @@ Welcome to Debian GNU/Linux 8 (jessie)!
 Debian GNU/Linux 8 sharespace ttyS0
 
 sharespace login: root
-Password: 
+Password:
 Last login: Thu Oct 15 21:30:42 UTC 2015 on ttyS0
 Linux sharespace 3.10.0+ #2 Tue Oct 13 14:50:33 UTC 2015 armv5tel
 
@@ -4545,17 +4660,18 @@ individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Yay, straight into a Debian system. We can even ssh in remotely:
+
 ```
 thomas@diamond ~ $ ssh thomas@sharespace
 The authenticity of host 'sharespace (192.168.1.205)' can't be established.
 ECDSA key fingerprint is SHA256:JxzLBSrM9ipqWnWHS1iqvzC/7O5d24fj3BbV12CnwSs.
 Are you sure you want to continue connecting (yes/no)? yes
 Warning: Permanently added 'sharespace,192.168.1.205' (ECDSA) to the list of known hosts.
-thomas@sharespace's password: 
+thomas@sharespace's password:
 X11 forwarding request failed
 
 The programs included with the Debian GNU/Linux system are free software;
@@ -4566,11 +4682,12 @@ Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 Last login: Fri Oct 16 08:01:48 2015 from diamond.lan
 thomas@sharespace:~$ thomas@sharespace:~$ su -
-Password: 
-root@sharespace:~# 
+Password:
+root@sharespace:~#
 ```
 
 Do some more basic setup of the system:
+
 ```
 root@sharespace:~# dpkg-reconfigure tzdata
 
@@ -4581,7 +4698,7 @@ Universal Time is now:  Fri Oct 16 14:12:41 UTC 2015.
 root@sharespace:~#
 root@sharespace:~# apt-get install locales
 Reading package lists... Done
-Building dependency tree       
+Building dependency tree
 Reading state information... Done
 The following NEW packages will be installed:
   locales
@@ -4589,7 +4706,7 @@ The following NEW packages will be installed:
 Need to get 3908 kB of archives.
 After this operation, 16.3 MB of additional disk space will be used.
 Get:1 http://httpredir.debian.org/debian/ jessie/main locales all 2.19-18+deb8u1 [3908 kB]
-Fetched 3908 kB in 4s (972 kB/s)   
+Fetched 3908 kB in 4s (972 kB/s)
 Preconfiguring packages ...
 Selecting previously unselected package locales.
 (Reading database ... 15713 files and directories currently installed.)
@@ -4603,10 +4720,11 @@ root@sharespace:~# dpkg-reconfigure locales
 Generating locales (this might take a while)...
   en_GB.UTF-8... done
 Generation complete.
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Update Linux and initrd images:
+
 ```
 root@sharespace:~# devio 'wl 0xe3a01c0c,4' 'wl 0xe3811044,4' > /boot/vmlinuz.magic
 root@sharespace:~# cat /boot/vmlinuz.magic /boot/vmlinuz-3.10.0+ > /boot/vmlinuz-3.10.0+.withmagic
@@ -4630,12 +4748,13 @@ Image Type:   ARM Linux RAMDisk Image (gzip compressed)
 Data Size:    8892506 Bytes = 8684.09 kB = 8.48 MB
 Load Address: 00000000
 Entry Point:  00000000
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Backup the mtd devices, this we can can allays return to the original firmware.
+
 ```
-root@sharespace:~# for n in `seq 0 4`; do dd bs=1M if=/dev/mtdblock$n of=mtdblock$n; done  
+root@sharespace:~# for n in `seq 0 4`; do dd bs=1M if=/dev/mtdblock$n of=mtdblock$n; done
 0+1 records in
 0+1 records out
 131072 bytes (131 kB) copied, 0.0573625 s, 2.3 MB/s
@@ -4663,18 +4782,19 @@ mtdblock1
 mtdblock2
 mtdblock3
 mtdblock4
-root@sharespace:~# 
+root@sharespace:~#
 root@sharespace:~# scp mtdbackup.tar.gz thomas@jasper:
-thomas@jasper's password: 
-mtdbackup.tar.gz                                                                                                         100%   15MB   4.9MB/s   00:03    
-root@sharespace:~# 
+thomas@jasper's password:
+mtdbackup.tar.gz                                                                                                         100%   15MB   4.9MB/s   00:03
+root@sharespace:~#
 ```
 
 Inspect the mtd devices with mtdinfo:
+
 ```
 root@sharespace:~# apt-get install mtd-utils
 Reading package lists... Done
-Building dependency tree       
+Building dependency tree
 Reading state information... Done
 The following extra packages will be installed:
   liblzo2-2
@@ -4683,10 +4803,10 @@ The following NEW packages will be installed:
 0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
 Need to get 209 kB of archives.
 After this operation, 862 kB of additional disk space will be used.
-Do you want to continue? [Y/n] 
+Do you want to continue? [Y/n]
 Get:1 http://httpredir.debian.org/debian/ jessie/main liblzo2-2 armel 2.08-1.2 [46.5 kB]
 Get:2 http://httpredir.debian.org/debian/ jessie/main mtd-utils armel 1:1.5.1-1 [163 kB]
-Fetched 209 kB in 1s (109 kB/s)    
+Fetched 209 kB in 1s (109 kB/s)
 Selecting previously unselected package liblzo2-2:armel.
 (Reading database ... 16639 files and directories currently installed.)
 Preparing to unpack .../liblzo2-2_2.08-1.2_armel.deb ...
@@ -4759,21 +4879,24 @@ Character device major/minor:   90:8
 Bad blocks are allowed:         false
 Device is writable:             false
 
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
-So we want to use /dev/mtdblock2 for the kernel and /dev/mtdblock3 for the initrd. The sizes will fit 1835008>1499664 and 13238272>8892570:
+So we want to use /dev/mtdblock2 for the kernel and /dev/mtdblock3 for the
+initrd. The sizes will fit 1835008>1499664 and 13238272>8892570:
+
 ```
 root@sharespace:~# ls -l /boot/u*
 -rw-r--r-- 1 root root 1499664 Oct 17 12:52 /boot/uImage
 -rw-r--r-- 1 root root 8892570 Oct 17 12:53 /boot/uInitrd
-root@sharespace:~# 
+root@sharespace:~#
 root@sharespace:~# cat /boot/uImage > /dev/mtdblock2
 root@sharespace:~# cat /boot/uInitrd > /dev/mtdblock3
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Back on the console reboot back to the uboot:
+
 ```
 root@sharespace:~# reboot
          Starting Synchronise Hardware Clock to System Clock...
@@ -4871,6 +4994,7 @@ root@sharespace:~# reboot
 ```
 
 Interrupt the boot:
+
 ```
          __  __                      _ _
         |  \/  | __ _ _ ____   _____| | |
@@ -4878,38 +5002,39 @@ Interrupt the boot:
         | |  | | (_| | |   \ V /  __/ | |
         |_|  |_|\__,_|_|    \_/ \___|_|_|
  _   _     ____              _
-| | | |   | __ )  ___   ___ | |_ 
-| | | |___|  _ \ / _ \ / _ \| __| 
-| |_| |___| |_) | (_) | (_) | |_ 
+| | | |   | __ )  ___   ___ | |_
+| | | |___|  _ \ / _ \ / _ \| __|
+| |_| |___| |_) | (_) | (_) | |_
  \___/    |____/ \___/ \___/ \__|  ** Forcing LOADER mode only **
- ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE 
+ ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE
 
 U-Boot 1.1.4 (Aug  4 2008 - 09:35:54) Marvell version: 2.3.23
 
 U-Boot code: 00200000 -> 0026FFF0  BSS: -> 0027AD18
 
 Soc: 88F5281 D0 (DDR2)
-CPU running @ 500Mhz 
-SysClock = 166Mhz , TClock = 166Mhz 
+CPU running @ 500Mhz
+SysClock = 166Mhz , TClock = 166Mhz
 
-DRAM CS[0] base 0x00000000   size 128MB 
+DRAM CS[0] base 0x00000000   size 128MB
 DRAM Total size 128MB  32bit width
 [16384kB@ff000000] Flash: 16 MB
 Addresses 4M - 0M are saved for the U-Boot usage.
 Mem malloc Initialization (4M - 3M): Done
 
 CPU : ARM926 (Rev 0)
-Streaming disabled 
+Streaming disabled
 VFP initialized to Run Fast Mode.
 USB 0: host mode
 PCI 0: PCI Express Root Complex Interface
 CPU: Write allocate enabled
 Net:   egiga0 [PRIME]
-Hit any key to stop autoboot:  0 
-Marvell>> 
+Hit any key to stop autoboot:  0
+Marvell>>
 ```
 
 Run a printenv to save the original uboot environment:
+
 ```
 Marvell>> printenv
 baudrate=115200
@@ -4971,10 +5096,12 @@ disaMvPnp=no
 overEthAddr=no
 
 Environment size: 1528/65532 bytes
-Marvell>> 
+Marvell>>
 ```
 
-Backup the bootcmd and bootargs variables to bootcmdorig and bootcmdorig respectfully:
+Backup the bootcmd and bootargs variables to bootcmdorig and bootcmdorig
+respectfully:
+
 ```
 Marvell>> printenv bootcmd
 bootcmd=ide reset; bootm 0xFFCC0000
@@ -4982,23 +5109,26 @@ Marvell>> setenv bootcmdorig ide reset\;bootm 0xFFCC0000
 Marvell>> printenv bootcmdorig
 bootcmdorig=ide reset;bootm 0xFFCC0000
 Marvell>>
-Marvell>> 
+Marvell>>
 Marvell>> printenv bootargs
 bootargs=root=/dev/mtdblock2 console=ttyS0,115200 init=/etc/rc.preroot
 Marvell>> setenv bootargsorig root=/dev/mtdblock2 console=ttyS0,115200 init=/etc/rc.preroot
 Marvell>> printenv bootargsorig
 bootargsorig=root=/dev/mtdblock2 console=ttyS0,115200 init=/etc/rc.preroot
-Marvell>> 
+Marvell>>
 ```
 
 Set a new bootargs to only say use serial console and have the rootfs as md0:
+
 ```
 Marvell>> setenv bootargs console=ttyS0,115200 root=/dev/md0
 Marvell>> printenv bootargs
 bootargs=console=ttyS0,115200 root=/dev/md0
 ```
 
-Set a new bootcmd to reset the ide, copy from the start of mtd3 to 0x01100000 for the length of mtd3, then boot code from the mtd2 and the copied location:
+Set a new bootcmd to reset the ide, copy from the start of mtd3 to 0x01100000
+for the length of mtd3, then boot code from the mtd2 and the copied location:
+
 ```
 Marvell>> setenv bootcmd ide reset\; cp 0xff000000 0x01100000 0xca0000\; bootm 0xffcc0000 0x01100000
 Marvell>> printenv bootcmd
@@ -5006,6 +5136,7 @@ bootcmd=ide reset; cp 0xff000000 0x01100000 0xca0000; bootm 0xffcc0000 0x0110000
 ```
 
 Save the new environment:
+
 ```
 Marvell>> saveenv
 Saving Environment to Flash...
@@ -5017,10 +5148,11 @@ Erased 1 sectors
 Writing to Flash... done
 .
 Protected 1 sectors
-Marvell>> 
+Marvell>>
 ```
 
 Reboot and don't interrupt the boot:
+
 ```
 Marvell>> reset
 
@@ -5030,36 +5162,36 @@ Marvell>> reset
         | |  | | (_| | |   \ V /  __/ | |
         |_|  |_|\__,_|_|    \_/ \___|_|_|
  _   _     ____              _
-| | | |   | __ )  ___   ___ | |_ 
-| | | |___|  _ \ / _ \ / _ \| __| 
-| |_| |___| |_) | (_) | (_) | |_ 
+| | | |   | __ )  ___   ___ | |_
+| | | |___|  _ \ / _ \ / _ \| __|
+| |_| |___| |_) | (_) | (_) | |_
  \___/    |____/ \___/ \___/ \__|  ** Forcing LOADER mode only **
- ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE 
+ ** MARVELL BOARD: DB-88F5X81-DDR2-A/B LE
 
 U-Boot 1.1.4 (Aug  4 2008 - 09:35:54) Marvell version: 2.3.23
 
 U-Boot code: 00200000 -> 0026FFF0  BSS: -> 0027AD18
 
 Soc: 88F5281 D0 (DDR2)
-CPU running @ 500Mhz 
-SysClock = 166Mhz , TClock = 166Mhz 
+CPU running @ 500Mhz
+SysClock = 166Mhz , TClock = 166Mhz
 
-DRAM CS[0] base 0x00000000   size 128MB 
+DRAM CS[0] base 0x00000000   size 128MB
 DRAM Total size 128MB  32bit width
 [16384kB@ff000000] Flash: 16 MB
 Addresses 4M - 0M are saved for the U-Boot usage.
 Mem malloc Initialization (4M - 3M): Done
 
 CPU : ARM926 (Rev 0)
-Streaming disabled 
+Streaming disabled
 VFP initialized to Run Fast Mode.
 USB 0: host mode
 PCI 0: PCI Express Root Complex Interface
 CPU: Write allocate enabled
 Net:   egiga0 [PRIME]
-Hit any key to stop autoboot:  0 
+Hit any key to stop autoboot:  0
 
-Reset IDE: 
+Reset IDE:
 Marvell Serial ATA Adapter
 Found adapter at bus 0, device 1 ... Scanning channels
   Device 0: OK
@@ -5506,7 +5638,7 @@ File System.
 Debian GNU/Linux 8 sharespace ttyS0
 
 sharespace login: root
-Password: 
+Password:
 Last login: Sat Oct 17 13:12:38 BST 2015 on ttyS0
 Linux sharespace 3.10.0+ #2 Tue Oct 13 14:50:33 UTC 2015 armv5tel
 
@@ -5516,10 +5648,11 @@ individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Yay, we have a working system. Erase sdd and partition it:
+
 ```
 root@sharespace:~# dd if=/dev/zero of=/dev/sdd bs=1M count=10
 10+0 records in
@@ -5539,8 +5672,8 @@ Partition type
    p   primary (0 primary, 0 extended, 4 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (1-4, default 1): 
-First sector (2048-312499999, default 2048): 
+Partition number (1-4, default 1):
+First sector (2048-312499999, default 2048):
 Last sector, +sectors or +size{K,M,G,T,P} (2048-312499999, default 312499999): +10G
 
 Created a new partition 1 of type 'Linux' and of size 10 GiB.
@@ -5550,9 +5683,9 @@ Partition type
    p   primary (1 primary, 0 extended, 3 free)
    e   extended (container for logical partitions)
 Select (default p): p
-Partition number (2-4, default 2): 
-First sector (20973568-312499999, default 20973568): 
-Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999): 
+Partition number (2-4, default 2):
+First sector (20973568-312499999, default 20973568):
+Last sector, +sectors or +size{K,M,G,T,P} (20973568-312499999, default 312499999):
 
 Created a new partition 2 of type 'Linux' and of size 139 GiB.
 
@@ -5587,37 +5720,39 @@ The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
 
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Add sdd1 to md0:
+
 ```
-root@sharespace:~# cat /proc/mdstat 
-Personalities : [raid1] 
+root@sharespace:~# cat /proc/mdstat
+Personalities : [raid1]
 md0 : active raid1 sda1[0] sdc1[2] sdb1[1]
       10477568 blocks super 1.2 [4/3] [UUU_]
-      
+
 unused devices: <none>
 root@sharespace:~# mdadm /dev/md0 -a /dev/sdd1
 mdadm: added /dev/sdd1
-root@sharespace:~# cat /proc/mdstat 
-Personalities : [raid1] 
+root@sharespace:~# cat /proc/mdstat
+Personalities : [raid1]
 md0 : active raid1 sdd1[4] sda1[0] sdc1[2] sdb1[1]
       10477568 blocks super 1.2 [4/3] [UUU_]
       [>....................]  recovery =  2.8% (302080/10477568) finish=2.2min speed=75520K/sec
-      
+
 unused devices: <none>
-root@sharespace:~# 
+root@sharespace:~#
 
 ```
 
 Create a new raid5 of the rest of the disks:
+
 ```
 root@sharespace:~# mdadm -C /dev/md1 -l 5 -n 4 /dev/sd[abcd]2
 mdadm: Defaulting to version 1.2 metadata
 mdadm: array /dev/md1 started.
-root@sharespace:~# cat /proc/mdstat 
-Personalities : [raid1] [raid6] [raid5] [raid4] 
+root@sharespace:~# cat /proc/mdstat
+Personalities : [raid1] [raid6] [raid5] [raid4]
 md1 : active raid5 sdd2[4] sdc2[2] sdb2[1] sda2[0]
       436895232 blocks super 1.2 level 5, 512k chunk, algorithm 2 [4/3] [UUU_]
       	resync=DELAYED
@@ -5626,36 +5761,38 @@ md1 : active raid5 sdd2[4] sdc2[2] sdb2[1] sda2[0]
 md0 : active raid1 sdd1[4] sda1[0] sdc1[2] sdb1[1]
       10477568 blocks super 1.2 [4/3] [UUU_]
       [========>............]  recovery = 41.4% (4344256/10477568) finish=1.5min speed=65221K/sec
-      
+
 unused devices: <none>
-root@sharespace:~# 
+root@sharespace:~#
 ```
 
 Make a new ext4 filesystem on the raid5:
+
 ```
 root@sharespace:~# mkfs -t ext4 /dev/md1
 mke2fs 1.42.12 (29-Aug-2014)
 Creating filesystem with 109223808 4k blocks and 27312128 inodes
 Filesystem UUID: e08c751b-43db-4518-8bb2-44112c3484cc
-Superblock backups stored on blocks: 
-	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208, 
-	4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968, 
+Superblock backups stored on blocks:
+	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+	4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
 	102400000
 
-Allocating group tables: done                            
-Writing inode tables: done                            
+Allocating group tables: done
+Writing inode tables: done
 Creating journal (32768 blocks): done
-Writing superblocks and filesystem accounting information: done     
+Writing superblocks and filesystem accounting information: done
 
 root@sharespace:~#
 ```
 
 Create fstab entry, mount point and mount it:
+
 ```
 root@sharespace:~# echo "/dev/md1 /srv/store ext4 defaults,noatime,errors=remount-ro 0 2" >> /etc/fstab
 root@sharespace:~# mount /srv/store
 root@sharespace:~# df -h /srv/store/
 Filesystem      Size  Used Avail Use% Mounted on
 /dev/md1        410G   71M  390G   1% /srv/store
-root@sharespace:~# 
+root@sharespace:~#
 ```

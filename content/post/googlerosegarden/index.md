@@ -6,4 +6,5 @@ tags: ["google"]
 categories: []
 date: 2006-04-02
 ---
+
 ![shot.png](shot.png)

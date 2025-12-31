@@ -6,7 +6,13 @@ tags: ["blog", "linux", "networking"]
 categories: []
 date: 2010-07-29 22:56:00
 ---
-I was looking at a development web site I am involved with and I was interested in where the site was in the big bad world, so I decided to traceroute to it[1]. What seemed very unusual was that the 5th hop reported an ip address in the 10.0.0.0/8 private address space. To quote Sam "10.what now?". I'm still amazed that packets with source addresses with private addresses are routed across the internet![2]
+
+I was looking at a development web site I am involved with and I was interested
+in where the site was in the big bad world, so I decided to traceroute to it[1].
+What seemed very unusual was that the 5th hop reported an ip address in the
+10.0.0.0/8 private address space. To quote Sam "10.what now?". I'm still amazed
+that packets with source addresses with private addresses are routed across the
+internet![2]
 
 ```
 [1]
@@ -71,12 +77,12 @@ traceroute to 78.86.199.179 (78.86.199.179), 10 hops max, 40 byte packets
  8  * * *
  9  * * *
 10  * * *
-$ 
+$
 
 [2]
 $ tshark -r cap -R "ip.src == 10.0.0.0/8"
 177   8.113729   10.1.3.177 -> 80.68.93.148 ICMP Time-to-live exceeded (Time to live exceeded in transit)
 183   8.122267   10.1.3.177 -> 80.68.93.148 ICMP Time-to-live exceeded (Time to live exceeded in transit)
 187   8.130944   10.1.3.177 -> 80.68.93.148 ICMP Time-to-live exceeded (Time to live exceeded in transit)
-$ 
+$
 ```

@@ -4,10 +4,12 @@ summary: ""
 authors: ["thomas"]
 tags: ["linux"]
 categories: []
-date:  2014-07-14
+date: 2014-07-14
 aliases: [/tomsweb/Stuff/ExtractInitrdWithMicrocode/]
 ---
+
 If you try to extract a initrd and only file some uncompressed cpio:
+
 ```
 $ file /boot/initrd.img-3.14-1-amd64
 /boot/initrd.img-3.14-1-amd64: ASCII cpio archive (SVR4 with no CRC)
@@ -20,7 +22,8 @@ kernel/x86/microcode/GenuineIntel.bin
 $
 ```
 
-Don't fear, the real initrd is stored just after that in the same file. Extract as follows:
+Don't fear, the real initrd is stored just after that in the same file. Extract
+as follows:
 
 ```
 $ cat /boot/initrd.img-3.14-1-amd64 | cpio -t | grep blocks
@@ -32,7 +35,7 @@ $
 $ dd if=/boot/initrd.img-3.14-1-amd64 bs=1 skip=$(( 41*512 + 0x90 )) | file -
 /dev/stdin: gzip compressed data, last modified: Wed Jul  9 09:43:32 2014, from Unix
 $
-$ grep COMPRESS= /etc/initramfs-tools/initramfs.conf 
+$ grep COMPRESS= /etc/initramfs-tools/initramfs.conf
 COMPRESS=gzip
 $
 $ dd if=/boot/initrd.img-3.14-1-amd64 bs=1 skip=$(( 41*512 + 0x90 )) | gunzip | cpio -i
