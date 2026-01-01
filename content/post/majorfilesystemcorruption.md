@@ -36,4 +36,4 @@ set. Fix? yes 45689 Fix? yes 61402 Illegal block # () in inode . CLEARED. 73733
 Clear? yes 425742
 
 Something else I noticed were many "WARNING: PROGRAMMING BUG IN E2FSCK"!
-messages—23 of them!
+messages, there were 23 of them!
