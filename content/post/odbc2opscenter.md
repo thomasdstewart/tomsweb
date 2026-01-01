@@ -14,7 +14,7 @@ that it's not actually that configurable, which is a shame as it's mostly quite
 good.
 
 It does however use a standard RDBMS that appears to be an OEMed version of
-Sybase's SQL Anywhere to store the data. I thought, great—now I'll be able to
+Sybase's SQL Anywhere to store the data. I thought: great, now I'll be able to
 use my own tools to query and report on the backend. I want to make pretty pie
 charts, report on total data transferred and as well as actual important things
 like jobs that have failed.
