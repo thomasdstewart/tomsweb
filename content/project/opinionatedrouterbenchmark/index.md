@@ -310,10 +310,11 @@ debian@client:~$
 
 ### Openwrt settings
 
-The software flow offloading seems to make a different on the edge router itself
-a significant. This is set within openwrt here: Network->Firewall->Routing/NAT
-Offloading->"Software flow offloading" is checked. I don't know what this tunes,
-but it dome seem to greatly effect throughput:
+The software flow offloading seems to make a difference on the edge router
+itself, and a significant one. This is set within openwrt here:
+Network->Firewall->Routing/NAT Offloading->"Software flow offloading" is
+checked. I don't know what this tunes, but it does seem to greatly affect
+throughput:
 
 Before:
 

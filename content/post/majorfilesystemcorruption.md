@@ -8,7 +8,7 @@ date: 2010-10-06 10:36:00
 aliases: [/tomsweb/Stuff/MajorFilesystemCorruption/]
 ---
 
-On Sunday (03/10/2010) my laptop has a bad crash. The screen went blank, I could
+On Sunday (03/10/2010) my laptop had a bad crash. The screen went blank, I could
 still see the cursor and move it around but could do nothing else. I could not
 even login on a virtual console, after I typed the user name it came straight
 back with a login prompt again. I rebooted, grub loaded, Linux ran, the
@@ -25,7 +25,7 @@ lost+found. Looks like I'll be reinstalling it!
 
 I then did some minor analysis on the fsck output. First I wanted to see what
 the common errors and questions were. A quick use of sed to remove numbers
-enabled me to cound them up with: "cat fsck.root | sed 's/[0-9][0-9]\*//g' |
+enabled me to count them up with: "cat fsck.root | sed 's/[0-9][0-9]\*//g' |
 sort | uniq -c | grep -v "^ 1" | sort -n | tail -10" produces:
 
 32901 Inode has imagic flag set. Clear? yes 34415 Illegal block number passed to

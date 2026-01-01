@@ -373,7 +373,7 @@ crash> dis -l evo_wait
 crash>
 ```
 
-Do it seems this is the point that it dies:
+So it seems this is the point that it dies:
 
 ```
 /build/linux-Xbe5gu/linux-4.0.2/drivers/gpu/drm/nouveau/nv50_display.c: 420
@@ -389,7 +389,7 @@ it seems that it's this assignment that fails:
 dmac->ptr[put] = 0x20000000;
 ```
 
-dmac is actually a pointer thats passed into the evo_wait function, this is
+dmac is actually a pointer that's passed into the evo_wait function, this is
 where I stood back.
 
 I also had a look at /var/crash/201505221035/dmesg.201505221035 and noticed that

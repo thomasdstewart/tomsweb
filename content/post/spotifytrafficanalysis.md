@@ -80,7 +80,7 @@ Now back to the main stream. Once the client gets a connection to the Spotify
 servers and it establishes what looks like an encrypted stream. Once this
 happens the entirety of the conversation with the server looks like gibberish.
 This is a bit annoying as I can't really look further into how it works. However
-I'm still able to see how much data is transfered and thus can calculate average
+I'm still able to see how much data is transferred and thus can calculate average
 data rates.
 
 I looked at the TCP stream between 0:00 and 6:00. The music was stopped for the
@@ -95,12 +95,12 @@ local cache, ~/.wine/drive_c/users/thomas/Local Settings/Application
 Data/Spotify/Storage is currently 1.2G on my work desktop where I don't have any
 off line play lists. During this 30 minute window, 10.2 KiB was sent from the
 server and 26.4 MiB was received. The average packet size was 775 bytes long.
-The Overall data rate was 16.5 KiB/s. This is alot less than I expected.
+The overall data rate was 16.5 KiB/s. This is a lot less than I expected.
 
 After looking at the Wikipedia list of
 [mobile telephone bandwidths](http://en.wikipedia.org/wiki/List_of_device_bandwidths#Mobile_telephone_interfaces)
 I conclude that to run Spotify on a phone both GSM and GPRS are too slow, 1.8
-KiB/s and 7.2 KiB/s respectfully. Only EDGE and faster is good enough at
+KiB/s and 7.2 KiB/s respectively. Only EDGE and faster is good enough at
 48KiB/s. Of course this assumes that the mobile client uses the same bandwidth.
 The other thing to note is that an 8M internet connection should be able to
 sustain 62 Spotify users, assuming that they are all listening to new music.

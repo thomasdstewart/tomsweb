@@ -950,18 +950,18 @@ echo PURGE | sudo debconf-communicate nova-consoleproxy
 
 ### openstack-deploy
 
-- keystone scripts depends on mysql
+- keystone scripts depend on mysql
 - typo
   http://anonscm.debian.org/cgit/openstack/openstack-meta-packages.git/tree/src/preseed-lib#n18
   should be if [ ! -z "${7}" ] ; then
   http://anonscm.debian.org/cgit/openstack/openstack-meta-packages.git/tree/src/preseed-lib#n121
-  assumes keystone ip is endpoint ip postrm dont remove endpoint
+  assumes keystone ip is endpoint ip postrm don't remove endpoint
 
 ### qemu build deps
 
 - qemu qemu-system-x86
-- add libspice-server-dev libspice-protocol-dev as depend for linux-armhf
-  blocked by libspice-server-dev not in armhh
+- add libspice-server-dev libspice-protocol-dev as dependencies for linux-armhf
+  blocked by libspice-server-dev not in armhf
 
 ```
 $ dpkg --print-architecture

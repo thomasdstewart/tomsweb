@@ -15,13 +15,13 @@ However it would be nice to know that data is encrypted when stored on disk.
 This does not mitigate against a very bad cloud provider, as ultimately if they
 are determined enough they can get at the data. However implementing some sort
 of encryption does offer some protection against reading the data if disks are
-re-used and certainly makes the barrier might higher for access casually.
+re-used and certainly makes the barrier much higher for access casually.
 
 ## Ideas
 
 General Linux knowledge and a few Internet searches quickly gave me 4 options:
 
-1.  Only encrypt a subset of data and have a dedicated disk thats encrypted. For
+1.  Only encrypt a subset of data and have a dedicated disk that's encrypted. For
     example /home on a separate disk/partition/lvm volume encrypted with the
     unlock key in /etc/crypttab or unlock and mount via ssh at every boot.
 2.  Implement mostly FDE (Full Disk Encryption). For example encrypt / and /home
@@ -96,7 +96,7 @@ Observations with Tang:
     this is fixed in Debian Testing (Bookworm) (see:
     https://sources.debian.org/src/tang/8-3+deb11u1/meson.build/#L19,
     https://sources.debian.org/src/tang/11-1/debian/patches/debian/2021-09-30.use-var-lib.patch/.
-4.  It is a http server with everything operating in plaintext and does not have
+4.  It is an http server with everything operating in plaintext and does not have
     any SSL.
 5.  It does not have any password protection.
 6.  It does not have any network restriction functionality.
@@ -105,7 +105,7 @@ Observations with Clevis:
 
 7.  Debian defaults to initramfs-tools rather than dracut, clevis supports both,
     but obviously via slightly different scripts.
-8.  In order to make network requests when the initaramfs systems is running
+8.  In order to make network requests when the initramfs system is running
     networking has to be configured. How this is done is not very well
     documented.
 9.  The initramfs system does not have a standard way to configure DNS.
@@ -117,15 +117,15 @@ Observations with Clevis:
 So given that running C daemons as root is fairly scary at the best of times, I
 wanted to put some wrapping around the setup to protect it more (issue 1).
 
-- Ideally I like to runs things from Debian stable, however it seems in this
+- Ideally I like to run things from Debian stable, however it seems in this
   case it's more straightforward to run the version from unstable as a separate
   user in a separate user rootless podman container (and hope that the tang-8
-  ping can talk to tang-11 server.) (issue 2 and 3).
+  pin can talk to tang-11 server.) (issue 2 and 3).
 - If Apache reverse proxies the traffic it can implement an ssl wrapper on it to
   give it https. (issue 4).
 - Apache can auto implement basic auth to stop casual access and implement
   source request IP based restrictions (issue 5 and 6).
-- Now is not to time to learn how to switch Debian from initramfs to dracut, so
+- Now is not the time to learn how to switch Debian from initramfs to dracut, so
   care needs to be taken it's configured correctly (issue 7).
 - Initramfs uses ipconfig from the klibc-utils package to configure networking
   (https://git.kernel.org/pub/scm/libs/klibc/klibc.git/tree/usr/kinit/ipconfig/README.ipconfig).
@@ -133,11 +133,11 @@ wanted to put some wrapping around the setup to protect it more (issue 1).
   configure_networking if it needs networking, eg the open-iscsi initramfs
   helper also calls this
   (https://sources.debian.org/src/clevis/16-2/src/initramfs-tools/scripts/local-top/clevis.in/#L265).
-  It gets it's config from the ip parameter from the linux command line
+  It gets its config from the ip parameter from the linux command line
   (skipping this param will cause a dhcp),
   (https://sources.debian.org/src/initramfs-tools/0.140/scripts/functions/#L236)
   so the kernel params will have have this ip parameter added. Interestingly
-  Ubuntu configures resolv when configuring networking automatically, but it
+  Ubuntu configures resolv.conf when configuring networking automatically, but it
   seems this patch never made it back to Debian
   (https://git.launchpad.net/ubuntu/+source/initramfs-tools/tree/scripts/functions#n461)
   (issue 8).
@@ -147,17 +147,17 @@ wanted to put some wrapping around the setup to protect it more (issue 1).
   details in. For example see
   https://sources.debian.org/src/open-iscsi/2.1.5-1/debian/extra/initramfs.local-top/?hl=130#L130
   https://sources.debian.org/src/kxd/0.15-3/cryptsetup/initramfs-scripts/kxc-premount-net/?hl=26#L26.
-  Unfortunately the clevis initramfs script do not setup resolv.conf
+  Unfortunately the clevis initramfs script does not set up resolv.conf
   (https://sources.debian.org/src/clevis/16-2/src/initramfs-tools/scripts/local-top/clevis.in/#L257).
   This needs to be fixed upstream or if not a new script that runs the
   configure_networking and the careful creation of /etc/resolv.conf before the
   clevis initramfs script runs (issue 9).
-- In order for the clevis script to run and use a https tang server, it
+- In order for the clevis script to run and use an https tang server, it
   ultimately uses curl to make the https request so will need a set of CA
   certificates to function correctly. The easiest way for this to work is an
   initramfs hook to include them (issue 10).
 
-## Implentation
+## Implementation
 
 https://gitlab.com/thomasdstewart-infra/docker-tang
 
@@ -227,11 +227,11 @@ root@client:~#
 
 ### Setup DNS
 
-Get the configure_networking funtion in initramfs-tools to setup DNS
+Get the configure_networking function in initramfs-tools to set up DNS
 
 ### Include root CA
 
-Add config option to theinitramfs-tools include a copy of the system CA's
+Add config option to the initramfs-tools to include a copy of the system CA's
 
 https://github.com/latchset/clevis/issues/175
 https://github.com/latchset/clevis/issues/176
