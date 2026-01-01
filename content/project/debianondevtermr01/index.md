@@ -168,12 +168,12 @@ sudo losetup -d $d
 The Linux kernel is somewhat harder, it seems to be some sort of "Android Common
 Kernels" as the README mentions this. The wiki page gives
 https://github.com/cuu/last_linux-5.4.git, which has no git history. So one
-assumes it's just been put together in a rather ad-hoc manor. Searching about
+assumes it's just been put together in a rather ad-hoc manner. Searching about
 with references to "tina-d1-h", the tree might be a combination of
 https://gitlab.com/weidongshan/tina-d1-h/-/tree/main/lichee/linux-5.4 with
 patches from clockwork here
 https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1. The 5.4 was
-released 2019-11-24 is an LTS kernel and supported untill 01-12-2025. Newer
+released 2019-11-24 is an LTS kernel and supported until 01-12-2025. Newer
 compilers don't work (eg GCC-11) as it uses assembly opcodes that GCC-11 errors
 on, but it does compile with an older GCC. The official guide suggests getting a
 custom toolchain for nega.nz! We use GCC-9 from Debian 11.

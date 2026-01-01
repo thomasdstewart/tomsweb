@@ -19,7 +19,7 @@ libvirt to create virtual hardware to run the various Openstack components to
 match a real world deployment. Each virtual machine represents what could be a
 physical host. It will use CentOS 7 as the base operating system and use the RDO
 Openstack packages. This matches the Red Hat Openstack Platform, however does
-not need subscriptions to install and test test.
+not need subscriptions to install and test.
 
 The deployment will use tripleo and ironic for deployment and provisioning.
 Meaning that a small cutdown Openstack cloud called the undercloud will look
@@ -48,7 +48,7 @@ A few preparations are needed before getting started. First you need a Linux
 machine, the more CPUs, memory and fast disk the better. This deployment was
 done on an Intel i5 laptop with 16GB RAM and a SSD. Next you need to get KVM and
 libvirt running. I used Debian and a simple "apt-get install virt-manager" was
-enough for me to start playing. However this should be very dooable on any other
+enough for me to start playing. However this should be very doable on any other
 Debian or Fedora derived distribution.
 
 Next we need to think about the software, given that there may be multiple
@@ -62,7 +62,7 @@ In order to speed the network up further I also installed the Squid web proxy
 and tuned it to store large files. While this is getting a little off topic I
 think it's worth including some brief notes on how to do this.
 
-To get the IOS mounted on boot make an entry in /etc/fstab like the following:
+To get the ISO mounted on boot make an entry in /etc/fstab like the following:
 
 ```
 $ cat /etc/fstab | grep CentOS
@@ -96,9 +96,9 @@ from alternative mirrors. I get round this by rewriting the repo files and
 instructing the build process to always use the cache. Again with a full mirror
 of Centos and RDO it should be possible to do this offline. We want to tell
 squid to allow access from a few virtual networks we will create, tell it to
-store large objects, get it to use disk cache, up the refresh pattern tof rpm,
-deb and iso files to a long time and lasty tell it to shutdown quickly. In
-anycase here were the changes I made to Squid which sped up the multiple updates
+store large objects, get it to use disk cache, up the refresh pattern to rpm,
+deb and iso files to a long time and lastly tell it to shutdown quickly. In
+any case here were the changes I made to Squid which sped up the multiple updates
 from Centos 1511 to present updates:
 
 ```
@@ -134,10 +134,10 @@ $
 ```
 
 Regarding nested virtualization, given that we are going to run a Nova compute
-node in a virtual machine we will need some form of nested virtulization. We
+node in a virtual machine we will need some form of nested virtualization. We
 could give the option "--libvirt-type qem" to the "openstack overcloud deploy"
 command to just use qemu inside the virtual machine, however we can instruct KVM
-to allow nested virtualizaton. The sysfs file
+to allow nested virtualization. The sysfs file
 /sys/module/kvm_intel/parameters/nested show the current value. A quick way to
 configure this is:
 

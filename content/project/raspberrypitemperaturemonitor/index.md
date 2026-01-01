@@ -12,17 +12,18 @@ aliases: [/tomsweb/RaspberryPITemperatureMonitor/]
 
 ## Introduction
 
-I recently needed to temperature monitor, log and alert on over temperatures. I
-had a look in my parts bin and I found a Raspberry PI a 1-Wire HBA, a 1-Wire
+I recently needed to monitor temperature, log it, and alert on high readings. I
+had a look in my parts bin and I found a Raspberry Pi, a 1-Wire HBA, a 1-Wire
 temperature IC and a 3G dongle.
 
 ## Solution
 
-I needed a quick way to create anImage I could throw on the Pi. I didn't want to
-have to maintain it, and if the pops I want to be able to generate a replacement
-image easily.
+I needed a quick way to create an image I could throw on the Pi. I didn't want
+to have to maintain it, and if it pops I want to be able to generate a
+replacement image easily.
 
-In the end I created the below script. It's not particually nice, but it works.
+In the end I created the below script. It's not particularly nice, but it
+works.
 
 ## Method
 
@@ -133,7 +134,7 @@ domain (ip ip6) chain FORWARD NFLOG nflog-prefix 'FORWARD';
 domain (ip ip6) chain OUTPUT NFLOG nflog-prefix 'OUTPUT';
 
 domain ip chain (INPUT FORWARD OUTPUT) REJECT reject-with icmp-admin-prohibited;
-domain ip6 chain (INPUT FORDWARD OUTPUT) REJECT reject-with icmp6-adm-prohibited;
+domain ip6 chain (INPUT FORWARD OUTPUT) REJECT reject-with icmp6-adm-prohibited;
 EOF
 
 cat <<EOF > files/50unattended-upgrades-local

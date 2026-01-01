@@ -28,7 +28,7 @@ while working on a serial console for a RaspberryPi it dawned on me that it was
 my mistake. So I got out the box and console cable and decided to have another
 go.
 
-A big thinks to David Hicks for giving me the right kernel patch and sending me
+A big thanks to David Hicks for giving me the right kernel patch and sending me
 in the right direction. To Western Digitals credit they did release a GPL.zip
 type zip that appeared to contain a build system, gcc, kernel etc. However
 actually unpicking all the .config.old, .config.old2 files would have taken an
@@ -41,7 +41,7 @@ to type, it's more or a command log. That way if anyone does want to repeat,
 they can at least understand what they expect to see. Given this it's rather
 longer than I expected. The original running Linux is too old to chroot into a
 new Linux and I did not try to get perl working in order to run debootstrap
-natively. So the process in colved cross compiling a kernel and booting that in
+natively. So the process involved cross compiling a kernel and booting that in
 order to debootstrap a new system install.
 
 The process:
@@ -51,10 +51,10 @@ The process:
 3.  create initrd
 4.  boot new kernel
 5.  extract debootstrap and finish to temp partition which can act as rescue
-    incase of later errors
+    in case of later errors
 6.  create actual system on raid1 and copy to there
 7.  reboot
-8.  do some clean up, backup mtd, setup uboot to boot automatticaly
+8.  do some clean up, backup mtd, setup uboot to boot automatically
 
 Some links:
 
@@ -78,7 +78,7 @@ thomas@diamond ~ $
 ```
 
 Older kernels don't know how to use gcc5, so create a jessie chroot to do some
-compilin:
+compiling:
 
 ```#!bash
 thomas@diamond /srv/store/sharespace $ sudo debootstrap --include=devio,u-boot-tools,build-essential,kernel-package,locales,curl,telnet,sudo jessie /srv/store/sharespace/jessie-x86_64/ http://httpredir.debian.org/debian/

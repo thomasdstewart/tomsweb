@@ -75,7 +75,7 @@ This all leads me to this project: Why not connect a Raspberry Pi up to the tape
 player and remotely control it!
 
 Which is exactly what I did. I made a cable from the tape player to a relay
-board, connected the relay board to teh GPIO pins on a raspberry pi, connected a
+board, connected the relay board to the GPIO pins on a raspberry pi, connected a
 usb IR receiver to the Raspberry Pi and wrote a two short python scripts to
 stick it all together. So now I can control my 20+ year old tape player using my
 new remote control or mobile phone!

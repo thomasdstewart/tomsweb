@@ -207,7 +207,7 @@ for br in /var/lib/libvirt/dnsmasq/*.macs; do
                         virsh --connect qemu:///system net-update default add ip-dhcp-host "<host mac='$mac' name='$name' ip='$ip' />" --live --config || true
                         echo "done."
                 else
-                        echo "allready added."
+                        echo "already added."
                 fi
 
                 # Add to default.addnhosts
@@ -218,7 +218,7 @@ for br in /var/lib/libvirt/dnsmasq/*.macs; do
                         virsh --connect qemu:///system net-update default add dns-host "<host ip='$ip'><hostname>$name</hostname></host>" --live --config || true
                         echo "done."
                 else
-                        echo "allready added."
+                        echo "already added."
                 fi
         done
 done
@@ -228,7 +228,7 @@ TODO:
 
 - The updatelibvirtdns.sh script never delete entries.
 - The systemd unit should search for all \*.macs files, it seems that
-  PathModifiedGlob does not exist yet so mutiple path units need to be created,
-  or paramaterised ones created.
+  PathModifiedGlob does not exist yet so multiple path units need to be
+  created, or parameterised ones created.
 - The NetworkManager dispatcher should add host entry in libvirt for dummy dns
   interface to reserve the IP.

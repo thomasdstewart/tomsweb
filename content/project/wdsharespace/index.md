@@ -23,12 +23,12 @@ getting a shell on these boxes is a bit harder than the original devices.
 
 Martin Hinner's method at his
 [site](http://martin.hinner.info/mybook/sshaccess.php) does not work because the
-firmware got a major overhall. The original My Book World's used perl
+firmware got a major overhaul. The original My Book World's used perl
 (/auth/firmware_upgrade.pl) but the newer Share Space devices use php
 (/admin/system_firmware_manual.php). My first thought was to implement a similar
-hack that Martin used, amazingly western digital put a link to the main
+hack that Martin used, amazingly Western Digital put a link to the main
 [code](http://support.wdc.com/product/download.asp?groupid=901&sid=107&lang=en)
-on there website. This gives all the juicy details about how the upgrade process
+on their website. This gives all the juicy details about how the upgrade process
 works.
 
 The automatic update process gives the
@@ -37,10 +37,10 @@ its version number and it returns if there is an update or not along with a link
 to the
 [firmware blob](http://cache.websupport.wdc.com/wda4nc40000-02.01.03.img). This
 believe it or not is tar.gz with the 1st and 16th block swapped where blocks are
-5k. Due to the way the upgrade process works there is no easy to to hook into
-upgrade process. If a manual firmware image is selected it gets downloaded and a
+5k. Due to the way the upgrade process works there is no easy way to hook into
+the upgrade process. If a manual firmware image is selected it gets downloaded and a
 script on the device installs the update. If you could trick the upgrade process
-into thinking it it a service pack update it will run a pre-install script
+into thinking it is a service pack update it will run a pre-install script
 inside the firmware blob. However the service pack install file (/etc/sp) does
 not exist so I abandoned this method.
 
@@ -52,8 +52,8 @@ did see an existing [wiki page](http://mybookworld.wikidot.com/sharespace) about
 how to do this, but it missed out some large details. It is important to edit
 the filesystem as a broken raid1 mirror, or else on the next boot the root
 filesystem mirrors will not be in sync. The next time the device boots it will
-notice one disk is more uptodate and resync the other three and as its only 200M
-its very quick to sync. Something like this worked for me:
+notice one disk is more up to date and resync the other three and as it's only
+200M it's very quick to sync. Something like this worked for me:
 
 ```
 sudo mdadm --assemble /dev/md0 /dev/sdb1
@@ -76,7 +76,7 @@ FACTORY_DEFAULT_FLAG=/etc/.factory_restore
 GENERAL_RESTORE_FLAG=/etc/.general_restore
 ```
 
-Now you will have a working telnet deamon but no user to login as, the default
+Now you will have a working telnet daemon but no user to login as, the default
 user admin does not have shell set. I just blanked the root users password by
 editing /mnt/etc/passwd and making the root line look like:
 `root::0:0:root:/root:/bin/sh`
@@ -84,5 +84,5 @@ editing /mnt/etc/passwd and making the root line look like:
 Then unmount it and stop the md device with "umount /mnt" and "mdadm -S
 /dev/md0". Pop the disk back in and as soon as it starts pinging you should be
 able to login as root. At which point I set a new root password with passwd.
-Then ipkg can be installed in /opt and once a reliable ssh deamon is working the
+Then ipkg can be installed in /opt and once a reliable ssh daemon is working the
 above hack in rcS can be removed.
