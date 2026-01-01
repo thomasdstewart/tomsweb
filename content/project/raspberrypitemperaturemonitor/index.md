@@ -115,7 +115,7 @@ domain (ip ip6) chain (INPUT OUTPUT) {
 }
 
 domain (ip ip6) chain INPUT interface lo ACCEPT;
-domain (ip ip6) chain OUTPUT interface lo ACCEPT;
+domain (ip ip6) chain OUTPUT outerface lo ACCEPT;
 
 domain ip chain (INPUT FORWARD OUTPUT) proto icmp ACCEPT;
 domain ip6 chain (INPUT FORWARD OUTPUT) proto icmpv6 ACCEPT;
