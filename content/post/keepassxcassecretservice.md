@@ -8,7 +8,7 @@ date: 2022-07-22 09:37:00
 ---
 
 When running the Gnome Desktop Environment on Debian there is a secrets tool
-that automatically runs called Gnome Keyring. This tools provides multiple
+that automatically runs called Gnome Keyring. This tool provides multiple
 functions:
 
 - ssh keys - ssh keys in ~/.ssh with passwords that match the login password are
@@ -25,7 +25,7 @@ functions:
   I assume its a location to store certificates: custom CA's, machine and user
   certificates.
 
-There are many tools to them use the above, seahorse is a gui tool and
+There are many tools to then use the above, seahorse is a gui tool and
 secret-tool is a cli tool.
 
 The idea being that ssh key passwords and general passwords are stored in
@@ -33,11 +33,11 @@ encrypted files on disk, albeit with the same password as login.
 
 ## The Problem
 
-- hanging passwords is hard, eg have to update password for
+- changing passwords is hard, eg have to update password for
   ~/.local/share/keyrings
 - logging in via fingerprint
 - ssh keys only when keepass unlocked
-- ansbile secerts, aws secrets, etc end up in ~/.local/share/keyrings across
+- ansible secrets, aws secrets, etc end up in ~/.local/share/keyrings across
   laptops
 - easier to keep an handle on in just keepass files
 

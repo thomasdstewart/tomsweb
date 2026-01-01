@@ -9,7 +9,7 @@ date: 2009-05-27
 
 ## /proc/mdstat information
 
-Linux has a software raid subsystem and it called md. It is generally quite well
+Linux has a software raid subsystem and it is called md. It is generally quite well
 documented. However the md status file in the proc pseudo filesystem is not
 documented at all. So this is one of those cases where you have to
 [read the source](http://lxr.linux.no/linux/drivers/md/md.c#L4922) to understand

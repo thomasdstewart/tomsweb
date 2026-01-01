@@ -7,8 +7,8 @@ categories: []
 date: 2011-03-28 21:30:00
 ---
 
-Petrol Prices are allays on the rise. I decided to do some analysis on some raw
-data comparing the price of Brend Crude Oil and the price of petrol. The details
+Petrol Prices are always on the rise. I decided to do some analysis on some raw
+data comparing the price of Brent Crude Oil and the price of petrol. The details
 of the analysis is on my site. I found out that there is a direct correlation
 between the price of Brent crude oil and the price of petrol at the pump
 excluding duty and VAT.
