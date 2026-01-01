@@ -23,7 +23,7 @@ mailing list from David Hicks, he had managed to get Debian installed at
 working! Yay I thought so I emailed him and he very helpfully gave me some
 instructions and some patches to get me started. Unfortunately I fell at the
 first hurdle and could not get the console working. Embarrassingly I had not
-turned the flow control to off within the minicom settings. After 18 months
+turned flow control off within the minicom settings. After 18 months
 while working on a serial console for a RaspberryPi it dawned on me that it was
 my mistake. So I got out the box and console cable and decided to have another
 go.
@@ -37,8 +37,8 @@ patch to get it working is not that big, so does not need the mountain of
 changes that Western Digital applied. I have attached the patch to this page.
 
 I have basically documented the entire process, rather than a list of commands
-to type, it's more or a command log. That way if anyone does want to repeat,
-they can at least understand what they expect to see. Given this it's rather
+to type, it's more of a command log. That way if anyone does want to repeat,
+they can at least understand what to expect to see. Given this it's rather
 longer than I expected. The original running Linux is too old to chroot into a
 new Linux and I did not try to get perl working in order to run debootstrap
 natively. So the process involved cross compiling a kernel and booting that in

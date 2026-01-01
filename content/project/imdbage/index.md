@@ -24,7 +24,7 @@ I have a few screen shots so you can see what it looks like.
 ![IMDBAge1.png](IMDBAge1_thumb.png) ![IMDBAge2.png](IMDBAge2_thumb.png)
 ![imdbagetest.png](imdbagetest.png)
 
-It was was created on 2005-03-29 but inspired sometime in 2001 and the last
+It was created on 2005-03-29 but inspired sometime in 2001 and the last
 modification was on 2020-12-28. And the current version is v2.14. First you need
 [Greasemonkey](https://addons.mozilla.org/firefox/addon/748) installed then
 install the script. It is available [locally](IMDBAge.user.js) or on the
@@ -36,7 +36,7 @@ install the script. It is available [locally](IMDBAge.user.js) or on the
 
 Changelog
 
-- 2.14 fixed icon, improved getNameDates, new style fixes, reformating
+- 2.14 fixed icon, improved getNameDates, new style fixes, reformatting
 - 2.13 added https urls, removed scriptvals, fixed title pages
 - 2.12 fixed adding ages to individual films and fixed old style
 - 2.11 fixed date grabbing again

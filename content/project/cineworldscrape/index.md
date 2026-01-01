@@ -50,10 +50,11 @@ reflects the data that Cineworld expose.
 Having an XML file with the raw data is all very cool but it does not really
 solve the problem. So next I created a
 [transform](https://github.com/thomasdstewart/cw/blob/master/cw.xsl) that
-displays all the showings in chronological and outputs to a html file that is
-easily viewable in both a normal browser and a phone (be warned the resultant
-html is quite large). Both web browsers don't have good enough xml/xstl brains
-todo the transform so the output (cw.html) is pre-generated each night at the
+displays all the showings in chronological order and outputs to a html file that
+is easily viewable in both a normal browser and a phone (be warned the
+resultant html is quite large). Both web browsers don't have good enough
+xml/xstl brains to do the transform so the output (cw.html) is pre-generated
+each night at the
 end of the scrape process.
 
 I then added some more javascript that tries to make the film selection process

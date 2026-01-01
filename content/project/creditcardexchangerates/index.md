@@ -10,9 +10,9 @@ aliases: [/tomsweb/Stuff/CreditCardExchangeRates/]
 
 I have a Barclaycard credit card and a Halifax credit card. I recently decided
 to experiment to try to find out how much it cost to use them abroad to withdraw
-cash from and ATM. I might be crasy, but I wanted to know! both cards have
-particular offers that means your don't get charged as much as most cards do to
-withdraw cash. I did a cash withdrawl of €50 from an ATM on both cards on the
+cash from an ATM. I might be crazy, but I wanted to know! Both cards have
+particular offers that mean you don't get charged as much as most cards do to
+withdraw cash. I did a cash withdrawal of €50 from an ATM on both cards on the
 same day. Anyway on with the results:
 
 | Card                 | Money Withdrawn | Cost on Bill                             | Overall Rate | Historical rate from ex.com | Historical rate from issuer | Rate difference |

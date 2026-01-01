@@ -14,18 +14,18 @@ My ISP don't provide IPv6 and the wireless router they give out does not work
 with IPv6 Tunnels. So I setup a [Raspberry Pi](http://www.raspberrypi.org/) as a
 [router on a stick](https://en.wikipedia.org/wiki/One-armed_router) to route
 IPv6 on my home network to my IPv6 tunnel provider over IPv4. I mostly did this
-to start get get familar with IPv6, it does work and my home computers and phone
-get IPv6 addresses on the Internet. I ocasionally do a netstat and see a bunch
-of tcp6 connections established to google, facebook and youtube. My one worry
-was the performance of the Raspberry Pi, it's a single core Arm v6 running at
-700Mhz with a 100M ethernet that sits on the USB bus. I have in the past noticed
-that when the Raspberry Pi is busy (mostly with cron) that the ability for it to
-forward packets does slow down. Very ocasionally it drops packets and makes the
-connection unusable for a short while. My internet connection is
+to start getting familiar with IPv6; it does work and my home computers and
+phone get IPv6 addresses on the Internet. I occasionally do a netstat and see a
+bunch of tcp6 connections established to google, facebook and youtube. My one
+worry was the performance of the Raspberry Pi, it's a single core Arm v6 running
+at 700Mhz with a 100M ethernet that sits on the USB bus. I have in the past
+noticed that when the Raspberry Pi is busy (mostly with cron) the ability for it
+to forward packets does slow down. Very occasionally it drops packets and makes
+the connection unusable for a short while. My internet connection is
 [FTTC/fiber to the cabinet](https://en.wikipedia.org/wiki/Fiber_to_the_x#Fiber_to_the_curb.2Fcabinet)
 and +100M, so I'm already limiting my connection speed if they go over the
-Raspberry Pi. I allways meant to run some bench marks on the Pi to see just how
-fast it can ship packets. With the advent of the newer Raspberry Pi 2 with it's
+Raspberry Pi. I always meant to run some benchmarks on the Pi to see just how
+fast it can ship packets. With the advent of the newer Raspberry Pi 2 with its
 quad Core Arm v8 running at 900Mhz I decided to do some proper testing.
 
 {{% toc %}}
@@ -34,24 +34,24 @@ quad Core Arm v8 running at 900Mhz I decided to do some proper testing.
 
 I used a
 [Dlink DGS-1008D](http://www.dlink.com/uk/en/business-solutions/switching/unmanaged-switches/desktop/dgs-1008d-8-port-10-100-1000mbps-gigabit-switch)
-unmanaged swtich to connect my desktop, a laptop Lenovo X220 (Intel Core
-i5-2520), a Raspbery Pi Model B and a Raspbery 2 Pi Model B. I also configured
-the test laptop to use it's ethernet port as a bridge and installed a new
+unmanaged switch to connect my desktop, a laptop Lenovo X220 (Intel Core
+i5-2520), a Raspberry Pi Model B and a Raspberry 2 Pi Model B. I also configured
+the test laptop to use its ethernet port as a bridge and installed a new
 virtual machine which connects to that bridge also. So all 4 test machines are
 bridged together at layer 2. I installed all the machines with Debian
 testing/sid and updated them all. I wanted to first see what the hardware can
-do, so I have a fairly stripped down setup. Alomost no processes are running and
-the iptable modules are no loaded. So on all 4 machines "iptables-save" produces
-nothing. The test laptop was running Gnome 3, however during the testing the
-test laptop and virtual machine were practically idle. Both machines are capable
-of saturating a 1G link. Any background processes running should not interfeer
-with saturating a 100M link with tcp.
+do, so I have a fairly stripped down setup. Almost no processes are running and
+the iptable modules are not loaded. So on all 4 machines "iptables-save"
+produces nothing. The test laptop was running Gnome 3, however during the
+testing the test laptop and virtual machine were practically idle. Both machines
+are capable of saturating a 1G link. Any background processes running should not
+interfere with saturating a 100M link with tcp.
 
 The plan was to use iperf to test networking from the laptop to virtual machine
 via a layer 3 router, in this case a Raspberry Pi router on a stick. This is not
-same same test as my original useage, ie routing IPv6 traffic to a IPv6 tunnel
+the same test as my original usage, ie routing IPv6 traffic to an IPv6 tunnel
 over IPv4. However I wanted to see how fast it would route and forward packets.
-Also to make sure eveything went via the Raspberry Pi I turned off ICMP
+Also to make sure everything went via the Raspberry Pi I turned off ICMP
 redirect's on all 4 machines using:
 
 ```

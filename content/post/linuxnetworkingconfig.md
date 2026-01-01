@@ -11,8 +11,8 @@ Linux Networking Config is a complex beast these days. In fairness networking is
 complicated, and there has to be a way to configure a multitude of
 technologies: ethernet, wifi, ppp, vpn, mobile, bridge, bonding, vlan, tunnels.
 Originally networking was configured during boot up in shell scripts as part of
-sysvinit. However over the 20+ years the many newer ways have popped up, this is
-a short comparison of the options.
+sysvinit. However over the last 20+ years many newer ways have popped up; this
+is a short comparison of the options.
 
 # Methods
 
@@ -68,20 +68,20 @@ work or not.
 ## network-scripts (redhat)
 
 As I understand network-scripts were the first way networks were configured in
-Red Hat based distros after directly editing rc scripts. The config files
-were sourced and then boot scripts would then implement everything needed to
-configure the network. These are stored under /etc/sysconfig/network-scripts.
-Almost all configurations were possible, however hooks to do "exotic" other
-things are harder. However these network-script have not been the only option on
-Red Hat based distros for sometime because Network-Manager was introduced in
-either RHEL 5 or 6 as a replacement. Generally people recommended disabling it
-because people don't like changes. However Network-manager has become the main
-way networking is configured. The way this worked was by implementing a sort of
-config compatibility layer that used the same config file format, so you could run
-with both enabled and network would start some interfaces and network-manager
-would start other interfaces. However now network-manager just works and with
-RHEL 8 it is quite hard not to use it, and I understand RHEL9 is just network
-manager.
+Red Hat based distros after directly editing rc scripts. The config files were
+sourced and then boot scripts would implement everything needed to configure the
+network. These are stored under /etc/sysconfig/network-scripts. Almost all
+configurations were possible, however hooks to do "exotic" other things are
+harder. However these network-scripts have not been the only option on Red Hat
+based distros for some time because Network-Manager was introduced in either RHEL
+5 or 6 as a replacement. Generally people recommended disabling it because
+people don't like changes. However Network-Manager has become the main way
+networking is configured. The way this worked was by implementing a sort of
+config compatibility layer that used the same config file format, so you could
+run with both enabled: network would start some interfaces and Network-Manager
+would start other interfaces. However now Network-Manager just works and with
+RHEL 8 it is quite hard not to use it, and I understand RHEL9 is just Network
+Manager.
 
 been around since at least Red Hat Linux 6.0 (~circa 2000)
 

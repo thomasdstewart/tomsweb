@@ -19,7 +19,7 @@ temperature IC and a 3G dongle.
 ## Solution
 
 I needed a quick way to create an image I could throw on the Pi. I didn't want
-to have to maintain it, and if it pops I want to be able to generate a
+to have to maintain it, and if it fails I want to be able to generate a
 replacement image easily.
 
 In the end I created the below script. It's not particularly nice, but it

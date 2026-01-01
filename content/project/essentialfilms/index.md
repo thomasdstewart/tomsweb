@@ -9,7 +9,7 @@ aliases: [/tomsweb/EssentialFilms/]
 ---
 
 Here are my essential films. It's somewhere between my favourite films and a
-list of films that must been seen. It's in alphabetical order and I was
+list of films that must be seen. It's in alphabetical order and I was
 originally aiming for the 50 mark however there are too many good films so the
 current count is 83. The main table is generated from [films.txt](films.txt)
 with [getimdb.py](getimdb.py) (needs updating from MoinMoin to MD syntax). I've
