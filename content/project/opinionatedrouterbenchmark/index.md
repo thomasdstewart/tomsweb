@@ -13,7 +13,7 @@ My home Internet connection is a VDSL/FTTC (fibre to the cabinet) which comes
 over the telephone line into a BT master socket which has an ADSL filter and
 requires a modem. The modems are now usually built into the BT Home/Smart Hub
 CPE (Customer-premises equipment) but I still use a Huawei HG612 standalone
-modem as I don't particluraly like the CPE I was given. So I need router to talk
+modem as I don't particularly like the CPE I was given. So I need a router to talk
 PPPoE to the modem and also firewall, route and NAT my home lan traffic to the
 Internet. I used a pair of Linksys WRT3200ACM devices: one as a router and
 wireless access point and the other as just a wireless access point. However
@@ -25,18 +25,18 @@ left most of the functionality of the WRT3200ACM unneeded in what is quite a
 large physical footprint, also I don't want to overload the device by turning my
 internet router into a NAS. Thus I needed to find a replacement device that just
 does the routing. Also with the new access points I also changed to a managed
-network swtiches with vlans to allow guest wifi, untrusted iot network, etc.
+network switches with vlans to allow guest wifi, an untrusted iot network, etc.
 Thus the new device could just be a single port router on a stick with a single
 trunk link.
 
 My random set of requirements for the new device (in no order):
 
-- can do the right tech networking stuff: eg PPPoR, VLANs, NAT, firewall, DHCP,
+- can do the right tech networking stuff: eg PPPoE, VLANs, NAT, firewall, DHCP,
   DNS (resolver and local registration), NTP
 - be as open as possible
 - reasonable gui/cli: probably openwrt (as mostly everything else is rubbish and
   openwrt seems least worse)
-- easy to swap and obtain new hardware in case of failure (eg Raspebrry Pi's are
+- easy to swap and obtain new hardware in case of failure (eg Raspberry Pis are
   (used to be) available)
 - easy to backup config or capture steps to configure replacement device
 - no fans and no spinning rust
@@ -86,7 +86,7 @@ ping -c 60 -i 1 -n -q $target
 ```
 
 After the fact it was pointed out that measuring power usage would also be
-interesting, so retrospectfully I used my cheap
+interesting, so retrospectively I used my cheap
 [https://www.amazon.co.uk/gp/product/B07H1ZFVFM/](Nevsetpo Power Meter).
 
 ## Network setup
@@ -186,7 +186,7 @@ sudo qemu-img convert -f raw -O qcow2 openwrt-22.03.2-x86-64-generic-ext4-combin
 sudo virt-install --connect qemu:///system --name openwrt --os-variant linux2020 --memory 1024 --import --disk path=/var/lib/libvirt/images/openwrt.qcow2 --network bridge=$lan,model=virtio --network bridge=$wan,model=virtio
 ```
 
-After the router starts some initial setup needs to be performed to confgure the
+After the router starts some initial setup needs to be performed to configure the
 network, eg
 
 ```
@@ -310,10 +310,11 @@ debian@client:~$
 
 ### Openwrt settings
 
-The software flow offloading seems to make a different on the edge router itself
-a significant. This is set within openwrt here: Network->Firewall->Routing/NAT
-Offloading->"Software flow offloading" is checked. I don't know what this tunes,
-but it dome seem to greatly effect throughput:
+The software flow offloading seems to make a difference on the edge router
+itself, and a significant one. This is set within openwrt here:
+Network->Firewall->Routing/NAT Offloading->"Software flow offloading" is
+checked. I don't know what this tunes, but it does seem to greatly affect
+throughput:
 
 Before:
 

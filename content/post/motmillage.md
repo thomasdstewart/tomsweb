@@ -1,5 +1,5 @@
 ---
-title: "MOT Millage"
+title: "MOT Mileage"
 summary: ""
 authors: ["thomas"]
 tags: ["car", "graph"]
@@ -9,16 +9,16 @@ date: 2021-06-30 22:50:00
 
 Recently when checking the MOT on my car using the
 [Check the MOT history of a vehicle](https://www.gov.uk/check-mot-history)
-GOV.UK service I discovered that the entire car's millage history is recorded.
-This made me quite interested in my Toyota Celica 2002 millage over the years. I
-first got in 2004 when it was 2, the first MOT was in 2005. However it seems the
-services history starts at 2007, which if I recall was when MOT became a lot
-more electronic.
+GOV.UK service I discovered that the entire car's mileage history is recorded.
+This made me quite interested in my Toyota Celica 2002 mileage over the years.
+I first got it in 2004 when it was 2 years old, and the first MOT was in 2005.
+However it seems the service history starts in 2007, which if I recall was when
+MOT became a lot more electronic.
 
-Here is the millage data, I calculated the miles since the last MOT column. The
-average annual millage is 9525.
+Here is the mileage data, I calculated the miles since the last MOT column. The
+average annual mileage is 9525.
 
-| MOT Date   | Millage on clock | Calculated miles since last MOT | Notes       |
+| MOT Date   | Mileage on clock | Calculated miles since last MOT | Notes       |
 | ---------- | ---------------- | ------------------------------- | ----------- |
 | 2007-02-22 | 24971            |                                 |
 | 2008-02-21 | 33622            | 8651                            |
@@ -33,7 +33,7 @@ average annual millage is 9525.
 | 2017-03-22 | 122246           | 11385                           |
 | 2018-03-21 | 132911           | 10665                           |
 | 2019-03-20 | 144742           | 11831                           |
-| 2020-03-17 | 153386           | 8644                            | COVD-19!    |
+| 2020-03-17 | 153386           | 8644                            | COVID-19!   |
 | 2021-03-27 | 158314           | 4928                            |
 | 2022-03-25 | 165704           | 7390                            |
 | 2023-03-24 | 173678           | 7974                            |
@@ -69,7 +69,7 @@ So just using Google Charts this looks like:
         ]);
 
         var options = {
-                title: 'Distance my Toyota Celeca drove since last MOT',
+                title: 'Distance my Toyota Celica drove since last MOT',
                 hAxis: {title: 'Year'},
                 vAxis: {title: 'Distance (miles)'},
                 legend: 'none'

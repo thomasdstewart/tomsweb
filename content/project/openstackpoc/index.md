@@ -1,32 +1,32 @@
 ---
-title: "Openstack proof of concept"
+title: "OpenStack proof of concept"
 summary: ""
 authors: ["thomas"]
 tags: ["openstack", "linux"]
 categories: []
 date: 2016-03-18
-aliases: [/tomsweb/CentOSOpenstackPOC/]
+aliases: [/tomsweb/CentOSOpenStackPOC/]
 ---
 
 ## Introduction
 
-This is a short howto on creating a small Openstack proof of concept on CentOS.
-The aim is to create a proof of concept Openstack Liberty deployment on a single
+This is a short howto on creating a small OpenStack proof of concept on CentOS.
+The aim is to create a proof of concept OpenStack Liberty deployment on a single
 Linux testing machine, where the deployment matches real world hardware
-deployments. The aim is not to just install all the Openstack components in a
+deployments. The aim is not to just install all the OpenStack components in a
 single machine or virtual machine. The aim is to make use of Linux, KVM and
-libvirt to create virtual hardware to run the various Openstack components to
+libvirt to create virtual hardware to run the various OpenStack components to
 match a real world deployment. Each virtual machine represents what could be a
 physical host. It will use CentOS 7 as the base operating system and use the RDO
-Openstack packages. This matches the Red Hat Openstack Platform, however does
-not need subscriptions to install and test test.
+OpenStack packages. This matches the Red Hat OpenStack Platform, however does
+not need subscriptions to install and test.
 
 The deployment will use tripleo and ironic for deployment and provisioning.
-Meaning that a small cutdown Openstack cloud called the undercloud will look
-after the hardware. Then this will deploy a production Openstack cloud with all
+Meaning that a small cut-down OpenStack cloud called the undercloud will look
+after the hardware. Then this will deploy a production OpenStack cloud with all
 the Components running, this is called the overcloud. The deployment consist of
 1 x undercloud virtual machine and 3 x overcloud virtual machines. One of these
-machines will run all the usual Openstack components (ie be a Controller in
+machines will run all the usual OpenStack components (ie be a Controller in
 RDO/Red Hat terms) and the other two will run Nova (ie be Compute in RDO/Red Hat
 terms).
 
@@ -48,12 +48,12 @@ A few preparations are needed before getting started. First you need a Linux
 machine, the more CPUs, memory and fast disk the better. This deployment was
 done on an Intel i5 laptop with 16GB RAM and a SSD. Next you need to get KVM and
 libvirt running. I used Debian and a simple "apt-get install virt-manager" was
-enough for me to start playing. However this should be very dooable on any other
+enough for me to start playing. However this should be very doable on any other
 Debian or Fedora derived distribution.
 
 Next we need to think about the software, given that there may be multiple
-permutations and a little trial and error for the install I setup a local mirror
-type setup. This is not actually needed, but it speeds up the install. Ideally
+permutations and a little trial and error for the install I set up a local
+mirror. This is not actually needed, but it speeds up the install. Ideally
 having a full CentOS mirror is best. However I was not able do that in this
 instance. I had a restricted network connection that was usable but
 frustratingly slow. I took the CentOS-7-x86_64-Everything-1511.iso and loopback
@@ -62,7 +62,7 @@ In order to speed the network up further I also installed the Squid web proxy
 and tuned it to store large files. While this is getting a little off topic I
 think it's worth including some brief notes on how to do this.
 
-To get the IOS mounted on boot make an entry in /etc/fstab like the following:
+To get the ISO mounted on boot make an entry in /etc/fstab like the following:
 
 ```
 $ cat /etc/fstab | grep CentOS
@@ -96,9 +96,9 @@ from alternative mirrors. I get round this by rewriting the repo files and
 instructing the build process to always use the cache. Again with a full mirror
 of Centos and RDO it should be possible to do this offline. We want to tell
 squid to allow access from a few virtual networks we will create, tell it to
-store large objects, get it to use disk cache, up the refresh pattern tof rpm,
-deb and iso files to a long time and lasty tell it to shutdown quickly. In
-anycase here were the changes I made to Squid which sped up the multiple updates
+store large objects, get it to use disk cache, up the refresh pattern to rpm,
+deb and iso files to a long time and lastly tell it to shutdown quickly. In
+any case here were the changes I made to Squid which sped up the multiple updates
 from Centos 1511 to present updates:
 
 ```
@@ -134,10 +134,10 @@ $
 ```
 
 Regarding nested virtualization, given that we are going to run a Nova compute
-node in a virtual machine we will need some form of nested virtulization. We
+node in a virtual machine we will need some form of nested virtualization. We
 could give the option "--libvirt-type qem" to the "openstack overcloud deploy"
 command to just use qemu inside the virtual machine, however we can instruct KVM
-to allow nested virtualizaton. The sysfs file
+to allow nested virtualization. The sysfs file
 /sys/module/kvm_intel/parameters/nested show the current value. A quick way to
 configure this is:
 
@@ -162,11 +162,11 @@ When looking at the example snippets the "$ " prompt is used. The lower boxes
 are the virtual machines that run on the above mentioned host. The red network
 is the provisioning network. For example a real host would have a first nic that
 would accept IPMI command and be able to PXE boot with out adding any other
-bonding, lacp or vlan complexities. The blue network is the Openstack network.
+bonding, lacp or vlan complexities. The blue network is the OpenStack network.
 It carries the production traffic and for the case of the overcloud machines
 each has 2 interfaces which match what a real life setup would look like. It
 should be noted that in this setup multiple VLANs are used on the blue network
-to segregate the traffic. Openstack handles all DHCP and ip address allocation
+to segregate the traffic. OpenStack handles all DHCP and ip address allocation
 for us. This does seem to work however I'm currently not 100% sure how, I can
 only assume that the libvirt virtual switch (which is a Linux bridge) somehow
 handles the vlan segregation.
@@ -253,7 +253,7 @@ speed I placed the kickstart file in my pubic_html directory of my home
 (~/public_html/ks.cfg). That way it would be accessible via Apache (you may need
 to enable the user directory module with "sudo a2enmod userdir"). I left it as
 close to the anaconda-ks.cfg as possible. The post installation script goes on
-to add the RDO reops and does a yum update. It then installs some base Openstack
+to add the RDO reops and does a yum update. It then installs some base OpenStack
 packages. It adds a user called stack, sets the password and gives it full root
 access via sudo. You will need to change the rootpw option and the stack
 password. If you don't have Squid configured then delete the echo line that sets
@@ -354,7 +354,7 @@ gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 EOF
 
-#Originally I install EPEL, however this proved to conflict with the Openstack repo, so this is now commented.
+#Originally I install EPEL, however this proved to conflict with the OpenStack repo, so this is now commented.
 #yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 #mv -v /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.orig
 #cat << EOF > /etc/yum.repos.d/epel.repo
@@ -438,7 +438,7 @@ $
 ### Create overcloud01-03 virtual machines
 
 I created the 3 virtual machines that will become the overcloud, which will form
-the real usable Openstack installation with all the normal Openstack components.
+the real usable OpenStack installation with all the normal OpenStack components.
 The undercloud01 virtual machine will manage these networks. I need to create
 the virtual machines in libvirt which required both the virtual machine and it's
 a associated disk. Again virt-install is used, however it it given the -
@@ -774,7 +774,7 @@ Updated subnet: 34ffb0cf-4818-4a48-9596-702c654e79cb
 
 ### Undercloud and overcloud image creation
 
-When using cloud and Openstack one doe snot usually install the operating
+When using cloud and OpenStack one doe snot usually install the operating
 system. Usually you upload base operating system images that run. Given that the
 Undercloud exists and it an deploy instances onto bare metal via ironic, we
 still need images to actually run the overcloud. There are two options, one is
@@ -824,7 +824,7 @@ dib-deploy.log                   ironic-python-agent.kernel     overcloud-full.v
 [stack@undercloud01 images]$
 ```
 
-The next step is to upload these images into the Openstack image storage system
+The next step is to upload these images into the OpenStack image storage system
 (Glance):
 
 ```
@@ -909,7 +909,7 @@ After this works we can see if virsh is able to communicate with the host:
 ### Prepare config files
 
 The next thing we need to do is tell ironic about the hosts it has available to
-deploy instances to (instances that will run Openstack). We would manually run
+deploy instances to (instances that will run OpenStack). We would manually run
 ironic commands to add the nodes, or we can construct a json file with all the
 details. The first step is to find out the mac addresses of the provisioning
 network overcloud virtual machines and put them in a list. This can be done
@@ -1228,7 +1228,7 @@ specs, the flavours that may match the hardware and the links between the
 compute flavor and the compute install.
 
 We start in the above state and we tell ironic to change the status of one node
-to be manageable. Then we tell it to start this discover process which Openstack
+to be manageable. Then we tell it to start this discover process which OpenStack
 calls introspection.
 
 ```
@@ -1405,9 +1405,9 @@ Deleted node e0aa0867-4e81-452e-a548-bf4c071936f9
 
 ### Add flavors
 
-The next thing to do is create the Openstack nova flavors that will run the over
+The next thing to do is create the OpenStack nova flavors that will run the over
 cloud. We create each one with a ram, cpu count, swap, arch and a profile or
-either control or compute. Later versions of Openstack may do this for you.
+either control or compute. Later versions of OpenStack may do this for you.
 Presumably this should be changed for real hardware where compute nodes might
 have more CPUs than controllers. These commands will create all the required
 favors:
@@ -2194,7 +2194,7 @@ Overcloud Deployed
 ### Connecting to new cloud
 
 Immediately we can source the Undercloud file (stackrc) and the Overcloud file
-(overcloudrc) in turn to inspect the running Openstack services and list of nova
+(overcloudrc) in turn to inspect the running OpenStack services and list of nova
 instances. See below for some examples, note that the service list for the
 Undercloud differs to the Overcloud.
 
@@ -2326,14 +2326,14 @@ overcloud-novacompute-0
 [stack@undercloud01 ~]$
 ```
 
-## Using Openstack on Overcloud
+## Using OpenStack on Overcloud
 
 ### Initial configuration
 
-The Overcloud Openstack installation is now complete. This is where some guides
+The Overcloud OpenStack installation is now complete. This is where some guides
 finish, however I want to show a few things so that it can be used. This is
-where a little Openstack knowledge is useful. The first thing I did was upload
-the Debian Openstack cloud image. You could pick any cloud image you like. I
+where a little OpenStack knowledge is useful. The first thing I did was upload
+the Debian OpenStack cloud image. You could pick any cloud image you like. I
 used the glance command line to upload the image directly from a http location.
 You can use the "- -file" option instead of the "- -location" option to upload
 from the local filesystem.
@@ -2391,7 +2391,7 @@ that local machine the 10.0.0.0/24 network is accessible.
 
 ### Kick the tires with tempest
 
-There is test suite for Openstack and it gets configured by default. This is not
+There is test suite for OpenStack and it gets configured by default. This is not
 necessary, however I found it interesting so I have left it in here. You run the
 tempest utility on the undercloud machine and it runs test against the new
 cloud. It does all sorts of things to make sure its working. Here is a sample
@@ -2441,7 +2441,7 @@ Worker Balance
 ### Create project and user
 
 Now to do some more fun things and actually start an instance. Going from a bare
-Openstack deployment to running instance takes a few steps.
+OpenStack deployment to running instance takes a few steps.
 
 Firstly create a new project and user:
 

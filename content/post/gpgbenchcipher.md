@@ -17,5 +17,5 @@ can be quickly discounted. I don't know if ssltunnel suffers from the same
 window limitations that ssh suffers from. I guess using a dedicated vpn would do
 the trick. However I liked the idea of using gpg. I was not sure which cipher to
 use so I decided to run a few benchmarks to see. The results are on my site.
-Once the encrypted file has been created then it can be transfered using any of
+Once the encrypted file has been created then it can be transferred using any of
 the available plain text mechanisms. I think nc or ftp have the least overhead.

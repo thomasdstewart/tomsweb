@@ -13,7 +13,7 @@ and walk away. This little piece just documents how I've got my systems setup.
 
 I've got systemd-resolved enabled and running, and I have also got
 /etc/resolv.conf linked to /run/systemd/resolve/stub-resolv.conf, this puts
-systemd-resolved into it's "normal" mode. It then runs a local stub DNS server
+systemd-resolved into its "normal" mode. It then runs a local stub DNS server
 and listens on localhost. It also takes care to create a working resolv.conf
 file. So in essence local DNS queries go to systemd-resolved. Now meanwhile
 NetworkManager is also running, it detects that systemd-resolved is calling the
@@ -25,10 +25,10 @@ connection that also uses some other custom domain and DNS server can also be
 used transparently without polluting DNS names to the wrong servers, eg a VPN
 that is given a DNS server of 10.0.0.1 and a search of work will mean that
 foo.lan and foo.work can both be resolved on the system using two different name
-severs.
+servers.
 
 What I wanted is more DNS integration with libvirt. The issue is that libvirt
-also does some network related activates, it's got it's own view of the world
+also does some network related activities, it's got its own view of the world
 and can go a create bridges, various iptables to allow NAT to work and it also
 spawns a dnsmasq process as a helper for the VM's and this acts as a DHCP and
 DNS server. By default on Debian you get an external network with
@@ -37,7 +37,7 @@ NetworkManager it's created and managed via libvirt, eg it does not have an
 entry in /etc/NetworkManager/system-connections/, and even if it had libvirt
 would ignore it.
 
-So to allow the system to talk to the libvirt dnsmaq process there has to be
+So to allow the system to talk to the libvirt dnsmasq process there has to be
 some sort of linkage. The way this is configured usually is for NetworkManager
 to use a ~ syntax for the dns search, thus is ~virt is set in the search then
 foo.virt is directed to the dns servers set in that connection. However because
@@ -66,7 +66,7 @@ libvirt creates virbr0 when you run: "sudo nmcli connection add type dummy
 ifname virbr0-dns con-name virbr0-dns ipv4.method manual ipv4.addresses
 192.168.122.254/32 ipv4.dns 192.168.122.1 ipv4.dns-search '~virt virt'
 ipv6.method disabled" the queries for foo.virt are directed to 192.168.122.1 and
-whats more virt is added to the serch list so foo should also resolve.
+what's more virt is added to the search list so foo should also resolve.
 
 While I was configuring this to test I found the following useful to restart
 resolved, turn up it's debug level, flush it's cache, follow it's log and start
@@ -207,7 +207,7 @@ for br in /var/lib/libvirt/dnsmasq/*.macs; do
                         virsh --connect qemu:///system net-update default add ip-dhcp-host "<host mac='$mac' name='$name' ip='$ip' />" --live --config || true
                         echo "done."
                 else
-                        echo "allready added."
+                        echo "already added."
                 fi
 
                 # Add to default.addnhosts
@@ -218,7 +218,7 @@ for br in /var/lib/libvirt/dnsmasq/*.macs; do
                         virsh --connect qemu:///system net-update default add dns-host "<host ip='$ip'><hostname>$name</hostname></host>" --live --config || true
                         echo "done."
                 else
-                        echo "allready added."
+                        echo "already added."
                 fi
         done
 done
@@ -228,7 +228,7 @@ TODO:
 
 - The updatelibvirtdns.sh script never delete entries.
 - The systemd unit should search for all \*.macs files, it seems that
-  PathModifiedGlob does not exist yet so mutiple path units need to be created,
-  or paramaterised ones created.
+  PathModifiedGlob does not exist yet so multiple path units need to be
+  created, or parameterised ones created.
 - The NetworkManager dispatcher should add host entry in libvirt for dummy dns
   interface to reserve the IP.

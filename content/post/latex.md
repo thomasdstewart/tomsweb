@@ -22,10 +22,10 @@ sort of word processor, initially it seems very odd but after you get over the
 initial change in mindset, you will wonder how you used Word at all to create
 documents of more than 10 pages. The main advantage is that you just do the
 writing, then later it makes it pretty for you. This means that while you are
-writing you don't waste you time with formatting. It does all the formatting for
-you as well as creating the page of contents, list of figures, page numbers,
-etc. It is also totally free. I have a few links for you to peruse at your
-leisure. Don't be intimidated, it a lot easier that it looks.
+writing you don't waste your time with formatting. It does all the formatting
+for you as well as creating the page of contents, list of figures, page
+numbers, etc. It is also totally free. I have a few links for you to peruse at
+your leisure. Don't be intimidated, it a lot easier than it looks.
 
 A very short page about what it is:
 http://scottmcpeak.com/latex/whatislatex.html and why to use it:

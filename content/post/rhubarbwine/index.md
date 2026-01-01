@@ -13,7 +13,7 @@ date: 2021-07-23 11:03:00
   21/07/2021 after cutting 3.348 kg)
 - Add sugar at a 5:3 rhubarb:sugar ratio (21:00 21/07/2021 2.009 kg of sugar was
   added, mixed and left to stand)
-- Wait for 48-36 hours (13:30 23/07/2021 all sugar dissolved)
+- Wait for 36-48 hours (13:30 23/07/2021 all sugar dissolved)
 - Filter into demijohn, (2.4L therefore ~0.4L rhubarb juice)
 - Use two teabags in jug, add 300ml of boiling water, brew for 5 min, remove
   bags and top to 300ml add to demijohn
@@ -23,17 +23,17 @@ date: 2021-07-23 11:03:00
   like 1:0.75?)
 - take some liquid and read with hydrometer (60)
 
-racked on 31st Julya, g read 0.988, eg (1.060-0.988)\*131 = 9.4% abv
+racked on 31st July, g read 0.988, eg (1.060-0.988)\*131 = 9.4% abv
 
-all but stopped grownth by 3rd Aug add 200ml+1 teaspoon of, to demi on 5th
+all but stopped growth by 3rd Aug; added 200ml and one teaspoon of sugar to the demijohn on 5th
 racked on
 
 ## Calculations
 
-A hydrometer measure the density of a liquid, water is 1.0. Lots of dissolved
+A hydrometer measures the density of a liquid, water is 1.0. Lots of dissolved
 sugar is more dense, so would read higher eg 1.1, the hydrometer floats lower.
-Once sugar is converted to alcohol is reads lower as water alcohol solution is
-less dence than water, and thus the hydrometer floats higher
+Once sugar is converted to alcohol it reads lower as a water alcohol solution is
+less dense than water, and thus the hydrometer floats higher
 
 (final gravity 'FG' - original gravity 'OG') \* 131.25 = ABV%
 

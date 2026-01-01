@@ -30,7 +30,7 @@ wanted to learn.
 
 I decided for a nice round 8 for the number of Raspberry Pi's, it seemed to be
 large enough to spread the different components, but small enough not to get too
-crazy. I Looking at my notes, I looks like I found
+crazy. Looking at my notes, it looks like I found
 http://www.pidramble.com/wiki/hardware as a useful reference. So we need the
 Pi's, some sd cards for storage, a desktop usb charger to power them, some usb
 power cables, a desktop 8 port switch, some network cables and a few Raspberry
@@ -70,8 +70,8 @@ basket (~May 2016).
   https://www.amazon.co.uk/Mepro-Raspberry-4-layer-Enclosure-Support/dp/B01COTH4V2/ref=sr_1_2?ie=UTF8&qid=1462455707&sr=8-2&keywords=Mepro+Raspberry+Pi+case
 
 I also considered getting a pair of desktop chargers to power more Pi's, which
-would need a larger switch, however I decided against, at the price of the extra
-Pi's started to get too much, Power (max 12 Pi's) 2\*15.99 = £31.98 iMuto
+would need a larger switch, however I decided against it as the price of the
+extra Pi's started to get too much, Power (max 12 Pi's) 2\*15.99 = £31.98 iMuto
 50W/10A 6-Port USB Charger Desktop Charging Station Wall Charger
 http://www.amazon.co.uk/6-Port-Charger-Desktop-Charging-Station/dp/B017IIW8NI/ref=sr_1_17?ie=UTF8&qid=1456766759&sr=8-17-spons&keywords=usb+charger+small&psc=1
 http://www.amazon.co.uk/NETGEAR-GS116UK-16-Port-Gigabit-Unmanaged/dp/B0007SQEPK/ref=sr_1_1?ie=UTF8&qid=1457473391&sr=8-1&keywords=16+port+netgear
@@ -92,19 +92,19 @@ http://www.amazon.co.uk/NETGEAR-GS116UK-16-Port-Gigabit-Unmanaged/dp/B0007SQEPK/
 
 ## Construction
 
-Actually building it was easy, just a case of screwing it all together and cable
-the cables nicely.
+Actually building it was easy, just a case of screwing it all together and
+cabling the cables nicely.
 
 ## Debian
 
 There any many ways to provision software on hardware and many of the existing
-Raspberry Pi guides consist of taking a Raspbian image doing a good deal oh
+Raspberry Pi guides consist of taking a Raspbian image doing a good deal of
 modification by hand. I wanted to avoid any custom by hand work, I wanted
 something very reproducible, something where I could wipe the lot and re-image
 easily, but also I didn't want to spend all the project time on the provisioning
 system without any OpenStack experimentation. While Raspbian is cool, I also
 wanted to run Debian testing/unstable so that everything was as up to date as
-possible so try an see off any issues when running new OpenStack software, so
+possible to try and see off any issues when running new OpenStack software, so
 for this reason I settled on running Debian on the Pi. While Debian does not
 have a kernel for the Pi, it only needs a few packages from
 archive.raspberrypi.org, the bootloader, kernel and firmware packages. In the
@@ -950,18 +950,18 @@ echo PURGE | sudo debconf-communicate nova-consoleproxy
 
 ### openstack-deploy
 
-- keystone scripts depends on mysql
+- keystone scripts depend on mysql
 - typo
   http://anonscm.debian.org/cgit/openstack/openstack-meta-packages.git/tree/src/preseed-lib#n18
   should be if [ ! -z "${7}" ] ; then
   http://anonscm.debian.org/cgit/openstack/openstack-meta-packages.git/tree/src/preseed-lib#n121
-  assumes keystone ip is endpoint ip postrm dont remove endpoint
+  assumes keystone ip is endpoint ip postrm don't remove endpoint
 
 ### qemu build deps
 
 - qemu qemu-system-x86
-- add libspice-server-dev libspice-protocol-dev as depend for linux-armhf
-  blocked by libspice-server-dev not in armhh
+- add libspice-server-dev libspice-protocol-dev as dependencies for linux-armhf
+  blocked by libspice-server-dev not in armhf
 
 ```
 $ dpkg --print-architecture

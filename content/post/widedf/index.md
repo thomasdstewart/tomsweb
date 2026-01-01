@@ -7,7 +7,7 @@ categories: []
 date: 2007-01-19
 ---
 
-I've writen a patch to coreutils to add a "-w" option to df to make the output
+I've written a patch to coreutils to add a "-w" option to df to make the output
 wider and on one line. Patch: [coreutils-6.7-df.patch](coreutils-6.7-df.patch)
 Pre-compiled binary: [df](df)
 

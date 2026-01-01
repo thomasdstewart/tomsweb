@@ -12,9 +12,9 @@ aliases: [/tomsweb/RaspebrryPiTapeRemote/]
 
 ## Introduction
 
-I have known about reel to reel tape for sometime, my Dad has an old 1960's
+I have known about reel to reel tape for some time, my Dad has an old 1960's
 player in the attic. However it is only relatively recently that I found out
-that there are some people that still used them for music listening purposes. I
+that there are some people that still use them for music listening purposes. I
 think my first real exposure was on the
 [Techmoan](https://www.youtube.com/user/Techmoan]) YouTube channel, I saw a
 video about
@@ -53,7 +53,7 @@ down is random tape from "masters". These are reels of used tape that were once
 used in some sort of studio. There will be cuts and the amount of tape per reel
 will vary. There is another form available on ebay which is old consumer tape of
 varying quality. I stayed away from the latter and managed to find a good deal
-on ebay for 10 used reals of tape that were discarded from an archive. They were
+on ebay for 10 used reels of tape that were discarded from an archive. They were
 "masters" for an audio book, so had cut marks in and the amount of tape on each
 reel varies. However all the reels were nice polished aluminium and mostly full.
 As with audio in general there is a fair amount of snake oil about and I
@@ -75,19 +75,19 @@ This all leads me to this project: Why not connect a Raspberry Pi up to the tape
 player and remotely control it!
 
 Which is exactly what I did. I made a cable from the tape player to a relay
-board, connected the relay board to teh GPIO pins on a raspberry pi, connected a
+board, connected the relay board to the GPIO pins on a raspberry pi, connected a
 usb IR receiver to the Raspberry Pi and wrote a two short python scripts to
 stick it all together. So now I can control my 20+ year old tape player using my
 new remote control or mobile phone!
 
 ## Signaling and Connectors
 
-While the project was in it's inception phase, I started researching how the
+While the project was in its inception phase, I started researching how the
 tape player remote controls work and how I could connect a new cable to the tape
 player. I found some ebay listings where people have created replacement remote
 control units and even old remote control units. However I ruled both these
 options out as they cost too much. However the service manual did have a
-schematic that had the players circuit diagram. So I was able to understand what
+schematic that had the player's circuit diagram. So I was able to understand what
 sort of circuit to make. If this was a modern device it would use some sort of
 advanced communication (i2c, 1wire, serial, usb, etc). However this was old. The
 connector on the back of the player had a number of pins and one was ground.
@@ -107,7 +107,7 @@ connection sockets and plugs that were fine for low voltage non commercial
 applications. I'm not sure when the DIN series came along, I guess a 6 connector
 one would do. However the manufactures chose a socket and plug that was actually
 used for vacuum tubes but it was also available in plug and socket form with
-nice housing to use. I found out that Farnell listed it in there parts catalogue
+nice housing to use. I found out that Farnell listed it in their parts catalogue
 which also had a copy of the spec sheet for the connectors.
 
 I got one of each of the below (shipped from the US):

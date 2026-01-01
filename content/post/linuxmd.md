@@ -9,7 +9,7 @@ date: 2009-05-27
 
 ## /proc/mdstat information
 
-Linux has a software raid subsystem and it called md. It is generally quite well
+Linux has a software raid subsystem and it is called md. It is generally quite well
 documented. However the md status file in the proc pseudo filesystem is not
 documented at all. So this is one of those cases where you have to
 [read the source](http://lxr.linux.no/linux/drivers/md/md.c#L4922) to understand
@@ -61,7 +61,7 @@ $
   "resync=DELAYED" appears when the array is queued for a sync. If the device
   happens to be re-syncing there is a little progress bar, the eta and a speed
   current speed. As a side note if you reboot before the sync is done, it is
-  just started form scratch again on the next boot.
+  just started from scratch again on the next boot.
 
 A little scary, but this is what a mdstat look like when there are failed
 devices:-
@@ -82,7 +82,7 @@ unused devices: < none >
 $
 ```
 
-This is less scary, this is sample output when an array is syncing
+This is less scary; this is sample output when an array is syncing
 
 ```
 Personalities : [raid1]
@@ -95,7 +95,7 @@ md0 : active raid1 sdb2[2] sda2[0]
 unused devices:
 ```
 
-this is what's logged to syslog
+This is what's logged to syslog
 
 ```
 Feb 17 19:13:49 localhost kernel: md: trying to hot-add unknown-block(22,1) to md0 ...
@@ -106,7 +106,7 @@ Feb 17 19:13:49 localhost kernel:  disk 0, wo:0, o:1, dev:hda1
 Feb 17 19:13:49 localhost kernel:  disk 1, wo:1, o:1, dev:hdc1
 Feb 17 19:13:49 localhost kernel: md: syncing RAID array md0
 Feb 17 19:13:49 localhost kernel: md: minimum _guaranteed_ reconstruction speed: 1000 KB/sec/disc.
-Feb 17 19:13:49 localhost kernel: md: using maximum available idle IO bandwith (but not more than 200000 KB/sec) for reconstruction.
+Feb 17 19:13:49 localhost kernel: md: using maximum available idle IO bandwidth (but not more than 200000 KB/sec) for reconstruction.
 Feb 17 19:13:49 localhost kernel: md: using 128k window, over a total of 15007488 blocks.
 Feb 17 19:26:15 localhost kernel: md: md0: sync done.
 Feb 17 19:26:15 localhost kernel: RAID1 conf printout:

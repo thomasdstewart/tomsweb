@@ -17,8 +17,8 @@ playing any music, then for the last few hours I played music I had not played
 before.
 
 I then started trying to analyse the dump. As amazing as
-[Wireshark](http://www.wireshark.org/) is it's really not too good at looking as
-large dumps or large amount of data. I then found
+[Wireshark](http://www.wireshark.org/) is it's really not too good at looking at
+large dumps or large amounts of data. I then found
 [Chaosreader](http://chaosreader.sourceforge.net/) which made it very easy. It
 basically looks at one big pcap file and splits it into the individual tcp
 steams, analyses them and produces a nice html report. Check out the example
@@ -40,7 +40,7 @@ c: CONNECT A2.spotify.com:80 HTTP/1.0
 s: HTTP/1.0 403 Forbidden
 ```
 
-And finally it tries 443 and establishes a ssl connection. It is this connection
+And finally it tries 443 and establishes an SSL connection. It is this connection
 that lasts for the duration that the Spotify client runs.
 
 ```
@@ -80,27 +80,27 @@ Now back to the main stream. Once the client gets a connection to the Spotify
 servers and it establishes what looks like an encrypted stream. Once this
 happens the entirety of the conversation with the server looks like gibberish.
 This is a bit annoying as I can't really look further into how it works. However
-I'm still able to see how much data is transfered and thus can calculate average
+I'm still able to see how much data is transferred and thus can calculate average
 data rates.
 
 I looked at the TCP stream between 0:00 and 6:00. The music was stopped for the
 whole of the time. As you might expect not much activity happened during this
 time, 7.5 KiB was sent to the server and 9.7 KiB was received. The average
-packet size was 77 bytes long. The overall data rate was 5 bytes per second, ie
+packet size was 77 bytes long. The overall data rate was 5 bytes per second, i.e.
 0.005 KiB/s. Almost no traffic!
 
 I also looked at the half hour window from 12:00 to 12:30 where I played music I
 had not played before and thus was not cached locally. Spotify relies heavily on
 local cache, ~/.wine/drive_c/users/thomas/Local Settings/Application
 Data/Spotify/Storage is currently 1.2G on my work desktop where I don't have any
-off line play lists. During this 30 minute window, 10.2 KiB was sent from the
+offline play lists. During this 30 minute window, 10.2 KiB was sent from the
 server and 26.4 MiB was received. The average packet size was 775 bytes long.
-The Overall data rate was 16.5 KiB/s. This is alot less than I expected.
+The overall data rate was 16.5 KiB/s. This is a lot less than I expected.
 
 After looking at the Wikipedia list of
 [mobile telephone bandwidths](http://en.wikipedia.org/wiki/List_of_device_bandwidths#Mobile_telephone_interfaces)
 I conclude that to run Spotify on a phone both GSM and GPRS are too slow, 1.8
-KiB/s and 7.2 KiB/s respectfully. Only EDGE and faster is good enough at
+KiB/s and 7.2 KiB/s respectively. Only EDGE and faster is good enough at
 48KiB/s. Of course this assumes that the mobile client uses the same bandwidth.
 The other thing to note is that an 8M internet connection should be able to
 sustain 62 Spotify users, assuming that they are all listening to new music.

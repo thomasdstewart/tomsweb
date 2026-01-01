@@ -14,14 +14,14 @@ unleaded 99 octane. I have tried both the normal and the super, I've not really
 noticed a massive difference, however the super feels better, but that could
 just be me imagining it. So I decided to do a not really scientific experiment
 to find out which one really is best. Is that extra 5p per litre worth it? I get
-petrol every week and an half or so and fill my 50 litre tank, so thats about
+petrol every week and a half or so and fill my 50 litre tank, so that's about
 [£85](http://www.wolframalpha.com/input/?i=%2850+litres+*+%28%C2%A30.05+%2F+litre%29%29+*+%2852+weeks+%2F+1.5%29)
 difference.
 
 My Celica does not have mileage readout so I had to calculate it the old
 fashioned way. Which is: get the tank almost empty, fill it to the brim, take
 note of the odometer reading, drive until the tank is almost empty, fill it
-again to the brim and take note of the odometer reader again. That way the
+again to the brim and take note of the odometer reading again. That way the
 petrol sloshing about in the bottom of the tank is not counted. The odometer
 difference is the total distance and the amount filled the second time is the
 fuel volume. I did this twice, once with regular and once with super. Between
@@ -37,4 +37,4 @@ On with the results:
 
 So as you can see the numbers are all very similar, the Super is 1 mpg better
 but as it costs a little more it actually works out the same! So I'm going to
-stick with super which feels better and gets be an extra 15 miles per tank.
+stick with super which feels better and gets me an extra 15 miles per tank.

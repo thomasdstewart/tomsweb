@@ -9,7 +9,7 @@ aliases: [/tomsweb/Kdump/]
 ---
 
 I recently had to use kdump to do some investigation into why my Lenovo W540
-started crashing with recent Linux kernels. I all started when I upgraded from
+started crashing with recent Linux kernels. It all started when I upgraded from
 Linux 3.14 to 3.16 and I started having random crashes soon after booting. Being
 lazy I just ignored it and continued to use the old kernel expecting the issue
 to go away. However try as I might the issue persisted in 3.17, 3.18, 3.19 and
@@ -23,7 +23,7 @@ months.
 
 I then decided to do something about it. So I methodically compiled each kernel
 by hand and ran each and recorded what worked and what didn't. I found that 3.14
-was solid, 3.15 had issues with resolution but was ok, 3.16 was ok ish and 3.17
+was solid, 3.15 had issues with resolution but was ok, 3.16 was ok-ish and 3.17
 to 4.0 were not. Sometimes booting and getting to gdm, sometimes not booting and
 sometimes running for a few minutes after logging in. This confirmed what I'd
 been experiencing in the past.
@@ -32,8 +32,8 @@ I decided to give kdump a try in order to capture that must be some sort of
 kernel issue as the system seemed to lock up when X was running and I was
 getting no output or logs.
 
-This doubles a quick setup guide for kdump on Debian and to document process I
-went thought to workaround my issue.
+This doubles as a quick setup guide for kdump on Debian and to document process
+I went through to workaround my issue.
 
 So, what is kexec? A very hand wavy explanation of kdump is that if the kernel
 has issues, it kexecs from its current running position to a fixed area of
@@ -52,8 +52,8 @@ dumps. You also need to "-dbg" (linux-image-$(uname -r)-dbg) version of
 linux-image that contains all the various debugging symbols, eg
 linux-image-4.0.0-1-amd64-dbg.
 
-Step two is to enable it. It needs some kernal parameters, so edit
-/etc/default/grub and run update-grub afterwards, somethings like this works for
+Step two is to enable it. It needs some kernel parameters, so edit
+/etc/default/grub and run update-grub afterwards, something like this works for
 me:
 
 ```
@@ -373,7 +373,7 @@ crash> dis -l evo_wait
 crash>
 ```
 
-Do it seems this is the point that it dies:
+So it seems this is the point that it dies:
 
 ```
 /build/linux-Xbe5gu/linux-4.0.2/drivers/gpu/drm/nouveau/nv50_display.c: 420
@@ -389,7 +389,7 @@ it seems that it's this assignment that fails:
 dmac->ptr[put] = 0x20000000;
 ```
 
-dmac is actually a pointer thats passed into the evo_wait function, this is
+dmac is actually a pointer that's passed into the evo_wait function, this is
 where I stood back.
 
 I also had a look at /var/crash/201505221035/dmesg.201505221035 and noticed that

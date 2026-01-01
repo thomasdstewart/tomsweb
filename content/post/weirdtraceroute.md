@@ -8,11 +8,11 @@ date: 2010-07-29 22:56:00
 ---
 
 I was looking at a development web site I am involved with and I was interested
-in where the site was in the big bad world, so I decided to traceroute to it[1].
-What seemed very unusual was that the 5th hop reported an ip address in the
+in where the site was in the big bad world, so I decided to traceroute to it [1].
+What seemed very unusual was that the 5th hop reported an IP address in the
 10.0.0.0/8 private address space. To quote Sam "10.what now?". I'm still amazed
 that packets with source addresses with private addresses are routed across the
-internet![2]
+Internet![2]
 
 ```
 [1]
