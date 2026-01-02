@@ -60,6 +60,6 @@ iface ppp0 inet ppp
         provider giffgaff
 ```
 
-Then the ppp0 interface will just start at boot and the usual debian ifup and
+Then the ppp0 interface will just start at boot and the usual Debian ifup and
 ifdown commands will work. Something like vnstat will be good enough to capture
 and log the traffic.

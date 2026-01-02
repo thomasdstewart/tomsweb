@@ -161,7 +161,7 @@ networking. The top machine in the hypervisor host, in my case a real laptop.
 When looking at the example snippets the "$ " prompt is used. The lower boxes
 are the virtual machines that run on the above mentioned host. The red network
 is the provisioning network. For example a real host would have a first nic that
-would accept IPMI command and be able to PXE boot with out adding any other
+would accept IPMI command and be able to PXE boot without adding any other
 bonding, lacp or vlan complexities. The blue network is the OpenStack network.
 It carries the production traffic and for the case of the overcloud machines
 each has 2 interfaces which match what a real life setup would look like. It

@@ -8,12 +8,12 @@ date: 2012-12-09 20:51:00
 ---
 
 Ever used a laptop with a wireless and a copper network interface? Practically
-every laptop have both, so chances are you have. Have you ever wondered what
+every laptop has both, so chances are you have. Have you ever wondered what
 happens if you plug in with copper, turn wireless on and have both interfaces
-configured with an IP address. I decided to do this and have have a quick look
+configured with an IP address. I decided to do this and have a quick look
 at the routing table to see what goes on.
 
-TL;DNR windows is sane and uses copper is you configure both.
+TL;DR windows is sane and uses copper if you configure both.
 
 Here is a sample ipconfig with some slight anonymization:
 
@@ -100,6 +100,6 @@ one with the lowest metric uses the 10.0.1.24 interface, which is the copper
 one. So it turns out that Windows seems sane and favours the faster copper
 interface when both are configured and working.
 
-As an aside on Linux using a default network-manager setup, is also seems sane.
+As an aside on Linux using a default network-manager setup, it also seems sane.
 You get one default gateway but the copper interface is used if it is available.
-The default gateway changes when the network interface go up and down.
+The default gateway changes when the network interfaces go up and down.

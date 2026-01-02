@@ -9,7 +9,7 @@ date: 2025-04-04 10:38:00
 
 ## Intro
 
-This is far far from exhastive, but I needed to perform some light benchmarks in
+This is far from exhaustive, but I needed to perform some light benchmarks in
 CRC, MD5 and SHA hashing. The idea was to compare crc, md5 and sha as well as
 compare Naive Python hashing to Linux based tools.
 

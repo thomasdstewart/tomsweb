@@ -481,8 +481,8 @@ done
 ## Pre OpenStack installation setup
 
 If all goes well, each Pi will boot with a different 192.168.10.0/24 address, so
-a quick "sudo ip add add 192.168.10.250/24 dev eth0" on my local desktop will
-get them reacable on the network.
+a quick "sudo ip addr add 192.168.10.250/24 dev eth0" on my local desktop will
+get them reachable on the network.
 
 ### Make myself at home
 
@@ -508,9 +508,9 @@ apt-get install openstack-deploy man-db mysql-client debconf-utils crudini munin
 
 The rubus02 and rubus03 Pi's will need to have their ethernet ports connected to
 an Open vSwitch bridge called br-ex. To do this I comment out each Raspberry
-Pi's respective interface in /etc/network/interfaces.d/eth0. If Open vSwtich
+Pi's respective interface in /etc/network/interfaces.d/eth0. If Open vSwitch
 fails for some reason, it's handy to have another way into the machine, so I
-also edit /etc/network/interfaces.d/wlan0 so that that Pi also connected to
+also edit /etc/network/interfaces.d/wlan0 so that the Pi is also connected to
 Wireless. Next I install openvswitch-switch and create a
 /etc/network/interfaces.d/br-ex file for that bridge and reboot.
 

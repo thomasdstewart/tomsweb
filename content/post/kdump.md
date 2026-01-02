@@ -263,7 +263,7 @@ PID: 40     TASK: ffff88046bb26310  CPU: 0   COMMAND: "kworker/0:1"
 crash>
 ```
 
-After a good more more playing I found out that you could load the module
+After a bit more playing I found out that you could load the module
 symbols with the mod command and then show the disassembly with the c code line
 numbers with the dis command:
 

@@ -89,7 +89,7 @@ The routing tables look as follows:
 
 I decided that during the write up I would not obscure the machines when pasting
 commands. The laptop is known as lenovo, the virtual machine is debian, the
-raspberry pi is lace and the raspberry pi 2 is is jessie-rpi. This is just some
+raspberry pi is lace and the raspberry pi 2 is jessie-rpi. This is just some
 general information about the machines. Also note that the machines are not
 running NTP, so timestamps sometimes look odd.
 

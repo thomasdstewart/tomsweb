@@ -136,7 +136,7 @@ wanted to put some wrapping around the setup to protect it more (issue 1).
   It gets its config from the ip parameter from the linux command line
   (skipping this param will cause a dhcp),
   (https://sources.debian.org/src/initramfs-tools/0.140/scripts/functions/#L236)
-  so the kernel params will have have this ip parameter added. Interestingly
+  so the kernel params will have this ip parameter added. Interestingly
   Ubuntu configures resolv.conf when configuring networking automatically, but it
   seems this patch never made it back to Debian
   (https://git.launchpad.net/ubuntu/+source/initramfs-tools/tree/scripts/functions#n461)

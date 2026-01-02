@@ -12,19 +12,19 @@ There are only four types of film! For a while I (and possibly others) have been
 able to categorise all films into four different types. I can't imagine coming
 up with such an idea. Perhaps I read it somewhere, or read it in relation
 stories and writing in general. However no one I have spoken to has heard of it
-and I've not been able to find out much out it. The classic example is the
+and I've not been able to find out much about it. The classic example is the
 original Star Wars trilogy, A New Hope is "into and out of hole", Empire is
 "into hole" and Jedi is "out of hole".
 
 ## into and out of hole
 
 Nearly all films fit in this category. The film starts, everything is happy and
-then something something bad happens. Later on the people over come the issue
+then something something bad happens. Later on the people overcome the issue
 and the film ends.
 
 ## into hole
 
-This the next most common category, these films can be quite depressing. The
+This is the next most common category, these films can be quite depressing. The
 film starts, everything is generally fine and then it just gets worse for the
 people and the film ends. A very good example of this is Requiem for a Dream.
 

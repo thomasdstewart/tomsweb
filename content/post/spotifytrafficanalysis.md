@@ -50,7 +50,7 @@ s: HTTP/1.0 200 Connection established
 
 I'll get back to the main stream of data in a minute. While the client is
 running it makes various requests to some other sites. I think these only happen
-when Spotify social is turned on. There are many many short lived connections to
+when Spotify social is turned on. There are many short lived connections to
 Twitter and Facebook.
 
 ```
