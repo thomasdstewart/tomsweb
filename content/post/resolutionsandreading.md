@@ -15,7 +15,7 @@ read LWN :-(
 I did however keep up the reading and by my standards I have read loads! So far
 I have read:
 
-- Guards Guards - Terry Pratchett
+- Guards! Guards! - Terry Pratchett
 - Blow Fly - Patricia Cornwell
 - Twilight - Stephenie Meyer
 - Starship Troopers - Robert A. Heinlein

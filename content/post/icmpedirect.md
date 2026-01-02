@@ -13,7 +13,7 @@ table. It's a bit hard to read so `ip route show cache 1.2.3.4` is better. For
 example 192.168.1.0/24 is a network that is connected via a host on my
 192.168.0/24 network. My default gateway (192.168.0.1) has a static routing
 entry to the host that gateways for the 192.168.1.0/24 network (192.168.0.57). So
-When a random host on the 192.168.0.0/24 network pings a host on the
+when a random host on the 192.168.0.0/24 network pings a host on the
 192.168.1.0/24 network it first sends to 192.168.0.1 but it sends an ICMP
 redirect saying that in the future it would be better to just send direct to
 192.168.0.57.

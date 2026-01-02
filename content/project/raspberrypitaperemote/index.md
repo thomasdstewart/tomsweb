@@ -165,15 +165,15 @@ power can be drawn from the board.
 The tricky part is understanding how to connect the GPIO header to the relay
 board. There are many guides on this and I found it quite hard to decode them.
 The GPIO pins can be programmed to be input or output, eg send a high or low
-signal or detect a hight or low signal. I understand that signals are either 0v
-or 3.3 volts. So actually actuating the relay's can be an issue. However I found
+signal or detect a high or low signal. I understand that signals are either 0v
+or 3.3 volts. So actually actuating the relays can be an issue. However I found
 that I was able to connect directly from the Pi to the relay board without any
 external power supply. The Pi supplies 5v to the relay board that goes to power
 the relays.
 
 The other issue I wanted to avoid was giving false signals to the tape player.
 Lord only knows what would happen if say all tape functions were activated at
-some for a minute while a Raspberry Pi booted. When my Pi turns on the GPIO ports
+once for a minute while a Raspberry Pi booted. When my Pi turns on the GPIO ports
 have defaults, some are set to IN and some are set to OUT. I found that reading
 the information too tricky so instead I took a Pi and booted the latest Raspbian.
 I then measured the voltage of each of the GPIO pins to find out what the

@@ -30,7 +30,7 @@ md0 : active raid5 etherd/e3.12[12] etherd/e3.11[10] etherd/e3.10[9] etherd/e3.9
       10721828480 blocks level 5, 64k chunk, algorithm 2 [12/11] [UUUUUUUUUUU_]
       [==>..................]  recovery = 13.4% (130652288/974711680) finish=158828.3min speed=87K/sec
 
-The mkfs looks like it won't finish for ages, also there's still not definitive information about stride, stripe and other random things.
+The mkfs looks like it won't finish for ages, also there's still no definitive information about stride, stripe and other random things.
 
 $ sudo mkfs -t ext3 -E stride=16,stripe-width=176 /dev/soda/store
 mke2fs 1.41.3 (12-Oct-2008)

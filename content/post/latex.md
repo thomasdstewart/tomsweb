@@ -38,7 +38,7 @@ Reasons to use it if you're a typesetting geek:
 http://nitens.org/taraborelli/latex and the detailed Wikipedia page about it:
 http://en.wikipedia.org/wiki/LaTeX
 
-The main program for LaTeX on Windows is called MiKTEX, you can get it here:
+The main program for LaTeX on Windows is called MiKTeX, you can get it here:
 http://miktex.org/
 
 Next you need an editor to edit the files, there are loads out there. Notepad

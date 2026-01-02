@@ -20,7 +20,7 @@ NetworkManager is also running, it detects that systemd-resolved is calling the
 shots, so any DNS information it gets it pushed to systemd-resolved. For example
 a WiFi connection with a name server of 192.168.1.1 and DNS search of lan get
 pushed to systemd-resolved and things generally work, eg a search of lan is
-added and resolved sends queries to this given name server. Whats more a VPN
+added and resolved sends queries to this given name server. What's more a VPN
 connection that also uses some other custom domain and DNS server can also be
 used transparently without polluting DNS names to the wrong servers, eg a VPN
 that is given a DNS server of 10.0.0.1 and a search of work will mean that
@@ -142,8 +142,8 @@ $ virsh --connect qemu:///system net-update default add ip-dhcp-host "<host mac=
 $ virsh --connect qemu:///system net-update default add dns-host "<host ip='192.168.122.120'><hostname>debian</hostname></host>" --live --config
 ```
 
-However this configuration is not added as part of virtian machine creation and
-needs to be done for each virtual machine. When machines start this virtual nics
+However this configuration is not added as part of virtual machine creation and
+needs to be done for each virtual machine. When machines start this virtual NICs
 create entries in /var/lib/libvirt/dnsmasq/{networkname}.macs eg virbr0.macs. So
 creating a systemd path unit to monitor this file and when it's modified to run
 a another service, this can then hook in an update script.

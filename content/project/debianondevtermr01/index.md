@@ -25,7 +25,7 @@ that documents some of this, however it self admits that it is more of a
 guidance that exact instructions. Clockwork have done a great job of building a
 working device from the ground up, eg hardware, case, schematics, pcb, firmware,
 and software (for multiple archs). Just the process of creating a working image
-from scratch is an epic piece of work, so clockworkpi's "principal of minimal
+from scratch is an epic piece of work, so clockworkpi's "principle of minimal
 changes" is really great to see. However there are a few sharp edges in the
 official image, I expect mostly down to just the speed of implementation. Some
 things are not implemented very "Debiany", eg it's nicer to configure
@@ -92,7 +92,7 @@ compiler and gets installed into the mbr gap, 8k into the block device, eg
 between the partition table and first partition. Which means that GPT partitions
 can't be used. I think the SoC reads the disk and starts running this code and
 it does print some messages to the serial debug console. It then jumps to
-OenSBI/u-boot, which also needs to be compiled with the cross compiler. Both
+OpenSBI/u-boot, which also needs to be compiled with the cross compiler. Both
 OpenSBI and u-boot need to be compiled separately, afterwards a u-boot utility
 is used to combine both into a single image that gets installed 16M into the
 block device. When execution passed from the SPL to OpenSBI it shows a banner

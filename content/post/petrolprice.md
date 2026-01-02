@@ -14,5 +14,5 @@ between the price of Brent crude oil and the price of petrol at the pump
 excluding duty and VAT.
 
 I concluded that if the price of Brent crude oil stays at $115 per barrel then
-the price of petrol will increase to 136.14 +/- 3.92 pence per litre, with it
-at around 125 at the time of the analysis.
+the price of petrol will increase to 136.14 +/- 3.92 pence per litre, with
+petrol at around 125 at the time of the analysis.

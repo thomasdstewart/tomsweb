@@ -43,9 +43,9 @@ Apparently you can name your starter after 2 weeks, we called ours Moby.
 5. Perform three "stretch and folds" at 30min intervals or when you remember.
    For each pull an edge of dough up and fold it back over itself, rotate the
    bowl 90 degrees and repeat round 6-10 times.
-6. Before going to bed lay out a tea towel sprinkle with flour and put the dough
+6. Before going to bed lay out a tea towel, sprinkle with flour and put the dough
    on it. Then perform an "Envelope Fold", pull a corner down and over the
-   middle, then repeat on the opposite side side after perform the same for the
+   middle, then repeat on the opposite side after performing the same for the
    two other sides. Thus ending with a ball of dough covered in flour. Lift it up
    by the towel and place in a basket then place in the fridge.
 7. Remove from fridge the following evening before Pizza time. If lunch pizza is
@@ -59,7 +59,7 @@ Apparently you can name your starter after 2 weeks, we called ours Moby.
    pizzas, use scissors to cut the dough in half.
 3. Take one half and join up the freshly cut part to in essence turn a
    semicircle into a circle.
-4. Work the dough into a pizza shape and place on a oiled pizza tray.
+4. Work the dough into a pizza shape and place on an oiled pizza tray.
 5. Spread chopped tomatoes around in an even layer from the middle.
 6. Sprinkle oregano over.
 7. Cut the dry type of mozzarella into chunks and put on pizza.
