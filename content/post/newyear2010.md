@@ -7,7 +7,7 @@ categories: []
 date: 2010-01-04 23:35:00
 ---
 
-It's time for some new years resolutions! Hopefully if they are cast in stone
+It's time for some new year's resolutions! Hopefully if they are cast in stone
 (well blog) there is more of a chance of success.
 
 - Stay super healthy for January:
@@ -17,7 +17,7 @@ It's time for some new years resolutions! Hopefully if they are cast in stone
   - No cake or chocolate.
   - Herbal tea during the day with no milk.
   - No burgers, chips or beer.
-  - No getting drink.
+  - No getting drunk.
   - Drinking loads of water.
 - Read more books, not reference books, what I call story books. I think a
   realistic goal is one chapter a week. I have started with Terry Pratchett's

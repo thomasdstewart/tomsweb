@@ -36,7 +36,7 @@ The automatic update process gives the
 its version number and it returns if there is an update or not along with a link
 to the
 [firmware blob](http://cache.websupport.wdc.com/wda4nc40000-02.01.03.img). This
-believe it or not is a tar.gz with the 1st and 16th block swapped where blocks are
+believe it or not, is a tar.gz with the 1st and 16th block swapped where blocks are
 5k. Due to the way the upgrade process works there is no easy way to hook into
 the upgrade process. If a manual firmware image is selected it gets downloaded and a
 script on the device installs the update. If you could trick the upgrade process
@@ -47,7 +47,7 @@ not exist so I abandoned this method.
 ## Telnet
 
 The easiest way I found was to add a telnet service. To do this I removed the
-first disk (bottom) and connected it via a sata to usb converter to my laptop. I
+first disk (bottom) and connected it via a SATA to USB converter to my laptop. I
 did see an existing [wiki page](http://mybookworld.wikidot.com/sharespace) about
 how to do this, but it missed out some large details. It is important to edit
 the filesystem as a broken raid1 mirror, or else on the next boot the root

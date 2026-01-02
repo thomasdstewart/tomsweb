@@ -46,7 +46,7 @@ that is not too far from what I wanted.
 
 {{< figure src="brent_crude_vs_petrol.png" >}}
 
-As you can see this produces quite a positive correlation; this actually
+As you can see, this produces quite a positive correlation; this actually
 surprised me. Linear regression calculated R^2^ as 0.9691. It was at this point
 that I started hitting problems with Excel's data analysis as well as my own
 statistical knowledge. Excel's regression add-in in the data analysis pack was
@@ -79,10 +79,10 @@ and v is the VAT. The above graph uses this: ((7.08+(Brent
 Crude/1.60129)*0.661)+58.95)*1.2.
 
 I have more ideas for analysis. I wanted to try to calculate the lag between
-crude oil prices changes and petrol prices but I'm not really sure this is
+crude oil price changes and petrol prices but I'm not really sure this is
 possible with the current data. Plus I don't have any idea how to do this. I did
-graph duty against time, interestingly this was quite linear even tho duty up to
-now has supposed to be tracking inflation, however fuel affects inflation so I'm
+graph duty against time, interestingly this was quite linear even though duty up to
+now was supposed to be tracking inflation, however fuel affects inflation so I'm
 not so sure.
 
 I've also got a copy of the spreadsheet I used for my analysis:

@@ -24,5 +24,5 @@ I have read:
 - New Moon - Stephenie Meyer
 
 I'm currently reading The Magicians - Lev Grossman. I'm also almost finished the
-backlog of books everyone suggested after Christmas, so any recommendations we
+backlog of books everyone suggested after Christmas, so any recommendations are
 most welcome!

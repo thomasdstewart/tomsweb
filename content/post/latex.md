@@ -23,9 +23,9 @@ initial change in mindset, you will wonder how you used Word at all to create
 documents of more than 10 pages. The main advantage is that you just do the
 writing, then later it makes it pretty for you. This means that while you are
 writing you don't waste your time with formatting. It does all the formatting
-for you as well as creating the page of contents, list of figures, page
+for you as well as creating the table of contents, list of figures, page
 numbers, etc. It is also totally free. I have a few links for you to peruse at
-your leisure. Don't be intimidated, it a lot easier than it looks.
+your leisure. Don't be intimidated; it's a lot easier than it looks.
 
 A very short page about what it is:
 http://scottmcpeak.com/latex/whatislatex.html and why to use it:
@@ -51,7 +51,7 @@ Then you will need a thesis template that looks good. My brother recommends:
 http://www.sunilpatel.co.uk/thesis-template/. The information about this
 template is actually formatted in the form of a thesis, it gives information
 about LaTeX in general and information about that template. To see what that
-template looks like have look at:
+template looks like have a look at:
 http://www.sunilpatel.co.uk/wp-content/uploads/2010/08/Thesis-Template-Help.pdf
 
 My favourite guide to learn LaTeX is the "A (Not So) Short Introduction to

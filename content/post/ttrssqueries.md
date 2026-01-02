@@ -1,8 +1,8 @@
 ---
-title: "TRRS Quries"
+title: "TTRSS Queries"
 summary: ""
 authors: ["thomas"]
-tags: ["rrs"]
+tags: ["ttrss"]
 categories: []
 date: 2007-11-15
 ---
@@ -13,7 +13,7 @@ Highest average entries per day for the last 7 days for all entries
 select ttrss_feeds.title as feed, count(ttrss_user_entries.ref_id)/7 as postsperday from ttrss_feeds, ttrss_user_entries, ttrss_entries where ttrss_feeds.id = ttrss_user_entries.feed_id and ttrss_user_entries.ref_id = ttrss_entries.id and overlaps(ttrss_entries.date_entered, ttrss_entries.date_entered, now() - interval '7 day', now()) group by ttrss_feeds.title order by postsperday desc limit 10;
 ```
 
-Lowest average entries per day for the last 7 days for allentries
+Lowest average entries per day for the last 7 days for all entries
 
 ```
 select ttrss_feeds.title as feed, count(ttrss_user_entries.ref_id)/7 as postsperday from ttrss_feeds, ttrss_user_entries, ttrss_entries where ttrss_feeds.id = ttrss_user_entries.feed_id and ttrss_user_entries.ref_id = ttrss_entries.id and overlaps(ttrss_entries.date_entered, ttrss_entries.date_entered, now() - interval '7 day', now()) group by ttrss_feeds.title order by postsperday limit 10;

@@ -1,5 +1,5 @@
 ---
-title: St. Albans Wi-Fi"
+title: "St. Albans Wi-Fi"
 summary: ""
 authors: ["thomas"]
 tags: ["linux", "wifi"]

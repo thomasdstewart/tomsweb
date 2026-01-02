@@ -12,7 +12,7 @@ with dd. Running "gpg --version" gives a list of available ciphers. I then ran
 "time cat test | gpg --symmetric --cipher-algo TWOFISH > test.enc" for each
 cipher to see how fast they all were. It's not amazingly accurate but it gave a
 good indication which one to avoid! I ran this on my "Intel(R) Core(TM)2 CPU
-6400 @ 2.13GHz", 2.6.30 gives this 4256 bogomips for what its worth. Anyway, on
+6400 @ 2.13GHz", 2.6.30 gives this 4256 bogomips for what it's worth. Anyway, on
 with the results.
 
 | Cipher   | Time      |
@@ -26,10 +26,10 @@ with the results.
 | TWOFISH  | 1m28.190s |
 
 I also ran a new file of the same size but just zeros. The results were all more
-or less the same, I'm not sure why the times are so much sorter, I guess all the
+or less the same, I'm not sure why the times are so much shorter, I guess all the
 algorithms are good at optimizing zeros. Also dd takes about 15 seconds to write
 a 1G file "time echo $(dd if=/dev/zero bs=1M count=1024 of=test; sync)", this
-equates to about 70MB/s write speed which sounds in the right ball park.
+equates to about 70MB/s write speed which sounds in the right ballpark.
 
 | Cipher   | Time      |
 | -------- | --------- |
@@ -42,5 +42,5 @@ equates to about 70MB/s write speed which sounds in the right ball park.
 | TWOFISH  | 0m27.481s |
 
 So don't use 3DES, otherwise they are all pretty much the same. To improve it
-more I should probably make an effort to the idle the cpu and make the file a
+more I should probably make an effort to idle the CPU and make the file a
 lot bigger or store the file in ram, but I can't be bothered.

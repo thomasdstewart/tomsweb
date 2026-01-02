@@ -35,7 +35,7 @@ $ mergecap -w barport.cap badport_l*.cap
 # Memory required
 
 I didn't try opening the large 100G file with wireshark I went straight for
-tshark. Howeve it exhausted all memory and eventually the OOM killer kicked in.
+tshark. However it exhausted all memory and eventually the OOM killer kicked in.
 After adding more memory to my virtual machine I found that for a 109G pcap that
 72G memory is required. Indicating that a potential rule of thumb is that to
 open or process a pcap of size n one requires two thirds the size of n's memory
@@ -43,7 +43,7 @@ available.
 
 # Statistics
 
-I was not really interested in viewing all packets, I wanted to get a feel for
+I was not really interested in viewing all packets; I wanted to get a feel for
 the entire data set. The two main commands to do this are:
 
 ```
@@ -55,12 +55,12 @@ These turn on quiet mode, read from the badport.cap file and print either the
 Protocol Hierarchy Statistics or IPv4 Endpoints statistics.
 
 Each of these took around 30 min to complete, which means that best case between
-the copying the pcaps to the host, merging the pcaps and running the tshark
+copying the pcaps to the host, merging the pcaps and running the tshark
 statistics its best case time is around 2 hours.
 
 # Conclusion
 
 I think I've concluded that next time I should aim to concatenate down to around
-10G max, as these files are a lot easier two work with (eg, 2 minutes to
+10G max, as these files are a lot easier to work with (eg, 2 minutes to
 complete above statistics). Also The above 2 hour process found the same issue
 that looking at a single 100M cap did.

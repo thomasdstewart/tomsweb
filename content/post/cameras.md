@@ -11,7 +11,7 @@ date: 2022-04-05 19:03:00
 
 https://www.canon.co.uk/for_home/product_finder/cameras/digital_slr/eos_700d/
 
-### Lens
+### Lenses
 
 - [Canon EF-S 18-55mm f/3.5-5.6 IS II ](https://www.canon.co.uk/lenses/ef-s-18-55mm-f-3-5-5-6-is-ii-lens/)
   (2015, 11-34mm equiv full frame)

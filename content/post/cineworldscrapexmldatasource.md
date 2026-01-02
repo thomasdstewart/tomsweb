@@ -1,5 +1,5 @@
 ---
-title: "Cineworld have an public xml data source"
+title: "Cineworld have a public xml data source"
 summary: ""
 authors: ["thomas"]
 tags: ["blog", "movies", "cineworld"]
@@ -14,6 +14,6 @@ bit sad in a way, my scraper has been working for more or less 3 years now in
 some form or another. The annoying thing is that they don't actually export all
 the data I use. Being quite visual I have grown used to using the thumbnails
 that each movie has to help me pick which films to see. Apart from this it's a
-great step forward. However the problem is there's know knowing if Cineworld
+great step forward. However the problem is there's no knowing if Cineworld
 will pull this service or even if they want it public. For now I'll continue to
 use my scraper.

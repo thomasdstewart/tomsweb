@@ -16,7 +16,7 @@ initramfs loaded and started and then it moaned about not being able to mount
 the root filesystem and dropped me to a prompt.
 
 After this I decided to pull out my [GRML](http://grml.org/) recovery CD. What
-happened next could only be defined as major filesystem corruption. I ran the
+happened next could only be described as major filesystem corruption. I ran the
 usual "sudo fsck -C -t ext3 -f -y /dev/mapper/ikaite-root" inside a script
 session to capture the output. This grew to 42M (a clean fsck is about 150k of
 script output). After it finally finished I ran it again and it came back clean.
@@ -35,5 +35,5 @@ Inode , i_blocks is , should be . Fix? yes 41438 Inode is in use, but has dtime
 set. Fix? yes 45689 Fix? yes 61402 Illegal block # () in inode . CLEARED. 73733
 Clear? yes 425742
 
-Something else I noticed were many "WARNING: PROGRAMMING BUG IN E2FSCK"!
-messages, there were 23 of them!
+Something else I noticed was that there were many "WARNING: PROGRAMMING BUG IN E2FSCK"!
+messages; there were 23 of them!

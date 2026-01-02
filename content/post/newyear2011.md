@@ -11,7 +11,7 @@ This year seems to have flown by so it's resolutions time again. I've done quite
 well; I managed to stay relatively healthy and read loads of books but I failed
 completely to keep up to date with LWN.
 
-Including the books from July I've managed to read 18 books, which is ace!
+Including the books from July, I've managed to read 18 books, which is ace!
 Please
 make recommendations.
 
@@ -27,7 +27,7 @@ make recommendations.
 - The Girl Who Played with Fire - Stieg Larsson
 - The Girl Who Kicked the Hornets' Nest - Stieg Larsson
 
-As for this year's ones, it's almost going to be the same.
+As for this year's resolutions, it's almost going to be the same.
 
 - Stay super healthy for January and February, except for Little Christmas and
   Skiing

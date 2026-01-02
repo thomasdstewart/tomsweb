@@ -5,7 +5,7 @@ authors: ["thomas"]
 tags: ["pi"]
 categories: []
 date: 2017-11-26
-aliases: [/tomsweb/RaspebrryPiTapeRemote/]
+aliases: [/tomsweb/RaspberryPiTapeRemote/]
 ---
 
 {{% toc %}}
@@ -16,7 +16,7 @@ I have known about reel to reel tape for some time, my Dad has an old 1960's
 player in the attic. However it is only relatively recently that I found out
 that there are some people that still use them for music listening purposes. I
 think my first real exposure was on the
-[Techmoan](https://www.youtube.com/user/Techmoan]) YouTube channel, I saw a
+[Techmoan](https://www.youtube.com/user/Techmoan) YouTube channel, I saw a
 video about
 [Tips and advice for the Reel-to-Reel buying newbie](https://www.youtube.com/watch?v=UnZXmpMo0XY).
 Instantly I decided it was a waste of time and money. However the more I thought
@@ -75,7 +75,7 @@ This all leads me to this project: Why not connect a Raspberry Pi up to the tape
 player and remotely control it!
 
 Which is exactly what I did. I made a cable from the tape player to a relay
-board, connected the relay board to the GPIO pins on a raspberry pi, connected a
+board, connected the relay board to the GPIO pins on a Raspberry Pi, connected a
 usb IR receiver to the Raspberry Pi and wrote a two short python scripts to
 stick it all together. So now I can control my 20+ year old tape player using my
 new remote control or mobile phone!
@@ -172,18 +172,18 @@ external power supply. The Pi supplies 5v to the relay board that goes to power
 the relays.
 
 The other issue I wanted to avoid was giving false signals to the tape player.
-Lord only know what would happen if say all tape functions were activated at
-some for a minute while a Raspberry Pi booted. When I Pi turns on the GPIO ports
+Lord only knows what would happen if say all tape functions were activated at
+some for a minute while a Raspberry Pi booted. When my Pi turns on the GPIO ports
 have defaults, some are set to IN and some are set to OUT. I found that reading
-the information too tricky so instead I took a Pi and booted the latest Rasbian.
-I then measured the voltage of each ov the GPIO pins to find out what the
+the information too tricky so instead I took a Pi and booted the latest Raspbian.
+I then measured the voltage of each of the GPIO pins to find out what the
 default was. I wanted to pick GPIO pins that by default were set low (ie 0v).
 That way then the Pi was turned on it would not activate any relays. Below is a
 table of my findings. There are 10 Pins that default to 0v. Some of the GPIO
 pins also have dual functions (SPI) and I didn't want to clash with these
 functions. So I picked the 7 gpio pins that were low and one that was high. My
 plan was the wire the relay in such a way that as soon as it gets power from the
-Pi the default high on one GPIO cuts the single for all the tape functions.
+Pi the default high on one GPIO cuts the signal for all the tape functions.
 
 ## Relay
 
@@ -195,7 +195,7 @@ the same board design. I think I got something similar to:
 http://www.sunfounder.com/8-channel-5v-relay-shield-module.html.
 
 Initially I wired the Pi to the relay board with wires and a bread board. I then
-experimented with the setup. They relay board I got has little LEDs on to
+experimented with the setup. The relay board I got has little LEDs on to
 indicate a relay being on or off. This was very visual and enabled me to get the
 wiring just right before connecting the tape recorder. Once the wiring was
 finalised I swapped the wires for a single single ribbon cable from the relay

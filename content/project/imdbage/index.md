@@ -9,9 +9,9 @@ aliases: [/tomsweb/IMDBAge/]
 ---
 
 IMDB Age is a [Greasemonkey]({{< relref "../../post/greasemonkey" >}}) script
-that I wrote. This script adds the age and other various info onto IMDB pages.
+that I wrote to add age and other various info onto IMDB pages.
 
-This script adds the age and other various info onto IMDB pages. Specifically it
+Specifically it
 adds some details to actors or actresses pages. It adds their age, their Tropical
 Zodiac Sign and their Chinese Zodiac Sign. As well as adding how many years ago
 and how old they were when they made the listed films. It also adds how long ago

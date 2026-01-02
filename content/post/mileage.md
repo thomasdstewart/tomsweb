@@ -7,12 +7,12 @@ categories: []
 date: 2012-05-23 22:32:00
 ---
 
-TL;DNR - Buy Super Unleaded petrol! (or don't)
+TL;DR - Buy Super Unleaded petrol! (or don't)
 
 I usually buy my petrol from Tesco for my Celica, I mostly use their super
 unleaded 99 octane. I have tried both the normal and the super, I've not really
 noticed a massive difference, however the super feels better, but that could
-just be me imagining it. So I decided to do a not really scientific experiment
+just be me imagining it. So I decided to do a not particularly scientific experiment
 to find out which one really is best. Is that extra 5p per litre worth it? I get
 petrol every week and a half or so and fill my 50 litre tank, so that's about
 [£85](http://www.wolframalpha.com/input/?i=%2850+litres+*+%28%C2%A30.05+%2F+litre%29%29+*+%2852+weeks+%2F+1.5%29)
