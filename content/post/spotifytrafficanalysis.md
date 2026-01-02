@@ -8,8 +8,8 @@ date: 2011-03-04 16:59:00
 ---
 
 A colleague asked me how much bandwidth [Spotify](http://www.spotify.com/) uses.
-I basically had no idea. I want to run Spotify on my mobile at some point it so
-it got me thinking. I decided to do some basic analysis. I ran the client behind
+I basically had no idea. I want to run Spotify on my mobile at some point, so it
+got me thinking. I decided to do some basic analysis. I ran the client behind
 a http proxy for a day or so and ran a tcpdump at the same time with a filter to
 capture all the traffic to the proxy. The dump ran from 19/10/2010 11:46 to
 20/10/2010 17:19 and produced a 362M capture file. For the most part I was not
