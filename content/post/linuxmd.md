@@ -9,11 +9,11 @@ date: 2009-05-27
 
 ## /proc/mdstat information
 
-Linux has a software raid subsystem and it is called md. It is generally quite well
+Linux has a software RAID subsystem and it is called md. It is generally quite well
 documented. However the md status file in the proc pseudo filesystem is not
 documented at all. So this is one of those cases where you have to
 [read the source](http://lxr.linux.no/linux/drivers/md/md.c#L4922) to understand
-what's going on. I'll jump right in, this is what my mdstat looks like:-
+what's going on. I'll jump right in, this is what my mdstat looks like:
 
 ```
 $ cat /proc/mdstat
@@ -29,14 +29,14 @@ $
 ```
 
 - The first line is just a list of personalities that the kernel supports, and
-  by personalities it means what raid methods are available. If md is compiled
+  by personalities it means what RAID methods are available. If md is compiled
   into the kernel this list will be static, but if md is compiled as modules the
   list can change as you insert the various modules. The available personalities
   in Linux are linear, raid0, raid1, raid5 and raid6.
 - The file then consists of a number of stanzas, where each one represents each
-  md device. The above the example show md0 and md1.
-- The array can then be either "active" or "inactive". For instance if its raid1
-  it can be active with one block device, where as if its raid0 and the array
+  md device. The above example shows md0 and md1.
+- The array can then be either "active" or "inactive". For instance if it's raid1
+  it can be active with one block device, whereas if it's raid0 and the array
   consists of two devices it will be inactive if only one is added. It can also
   have a "read-only" attribute
 - In md0 section in this example the "raid1" signifies what personality the

@@ -8,10 +8,10 @@ date: 2009-07-24 00:18:00
 ---
 
 I got back on Monday night after cutting it worryingly close to get to the
-airport, 2 hours in advance try 40 min! Only for Ryanair to delay the flight by
+airport; two hours in advance, try 40 min! Only for Ryanair to delay the flight by
 an hour and tell no one. Then there's the Post Holiday Blues, aka
 [PTD](http://en.wikipedia.org/wiki/Post_vacation_blues). It hit bad on Tuesday
-night but I think I'm used to the grind stone again now.
+night but I think I'm used to the grindstone again now.
 
 Also I'm not laughing now:
 

@@ -21,11 +21,11 @@ I then started trying to analyse the dump. As amazing as
 large dumps or large amounts of data. I then found
 [Chaosreader](http://chaosreader.sourceforge.net/) which made it very easy. It
 basically looks at one big pcap file and splits it into the individual tcp
-steams, analyses them and produces a nice html report. Check out the example
+streams, analyses them and produces a nice html report. Check out the example
 report for some examples of what it can do.
 
 The Spotify client tries a few ways of connecting. It first tries to connect to
-a server on port 4070, which fails because the proxy does not allow CONNECT's to
+a server on port 4070, which fails because the proxy does not allow CONNECTs to
 that port.
 
 ```

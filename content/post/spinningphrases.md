@@ -12,7 +12,7 @@ year since I started. I think every teacher has one phrase they use most; this
 is not a bad thing, it's just something I have noticed. I present an anonymous list
 of them here.
 
-- butts over them saddles
+- butts over the saddles
 - quarter turn
 - begin with the end in mind
 - go go go go go go go go go go go go go go go go go go go go

@@ -15,8 +15,8 @@ I first got it in 2004 when it was 2 years old, and the first MOT was in 2005.
 However it seems the service history starts in 2007, which, if I recall, was when
 MOT became a lot more electronic.
 
-Here is the mileage data; I calculated the miles since the last MOT column. The
-average annual mileage is 9525.
+Here is the mileage data; I calculated the miles since the last MOT column
+myself. The average annual mileage is 9525.
 
 | MOT Date   | Mileage on clock | Calculated miles since last MOT | Notes       |
 | ---------- | ---------------- | ------------------------------- | ----------- |

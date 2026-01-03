@@ -10,7 +10,7 @@ date: 2012-12-09 20:51:00
 Ever used a laptop with a wireless and a copper network interface? Practically
 every laptop has both, so chances are you have. Have you ever wondered what
 happens if you plug in with copper, turn wireless on and have both interfaces
-configured with an IP address. I decided to do this and have a quick look
+configured with an IP address? I decided to do this and have a quick look
 at the routing table to see what goes on.
 
 TL;DR windows is sane and uses copper if you configure both.
@@ -95,7 +95,7 @@ Persistent Routes:
 >
 ```
 
-As you can see there are two default gateways (ie destination 0.0.0.0) and the
+As you can see there are two default gateways (i.e. destination 0.0.0.0) and the
 one with the lowest metric uses the 10.0.1.24 interface, which is the copper
 one. So it turns out that Windows seems sane and favours the faster copper
 interface when both are configured and working.

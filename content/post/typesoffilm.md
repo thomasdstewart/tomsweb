@@ -19,7 +19,7 @@ original Star Wars trilogy, A New Hope is "into and out of hole", Empire is
 ## into and out of hole
 
 Nearly all films fit in this category. The film starts, everything is happy and
-then something something bad happens. Later on the people overcome the issue
+then something bad happens. Later on the people overcome the issue
 and the film ends.
 
 ## into hole
