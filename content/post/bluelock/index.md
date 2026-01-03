@@ -1,5 +1,5 @@
 ---
-title: "Blueock"
+title: "Bluelock"
 summary: ""
 authors: ["thomas"]
 tags: ["linux", "bluetooth"]

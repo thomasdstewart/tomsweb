@@ -12,9 +12,9 @@ seemed to enjoy the small ones more. I've always assumed it was because a medium
 was too much of a good thing, which has led me to hardly ever get a large.
 
 However I was thinking recently that maybe I was wrong and the small ones just
-taste better. This lead me to wonder why. Anyone that knows me knows that I love
+taste better. This led me to wonder why. Anyone that knows me knows that I love
 milk. I thought that maybe I liked more milky ones better. I decided to conduct
-an experiment, over a few days I got a small, medium and large coffee to measure
+an experiment; over a few days I got a small, medium and large coffee to measure
 how much milk will fit in each one.
 
 I didn't bother measuring the volume of the paper cups I just read the volume
@@ -29,11 +29,11 @@ cup. Anyway here are the results:
 | Small    | 355             | 1     | 1\*30=30ml         | 355-30=325      | 325/30=10.83         |
 
 I can now conclusively state that the milk to coffee ratio is highest for small
-cups, almost double that of the Medium and Large. Whereas Large and Medium are
+cups, almost double that of the medium and large. Whereas large and medium are
 relatively similar. Further investigation will be required to measure the cups
 and shot sizes more accurately. As well as real mugs rather than paper ones. As
-a side note getting a medium with one shot will result in a milk to coffee ratio
-of around 15, which could even be too milky for me! However a Large with two
+a side note, getting a medium with one shot will result in a milk to coffee ratio
+of around 15, which could even be too milky for me! However a large with two
 shots comes in around at 9 which is similar to the small ratio.
 
 From now on I will just get smalls and if I want more I'll just buy two cups!

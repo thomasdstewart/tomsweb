@@ -27,7 +27,7 @@ I then remembered, we pay quite a substantial amount of money to Symantec for
 support. I thought, amazing I'll just ask them: they can tell me how to
 configure the ODBC driver and save me a bunch of time figuring it out! Roll
 forward one month of emails (they don't seem to like the phone), and I got this
-conclusion
+conclusion:
 
 ```
 On 2010-09-13 06:21, enterprise_support@symantec.com wrote:
@@ -35,7 +35,7 @@ On 2010-09-13 06:21, enterprise_support@symantec.com wrote:
 > by backline that we can only provide you the ODBC drivers for the
 > OpsCenter(As ****** has already sent to you), however unfortunately we
 > cannot support or provide the technical know how regarding integrating
-> OpsCenter database with any third party frond end reporting software
+> OpsCenter database with any third party front end reporting software
 > like Crystal Reports.
 ```
 

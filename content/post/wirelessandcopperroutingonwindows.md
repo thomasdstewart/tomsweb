@@ -13,7 +13,7 @@ happens if you plug in with copper, turn wireless on and have both interfaces
 configured with an IP address? I decided to do this and have a quick look
 at the routing table to see what goes on.
 
-TL;DR windows is sane and uses copper if you configure both.
+TL;DR Windows is sane and uses copper if you configure both.
 
 Here is a sample ipconfig with some slight anonymization:
 
